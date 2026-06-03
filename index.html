@@ -643,7 +643,7 @@ function diTick(){
     pill.style.display='flex';
   } else if(nxt){
     var remS2check=nxt.startM*60-(toMins(new Date().getHours(),new Date().getMinutes())*60+new Date().getSeconds());
-    if(remS2check>20*60){pill.style.display='none';return;}
+    if(remS2check>75*60){pill.style.display='none';return;}
     var info2=izlenceler[nxt.kod];
     var fullName2=info2?info2.ad:'';
     var shortName2=fullName2.split(' ').slice(0,4).join(' ');
