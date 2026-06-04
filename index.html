@@ -151,7 +151,7 @@ if(document.readyState==='complete'){setTimeout(hideSplash,350);}
 else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})();</script> <div id="mob-sticky-day"></div>
 <!-- PWA Kurulum Banneri -->
 <div id="pwa-banner" style="display:none;align-items:center;gap:12px;background:linear-gradient(135deg,#0C2461,#1a3a8f);color:#fff;padding:11px 16px;font-family:'Sora',sans-serif;font-size:13px;position:relative;z-index:500;"> <div style="font-size:22px;flex-shrink:0;">📲</div> <div style="flex:1;min-width:0;"> <div style="font-weight:700;font-size:13px;line-height:1.3;">Ana Ekrana Ekle</div> <div style="font-size:11px;opacity:0.75;margin-top:1px;" id="pwa-banner-sub">Uygulama gibi kullan, çevrimdışı çalışır</div> </div> <button id="pwa-install-btn" style="background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.4);color:#fff;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;white-space:nowrap;flex-shrink:0;">Ekle</button> <button id="pwa-dismiss-btn" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;padding:0 4px;flex-shrink:0;line-height:1;">×</button>
-</div> <div class="header"> <!-- Sol: logo + başlık --> <div class="header-left"> <div class="header-logo">D<span>8</span></div> <div class="header-title-block"> <div class="header-title">Derslik 8</div> <div class="header-sub">Milli Eğitim Akademisi · Kayseri</div> <div class="header-badges"> <span class="hbadge hbadge-green">● I. Dönem Aktif</span> <span class="hbadge hbadge-white">30 saat/hafta</span> </div> </div> </div> <!-- Sağ: kontroller --> <div class="header-controls"> <button class="dark-toggle hctrl-btn" id="darkToggle" onclick="toggleDark()" title="Karanlık/Aydınlık Mod">🌙</button> <div style="position:relative;"> <button id="themePickerBtn" class="dark-toggle hctrl-btn" onclick="toggleThemePicker(event)" title="Tema Seç">🎨</button> <div id="theme-picker-dropdown" style="display:none;position:fixed;top:auto;right:16px;z-index:9999;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(12,36,97,0.18);padding:8px 10px;max-height:80vh;overflow-y:auto;"> <div id="theme-picker-list"></div> </div> </div> </div>
+</div> <div class="header"> <!-- Sol: logo + başlık --> <div class="header-left"> <div class="header-logo">D<span>8</span></div> <div class="header-title-block"> <div class="header-title">Derslik 8</div> <div class="header-sub">Milli Eğitim Akademisi · Kayseri</div> <div class="header-badges"> <span class="hbadge hbadge-green">● I. Dönem Aktif</span> <span class="hbadge hbadge-white">30 saat/hafta</span> </div> </div> </div> <!-- Sağ: kontroller --> <div class="header-controls"> <button class="dark-toggle hctrl-btn" id="darkToggle" onclick="toggleDark()" title="Karanlık/Aydınlık Mod">🌙</button> <div style="position:relative;"> <button id="themePickerBtn" class="dark-toggle hctrl-btn" onclick="toggleThemePicker(event)" title="Tema Seç">🎨</button> <div id="theme-picker-dropdown" style="display:none;position:fixed;top:auto;right:16px;z-index:9999;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(12,36,97,0.18);padding:8px 10px;max-height:80vh;overflow-y:auto;"> <div id="theme-picker-list"></div> </div> </div> <button class="dark-toggle hctrl-btn" id="screensaverBtn" onclick="openScreensaver()" title="Sınıf Zamanlayıcısı">⏱️</button> </div>
 </div> <div class="tabs-pill-row">
 <div class="main-tabs" style="margin-bottom:0;">
 <button class="mtab active" onclick="showMain('program',this)"><span class="tab-icon">📋 </span><span class="tab-full">Ders Programı</span><span class="tab-short">Dersler</span></button>
@@ -870,6 +870,251 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
       if(lt)lt.media='all';
     });
   }
+})();
+</script>
+
+<!-- ═══ SCREENSAVER (gömülü) ═══ -->
+<style>
+@keyframes ss-pulse{0%,100%{opacity:1;box-shadow:0 0 6px 2px currentColor;}50%{opacity:.4;box-shadow:none;}}
+@keyframes ss-warn{0%,100%{transform:scale(1)}50%{transform:scale(1.016)}}
+#ss-overlay{display:none;position:fixed;inset:0;z-index:99990;overflow:hidden;}
+#ss-bg{position:absolute;inset:0;transition:background 1.4s ease;}
+#ss-grid{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);
+  background-size:80px 80px;}
+#ss-close{position:fixed;top:clamp(12px,2vh,22px);right:clamp(12px,2vw,22px);z-index:99999;
+  background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);
+  border-radius:10px;width:clamp(30px,4vmin,40px);height:clamp(30px,4vmin,40px);
+  font-size:clamp(12px,1.8vmin,16px);cursor:pointer;color:rgba(255,255,255,0.7);
+  display:flex;align-items:center;justify-content:center;transition:background .2s;}
+#ss-close:hover{background:rgba(255,255,255,0.22);}
+#ss-stage{position:relative;z-index:1;width:100%;height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:clamp(16px,4vh,60px) clamp(16px,4vw,60px);}
+#ss-badge{display:inline-flex;align-items:center;gap:8px;
+  padding:clamp(4px,0.7vh,8px) clamp(12px,2vw,20px);
+  border-radius:99px;font-size:clamp(9px,1.2vmin,12px);font-weight:700;
+  letter-spacing:1.6px;text-transform:uppercase;border:1px solid;
+  margin-bottom:clamp(16px,3vh,42px);transition:all .7s ease;
+  background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:#93C5FD;
+  font-family:'Space Mono',monospace;}
+#ss-dot{width:6px;height:6px;border-radius:50%;background:#60A5FA;flex-shrink:0;
+  animation:ss-pulse 1.6s ease-in-out infinite;}
+#ss-timer{font-family:'Space Mono',monospace;
+  font-size:clamp(48px,min(18vw,22vh),180px);
+  font-weight:700;letter-spacing:-0.04em;line-height:1;color:#fff;
+  text-shadow:0 0 70px rgba(59,130,246,0.25);
+  transition:color .7s,text-shadow .7s;white-space:nowrap;}
+#ss-sub{font-family:'Sora',sans-serif;
+  font-size:clamp(9px,min(1.2vw,1.4vh),14px);
+  color:rgba(255,255,255,0.28);letter-spacing:1.8px;text-transform:uppercase;
+  margin-top:clamp(8px,1.5vh,16px);font-weight:400;white-space:nowrap;}
+#ss-bar-wrap{width:min(540px,72vw);margin-top:clamp(20px,4vh,50px);
+  opacity:0;transition:opacity .5s .15s;}
+#ss-bar-track{width:100%;height:3px;background:rgba(255,255,255,0.07);
+  border-radius:99px;overflow:hidden;}
+#ss-bar{height:100%;border-radius:99px;width:0%;
+  background:linear-gradient(90deg,#3B82F6,#6366F1);transition:width 1s linear,background .7s;}
+#ss-bar-meta{display:flex;justify-content:space-between;
+  font-family:'Space Mono',monospace;
+  font-size:clamp(8px,1vmin,11px);color:rgba(255,255,255,0.2);margin-top:8px;}
+#ss-clock{position:fixed;bottom:clamp(14px,2.5vh,32px);left:clamp(16px,3vw,40px);z-index:10;
+  font-family:'Space Mono',monospace;
+  font-size:clamp(14px,2.2vmin,24px);font-weight:700;
+  color:rgba(255,255,255,0.5);letter-spacing:2px;}
+#ss-brand{position:fixed;bottom:clamp(16px,2.8vh,36px);right:clamp(16px,3vw,40px);z-index:10;
+  font-family:'Sora',sans-serif;font-size:clamp(9px,1.1vmin,12px);font-weight:700;
+  color:rgba(255,255,255,0.18);letter-spacing:1.5px;text-transform:uppercase;}
+</style>
+
+<div id="ss-overlay">
+  <div id="ss-bg"></div>
+  <div id="ss-grid"></div>
+  <button id="ss-close" onclick="closeScreensaver()" title="Kapat (Esc)">✕</button>
+
+  <div id="ss-stage">
+    <div id="ss-badge">
+      <div id="ss-dot"></div>
+      <span id="ss-badge-txt">DERS</span>
+    </div>
+
+    <div id="ss-timer">--:--</div>
+    <div id="ss-sub">kalan süre</div>
+
+    <div id="ss-bar-wrap">
+      <div id="ss-bar-track">
+        <div id="ss-bar"></div>
+      </div>
+      <div id="ss-bar-meta">
+        <span id="ss-bar-s">--:--</span>
+        <span id="ss-bar-e">--:--</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="ss-clock"></div>
+  <div id="ss-brand">Derslik<span style="color:rgba(255,180,60,0.4);">8</span></div>
+</div>
+
+<script>
+(function(){
+  var SS_SLOTS=[
+    {id:'p1',type:'lesson',period:1,  start:'09:20',end:'10:10',sc:null,   ec:null},
+    {id:'b1',type:'break', period:null,start:'10:10',end:'10:20',sc:null,   ec:null},
+    {id:'p2',type:'lesson',period:2,  start:'10:20',end:'11:10',sc:null,   ec:null},
+    {id:'b2',type:'break', period:null,start:'11:10',end:'11:20',sc:null,   ec:null},
+    {id:'p3',type:'lesson',period:3,  start:'11:20',end:'12:10',sc:null,   ec:null},
+    {id:'ln',type:'lunch', period:null,start:'12:10',end:'13:10',sc:'12:10',ec:'13:30'},
+    {id:'p4',type:'lesson',period:4,  start:'13:10',end:'14:00',sc:'13:30',ec:'14:20'},
+    {id:'b4',type:'break', period:null,start:'14:00',end:'14:10',sc:'14:20',ec:'14:30'},
+    {id:'p5',type:'lesson',period:5,  start:'14:10',end:'15:00',sc:'14:30',ec:'15:20'},
+    {id:'b5',type:'break', period:null,start:'15:00',end:'15:10',sc:'15:20',ec:'15:30'},
+    {id:'p6',type:'lesson',period:6,  start:'15:10',end:'16:00',sc:'15:30',ec:'16:20'},
+  ];
+
+  function toMin(s){var p=s.split(':');return+p[0]*60+ +p[1];}
+  function p2(n){return String(n).padStart(2,'0');}
+  function fmtSec(s){return p2(Math.floor(s/60))+':'+p2(s%60);}
+  function fmtMin(m){return p2(Math.floor(m/60))+':'+p2(m%60);}
+
+  function getCur(nm,fr){
+    for(var i=0;i<SS_SLOTS.length;i++){
+      var s=SS_SLOTS[i];
+      var st=fr&&s.sc?toMin(s.sc):toMin(s.start);
+      var en=fr&&s.ec?toMin(s.ec):toMin(s.end);
+      if(nm>=st&&nm<en)return{s:s,st:st,en:en};
+    }return null;
+  }
+
+  var ssTimer=null;
+
+  function ssTick(){
+    var now=new Date();
+    var fr=now.getDay()===5;
+    var nm=now.getHours()*60+now.getMinutes();
+    var ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+
+    document.getElementById('ss-clock').textContent=p2(now.getHours())+':'+p2(now.getMinutes());
+
+    var bg=document.getElementById('ss-bg');
+    var badge=document.getElementById('ss-badge');
+    var dot=document.getElementById('ss-dot');
+    var btxt=document.getElementById('ss-badge-txt');
+    var timer=document.getElementById('ss-timer');
+    var sub=document.getElementById('ss-sub');
+    var bwrap=document.getElementById('ss-bar-wrap');
+    var bar=document.getElementById('ss-bar');
+    var bs=document.getElementById('ss-bar-s');
+    var be=document.getElementById('ss-bar-e');
+
+    var cur=getCur(nm,fr);
+
+    if(!cur){
+      var after=nm>=toMin('16:20');
+      bg.style.background='radial-gradient(ellipse 70% 50% at 15% 15%,rgba(99,102,241,0.08) 0%,transparent 60%),linear-gradient(160deg,#060d1f 0%,#0a0f25 100%)';
+      badge.style.background='rgba(148,163,184,0.07)';
+      badge.style.borderColor='rgba(148,163,184,0.18)';
+      badge.style.color='rgba(255,255,255,0.35)';
+      dot.style.background='rgba(255,255,255,0.25)';
+      dot.style.animation='none';
+      btxt.textContent=after?'BİTTİ':'BAŞLAMADI';
+      if(!after){
+        var rem=toMin('09:20')*60-ns;
+        timer.textContent=fmtSec(rem>0?rem:0);
+        sub.textContent='1. DERS BAŞLAMASINA KALAN';
+      } else {
+        timer.textContent='00:00';
+        sub.textContent='';
+      }
+      timer.style.color='#fff';
+      timer.style.textShadow='0 0 70px rgba(59,130,246,0.15)';
+      timer.style.animation='none';
+      bwrap.style.opacity='0';
+      return;
+    }
+
+    var s=cur.s, st=cur.st, en=cur.en;
+    var total=(en-st)*60;
+    var elapsed=ns-st*60;
+    var remain=en*60-ns;
+    var pct=Math.min(100,elapsed/total*100);
+    var warn=remain<=120&&s.type!=='break';
+
+    // bg rengi
+    if(s.type==='break'){
+      bg.style.background='radial-gradient(ellipse 70% 50% at 15% 15%,rgba(16,185,129,0.11) 0%,transparent 60%),linear-gradient(160deg,#04160f 0%,#062618 100%)';
+    } else if(s.type==='lunch'){
+      bg.style.background='radial-gradient(ellipse 70% 50% at 15% 15%,rgba(245,158,11,0.11) 0%,transparent 60%),linear-gradient(160deg,#151006 0%,#221808 100%)';
+    } else {
+      bg.style.background='radial-gradient(ellipse 70% 50% at 15% 15%,rgba(59,130,246,0.13) 0%,transparent 60%),radial-gradient(ellipse 55% 45% at 85% 85%,rgba(99,102,241,0.09) 0%,transparent 60%),linear-gradient(160deg,#040917 0%,#08133a 50%,#040917 100%)';
+    }
+
+    // badge
+    if(s.type==='break'){
+      badge.style.background='rgba(16,185,129,0.1)';badge.style.borderColor='rgba(16,185,129,0.3)';badge.style.color='#6EE7B7';
+      dot.style.background='#34D399';dot.style.animation='none';
+      btxt.textContent='TENEFFÜS';
+    } else if(s.type==='lunch'){
+      badge.style.background='rgba(245,158,11,0.1)';badge.style.borderColor='rgba(245,158,11,0.3)';badge.style.color='#FCD34D';
+      dot.style.background='#FBBF24';dot.style.animation='ss-pulse 2s ease-in-out infinite';
+      btxt.textContent='ÖĞLE ARASI';
+    } else {
+      badge.style.background='rgba(59,130,246,0.1)';badge.style.borderColor='rgba(59,130,246,0.3)';badge.style.color='#93C5FD';
+      dot.style.background='#60A5FA';dot.style.animation='ss-pulse 1.6s ease-in-out infinite';
+      btxt.textContent=s.period+'. DERS';
+    }
+
+    // timer
+    timer.textContent=fmtSec(remain>0?remain:0);
+    if(warn){
+      timer.style.color='#FCA5A5';timer.style.textShadow='0 0 70px rgba(239,68,68,0.3)';timer.style.animation='ss-warn .9s ease-in-out infinite';
+    } else if(s.type==='break'){
+      timer.style.color='#6EE7B7';timer.style.textShadow='0 0 70px rgba(16,185,129,0.25)';timer.style.animation='none';
+    } else if(s.type==='lunch'){
+      timer.style.color='#FCD34D';timer.style.textShadow='0 0 70px rgba(245,158,11,0.25)';timer.style.animation='none';
+    } else {
+      timer.style.color='#fff';timer.style.textShadow='0 0 70px rgba(59,130,246,0.25)';timer.style.animation='none';
+    }
+
+    // sublabel
+    if(s.type==='lesson')sub.textContent='DERS BİTİMİNE KALAN';
+    else if(s.type==='break')sub.textContent='TENEFFÜS BİTİMİNE KALAN';
+    else sub.textContent='ÖĞLE MOLASI BİTİMİNE KALAN';
+
+    // bar
+    bwrap.style.opacity='1';
+    bar.style.width=pct+'%';
+    if(warn)bar.style.background='linear-gradient(90deg,#EF4444,#FCA5A5)';
+    else if(s.type==='break')bar.style.background='linear-gradient(90deg,#10B981,#34D399)';
+    else if(s.type==='lunch')bar.style.background='linear-gradient(90deg,#F59E0B,#FCD34D)';
+    else bar.style.background='linear-gradient(90deg,#3B82F6,#6366F1)';
+
+    bs.textContent=fmtMin(st);
+    be.textContent=fmtMin(en);
+  }
+
+  window.openScreensaver=function(){
+    var ov=document.getElementById('ss-overlay');
+    ov.style.display='flex';
+    document.body.style.overflow='hidden';
+    ssTick();
+    ssTimer=setInterval(ssTick,1000);
+  };
+
+  window.closeScreensaver=function(){
+    var ov=document.getElementById('ss-overlay');
+    ov.style.display='none';
+    document.body.style.overflow='';
+    if(ssTimer){clearInterval(ssTimer);ssTimer=null;}
+  };
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      var ov=document.getElementById('ss-overlay');
+      if(ov&&ov.style.display!=='none')window.closeScreensaver();
+    }
+  });
 })();
 </script>
 </body>
