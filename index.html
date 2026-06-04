@@ -877,8 +877,8 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
 <style>
 @keyframes ss-pulse{0%,100%{opacity:0.7;}50%{opacity:0.3;}}
 @keyframes ss-warn{0%,100%{opacity:1;}50%{opacity:0.75;}}
-#ss-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;z-index:99990;overflow:hidden;}
-#ss-bg{position:absolute;inset:0;transition:background 2s ease;
+#ss-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;min-width:100%;min-height:100%;z-index:99990;overflow:hidden;margin:0;padding:0;box-sizing:border-box;}
+#ss-bg{position:fixed;top:0;left:0;width:100vw;height:100vh;transition:background 2s ease;
   background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(12,36,97,0.9) 0%,transparent 65%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(26,58,143,0.7) 0%,transparent 60%),linear-gradient(160deg,#060d1f 0%,#0c2461 40%,#07112e 100%);}
 #ss-grid{display:none;}
 #ss-close{position:fixed;top:clamp(12px,2vh,22px);right:clamp(12px,2vw,22px);z-index:99999;
@@ -887,7 +887,7 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
   font-size:clamp(12px,1.8vmin,16px);cursor:pointer;color:rgba(255,255,255,0.4);
   display:flex;align-items:center;justify-content:center;transition:all .2s;}
 #ss-close:hover{background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);}
-#ss-stage{position:relative;z-index:1;width:100%;height:100vh;
+#ss-stage{position:relative;z-index:1;width:100%;height:100%;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:clamp(16px,4vh,60px) clamp(16px,4vw,60px);}
 #ss-badge{display:inline-flex;align-items:center;gap:7px;
@@ -1094,6 +1094,8 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
     ov.style.display='flex';
     document.body.style.overflow='hidden';
     document.documentElement.style.overflow='hidden';
+    document.body.style.paddingRight='0';
+    document.documentElement.style.scrollbarWidth='none';
     ssTick();
     ssTimer=setInterval(ssTick,1000);
   };
