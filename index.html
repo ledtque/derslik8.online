@@ -292,53 +292,45 @@ else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})
 </div>
 <!-- Haftanın Sözü pill'e taşındı -->
 </div> </div> <div id="panel-sinav" style="display:none"><div id="sinav-empty-state" style="display:none;text-align:center;padding:32px 16px;color:var(--muted);font-size:13px;"><div style="font-size:32px;margin-bottom:10px">📝</div>Sınav bilgisi bulunamadı</div> <div class="table-wrap">
-<table class="prog">
+<table class="prog" style="min-width:360px;">
 <thead>
 <tr>
 <th class="th-gun">Gün</th>
-<th class="th-p"><span class="pn">1</span><span class="pt">09:20–10:10</span></th>
-<th class="th-p"><span class="pn">2</span><span class="pt">10:20–11:10</span></th>
-<th class="th-p"><span class="pn">3</span><span class="pt">11:20–12:10</span></th>
-<th class="th-p th-split"><span class="pn">4</span><span class="pt th-time-normal">13:10–14:00</span><span class="pt th-time-cuma">13:30–14:20 <span class="th-cuma-tag">Cum</span></span></th>
-<th class="th-p th-split"><span class="pn">5</span><span class="pt th-time-normal">14:10–15:00</span><span class="pt th-time-cuma">14:30–15:20 <span class="th-cuma-tag">Cum</span></span></th>
-<th class="th-p th-split"><span class="pn">6</span><span class="pt th-time-normal">15:10–16:00</span><span class="pt th-time-cuma">15:30–16:20 <span class="th-cuma-tag">Cum</span></span></th>
+<th class="th-p"><span class="pn">1</span><span class="pt">10:00–10:50</span></th>
+<th class="th-p" style="background:linear-gradient(135deg,#3a3a5c,#4a4a6c);min-width:72px;"><span class="pn" style="font-size:11px;letter-spacing:0.5px;">ARA</span><span class="pt">10:50–11:50</span></th>
+<th class="th-p"><span class="pn">2</span><span class="pt">11:50–12:40</span></th>
 </tr>
 </thead>
-<tbody> <tr class="don-row" style="opacity:0.35;">
-<td class="td-gun">Pazartesi<span class="gl">11.05.2026</span></td>
-<td class="td-full" colspan="6">🔄 DÖNÜŞÜMSEL UYGULAMA</td>
-</tr> <tr id="sinav-row-2026-05-12">
-<td class="td-gun" id="sinav-gun-2026-05-12">Salı<span class="gl">12.05.2026</span></td>
-<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-05-12-1" data-kod="109" onclick="openModal('109')" style="cursor:pointer;" data-tarih="2026-05-12" data-bitis="10:10"><div class="cn">İngilizce Öğretiminde Farklılaştırma</div></div></td>
-<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-05-12-2" data-kod="103" onclick="openModal('103')" style="cursor:pointer;" data-tarih="2026-05-12" data-bitis="11:10"><div class="cn">Veri Temelli İzleme ve Değerlendirme</div></div></td>
-<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-05-12-3" data-kod="105" onclick="openModal('105')" style="cursor:pointer;" data-tarih="2026-05-12" data-bitis="12:10"><div class="cn">Eğitimde Hak ve Sorumluluklar</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-</tr> <tr id="sinav-row-2026-05-13">
-<td class="td-gun" id="sinav-gun-2026-05-13">Çarşamba<span class="gl">13.05.2026</span></td>
-<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-05-13-1" data-kod="110" onclick="openModal('110')" style="cursor:pointer;" data-tarih="2026-05-13" data-bitis="10:10"><div class="cn">İngilizce Öğretim Yöntemleri</div></div></td>
-<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-05-13-2" data-kod="104" onclick="openModal('104')" style="cursor:pointer;" data-tarih="2026-05-13" data-bitis="11:10"><div class="cn">İnsan ve Öğrenme</div></div></td>
-<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-05-13-3" data-kod="108" onclick="openModal('108')" style="cursor:pointer;" data-tarih="2026-05-13" data-bitis="12:10"><div class="cn">Medya Toplum ve Eğitim</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-</tr> <tr id="sinav-row-2026-05-14">
-<td class="td-gun" id="sinav-gun-2026-05-14">Perşembe<span class="gl">14.05.2026</span></td>
-<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-05-14-1" data-kod="101" onclick="openModal('101')" style="cursor:pointer;" data-tarih="2026-05-14" data-bitis="10:10"><div class="cn">Program Okuryazarlığı</div></div></td>
-<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-05-14-2" data-kod="106" onclick="openModal('106')" style="cursor:pointer;" data-tarih="2026-05-14" data-bitis="11:10"><div class="cn">Türk Kültürünün Kurucu Metinleri</div></div></td>
-<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-05-14-3" data-kod="107" onclick="openModal('107')" style="cursor:pointer;" data-tarih="2026-05-14" data-bitis="12:10"><div class="cn">Türkçenin Söz Varlığı ve Maarif Sözlüğü</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-</tr> <tr style="opacity:0.35;">
-<td class="td-gun">Cuma<span class="gl">15.05.2026</span><span class="gl" style="color:#C0392B">+20 dk öğle</span></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
-<td class="td-cell"><div class="ci sinav-ders-soluk"><div class="cn">Ders</div></div></td>
+<tbody>
+<tr id="sinav-row-2026-06-27">
+<td class="td-gun" id="sinav-gun-2026-06-27">Cumartesi<span class="gl">27.06.2026</span></td>
+<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-06-27-1" data-kod="110" onclick="openModal('110')" style="cursor:pointer;" data-tarih="2026-06-27" data-bitis="10:50"><div class="cn">İngilizce Öğretim Yöntemleri</div></div></td>
+<td class="td-cell" style="background:rgba(0,0,0,0.04);"><div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:0.25;">☕</div></td>
+<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-06-27-2" data-kod="107" onclick="openModal('107')" style="cursor:pointer;" data-tarih="2026-06-27" data-bitis="12:40"><div class="cn">Türkçenin Söz Varlığı ve Maarif Sözlüğü</div></div></td>
+</tr>
+<tr id="sinav-row-2026-06-28">
+<td class="td-gun" id="sinav-gun-2026-06-28">Pazar<span class="gl">28.06.2026</span></td>
+<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-06-28-1" data-kod="109" onclick="openModal('109')" style="cursor:pointer;" data-tarih="2026-06-28" data-bitis="10:50"><div class="cn">İngilizce Eğitiminde Farklılaştırma</div></div></td>
+<td class="td-cell" style="background:rgba(0,0,0,0.04);"><div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:0.25;">☕</div></td>
+<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-06-28-2" data-kod="103" onclick="openModal('103')" style="cursor:pointer;" data-tarih="2026-06-28" data-bitis="12:40"><div class="cn">Veri Temelli İzleme ve Değerlendirme</div></div></td>
+</tr>
+<tr id="sinav-row-2026-06-29">
+<td class="td-gun" id="sinav-gun-2026-06-29">Pazartesi<span class="gl">29.06.2026</span></td>
+<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-06-29-1" data-kod="105" onclick="openModal('105')" style="cursor:pointer;" data-tarih="2026-06-29" data-bitis="10:50"><div class="cn">Eğitimde Hak ve Sorumluluklar</div></div></td>
+<td class="td-cell" style="background:rgba(0,0,0,0.04);"><div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:0.25;">☕</div></td>
+<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-06-29-2" data-kod="104" onclick="openModal('104')" style="cursor:pointer;" data-tarih="2026-06-29" data-bitis="12:40"><div class="cn">İnsan ve Öğrenme</div></div></td>
+</tr>
+<tr id="sinav-row-2026-06-30">
+<td class="td-gun" id="sinav-gun-2026-06-30">Salı<span class="gl">30.06.2026</span></td>
+<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-06-30-1" data-kod="101" onclick="openModal('101')" style="cursor:pointer;" data-tarih="2026-06-30" data-bitis="10:50"><div class="cn">Program Okuryazarlığı</div></div></td>
+<td class="td-cell" style="background:rgba(0,0,0,0.04);"><div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:0.25;">☕</div></td>
+<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-06-30-2" data-kod="106" onclick="openModal('106')" style="cursor:pointer;" data-tarih="2026-06-30" data-bitis="12:40"><div class="cn">Türk Kültürünün Kurucu Metinleri</div></div></td>
+</tr>
+<tr id="sinav-row-2026-07-01">
+<td class="td-gun" id="sinav-gun-2026-07-01">Çarşamba<span class="gl">01.07.2026</span></td>
+<td class="td-cell"><div class="ci band-sinav" id="sinav-cell-2026-07-01-1" data-kod="108" onclick="openModal('108')" style="cursor:pointer;" data-tarih="2026-07-01" data-bitis="10:50"><div class="cn">Medya, Toplum ve Eğitim</div></div></td>
+<td class="td-cell" style="background:rgba(0,0,0,0.04);"><div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:0.25;">☕</div></td>
+<td class="td-cell"><div class="ci sinav-ders-soluk" style="opacity:0.2;"><div class="cn">—</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -386,7 +378,7 @@ else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})
 {q:'Okul sözlüklerinde görülen sorunlar nelerdir?',a:'Yeterli bilimsel çalışma ve denetimin yapılmaması. Biçimsel sorunlar: yazı puntosunun küçük olması, baskı ve kâğıt kalitesinin düşük olması, resimleme eksikliği. İçerik sorunları: hedef kitlenin gözetilmemesi, yazım birliğinin sağlanamaması, sesletimlerin verilmemesi, tanımların yeterince açık ve anlaşılır olmaması.'},
 {q:'Sözlük kullanımında kullanıcı erişimi hakkında neler söylenebilir?',a:'Kullanıcı erişimi, sözlüğün hem genel yapısıyla (makroyapı) hem de madde içi yapısıyla (mikroyapı) doğrudan ilişkilidir. Kullanıcı önce madde başına, ardından ihtiyaç duyduğu bilgiye hızlıca ulaşmak ister. E-sözlükler, bilgiye kolay ve hızlı erişim sağladığı için basılı sözlüklere göre daha çok tercih edilmektedir.'},
 {q:'Sözlük kullanımına ilişkin literatür araştırmaları hakkında neler söylenebilir?',a:'Öğrencilerin sözlük kullanma alışkanlıklarına yönelik çalışmalar sınırlıdır. Araştırmalar ağırlıklı olarak şu konulara yoğunlaşmaktadır: basılı ve elektronik sözlük kullanımı, sözcük hazinesine etkisi, okuma becerisine katkısı, öğrencilerin tutum ve alışkanlıkları.'}]},'108':{ad:'Medya, Toplum ve Eğitim',ogretmen:'Prof. Dr. Mustafa Koçer',donem:'1. Dönem',saat:20,teori:2,uyg:0,amac:'Medyanın toplumsal yapı ve eğitim süreçleri üzerindeki etkilerini eleştirel bir bakış açısıyla incelemek; medya mesajları yoluyla birey, toplum ve eğitim arasındaki etkileşimi anlamak ve bunların toplumsal değerler, insan hakları ve demokrasi kültürü, kimlikler ve öğrenme biçimleri üzerindeki etkisini analiz etmek.',ciktilar:['Medya, toplum ve eğitim arasındaki karşılıklı etkileşimi kuramsal yaklaşımlar çerçevesinde analiz eder.','Geleneksel ve dijital medyanın bireylerin tutum, değer ve davranışları üzerindeki etkilerini değerlendirir.','Medya okuryazarlığı yoluyla eğitime yönelik içerikleri sorgulayıp medyayı bilinçli kullanır.','Medya kaynaklı toplumsal sorunları eğitim perspektifinden tartışır ve çözüm önerileri sunar.'],haftalar:['Medya ve Kültür','Medya, Kültür ve Kimlik','Medya, Kamuoyu ve Gündem Oluşturma','Medya, İkna ve Propaganda','Medya, Reklam ve Tüketim Kültürü','İnsan Hakları ve Demokrasi Kültürü Bağlamında Medya','Medya Etiği ve Sorumluluk, Güvenilir Bilgi ve Dezenformasyon','Medya Mesajlarının Tasarımı','Eğitsel Mesaj Tasarımı ve Medya Okuryazarlığı','Medya Okuryazarlığı Perspektifiyle Etkinlik ve Materyal Tasarımı'],yontemler:['Tartışma','Beyin Fırtınası','Görsel Okuma','Ters Yüz Öğrenme','Söylem Analizi'],kaynaklar:['Televizyon Öldüren Eğlence – Neil Postman','Dijital Bağımlılıkla Mücadele Rehberi – Tuncay Dilci','Dijital Çocuk – Kemal Sayar, Sezin Benli','Media Education: Literacy, Learning and Contemporary Culture – David Buckingham','The Critical Media Literacy Guide – Kellner Douglas, Jeff Share'],driveLink:'https://drive.google.com/drive/folders/1Rzub9zpgutGoOnCkARe9xpJq7dgN0lR-?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'109':{ad:'İngilizce Eğitiminde Farklılaştırma',ogretmen:'Uzm. Öğr. Buse Yetiş',donem:'1. Dönem',saat:30,teori:2,uyg:1,amac:'İngilizce eğitiminde bireysel farklılıkları (öğrenme stilleri, stratejileri, eğilim ve yetenekleri) kuramsal yaklaşımlarla analiz etmek; farklılaştırılmış içerik, süreç ve ürüne dayalı öğretim programı uyarlamaları planlayıp uygulamak.',ciktilar:['İngilizce öğretiminde bireysel farklılıkları sorgular.','İngilizce öğretiminde öğrenme stillerini sınıflandırır.','İngilizce öğretiminde öğrenme stratejilerini karşılaştırır.','Farklılaştırılmış öğretim ve farklılaştırılmış sınıf planlamasının özelliklerini sentezler.','Öğrenme miktarını artırma stratejilerini geneller.','Farklılaştırılmış İngilizce öğretimini planlamayı ve uygulamayı yapılandırır.'],haftalar:['Bireysel Farklılık ve Bireysel Farklılıkla İlgili Teoriler','İngilizce Öğretiminde Bireysel Farklılıklar','İngilizce Öğretiminde Öğrenme Stilleri','İngilizce Öğretiminde Öğrenme Stratejileri','İngilizce Öğretiminde Eğilim ve Yetenek İle İlgili Teoriler','Farklılaştırılmış Öğretim ve Farklılaştırılmış Sınıf Planlamasının Özellikleri','Öğrenme Miktarını Artırma Stratejileri: Tekrarlama Algoritmaları, İlişkisel Stratejiler, Hatırlatıcılar, Öz Düzenleme Yöntemi','Öğretim Programlarını Uyarlama: İçerik, Süreç ve Ürün Açısından Farklılaştırma','Farklılaştırılmış İngilizce Öğretimini Planlama ve Uygulama','Farklılaştırılmış İngilizce Öğretimini Planlama ve Uygulama'],yontemler:['Düşün Eşleş Paylaş','Zihin Haritası','Mikro Öğretim'],kaynaklar:['Öz Düzenlemeli Öğrenme – Solmaz Aydın ve Tazegül Demir Atalay','Differentiating Instruction for Students with Learning Disabilities – William N. Bender','The Psychology of the Language Learner – Zoltán Dörnyei','Öğrenci Gereksinimlerine Göre Farklılaştırılmış Eğitim – Carol Ann Tomlinson'],driveLink:'https://drive.google.com/drive/folders/1G2Qnx7EjuKdhMAfPyYYU_L9o5tZzCBW6?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'110':{ad:'İngilizce Öğretim Yöntemleri',ogretmen:'Baş Öğr. Gülay Özbebit',donem:'1. Dönem',saat:30,teori:2,uyg:1,amac:'İngilizce öğretiminde bütüncül, eylem temelli, görev temelli, CLIL ve harmanlanmış öğrenme gibi yaklaşımlarla dil becerilerinin kuramsal çerçevelerini disiplinler arası bir bakış açısıyla derinlemesine kavramak.',ciktilar:['İngilizce öğretimindeki kuramsal temelleri analiz eder.','İngilizce öğretimine uygun öğrenme-öğretme yaşantılarına dönüştürür.','Teknoloji destekli İngilizce öğretimi tasarımları geliştirir.','Alımlayıcı, üretici ve destekleyici becerileri sınıf içi uygulamalarla ilişkilendirir.'],haftalar:['İngilizce Eğitiminde Bütüncül Yaklaşım (Holistic Approach)','İngilizce Eğitiminde Yarı Bütüncül / Yarı Tümevarımsal Yaklaşım','İngilizce Eğitiminde Tümevarımsal Yaklaşım (Inductive Approach)','İngilizce Eğitiminde Eylem Temelli Yaklaşım (Action Oriented Approach)','İngilizce Eğitiminde İçerik ve Dil Entegreli Öğrenme (CLIL)','İngilizce Eğitiminde Görev Temelli Öğrenme (Task-Based Language Teaching)','İngilizce Eğitiminde Harmanlanmış Öğrenme (Blended Learning)','İngilizce Eğitiminde Alımlayıcı Beceriler (Dinleme/İzleme – Okuma Anlamlandırma)','İngilizce Eğitiminde Üretici Beceriler (Konuşma – Yazma Anlatma)','İngilizce Eğitiminde Destekleyici Beceriler: Dil Bilgisi – Sözcük – Sesletim'],yontemler:['Öğrenme Yaşantısı Tasarımı','Kavram Analizi','Kavram Haritası','Etkileşimli / Uygulamalı Atölye'],kaynaklar:['Approaches and Methods in Language Teaching – Jack C. Richards, Theodore S. Rodgers','How to Teach English – Jeremy Harmer','Principles of Language Learning and Teaching – H. Douglas Brown','Learning Teaching – Jim Scrivener'],driveLink:'https://drive.google.com/drive/folders/17oZgZka5coMzb4QNyVGSeqRg-ynSpB7f?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'111':{ad:'Dönüşümsel Uygulama',ogretmen:'MEB – Uygulama Koordinatörlüğü',donem:'1. Dönem',saat:0,teori:0,uyg:0,amac:'Öğretmen adaylarının Türk eğitim sistemini yerinde gözlemleyerek mesleki deneyim kazanmalarını sağlamak; okul ortamını, rehberlik hizmetlerini ve eğitim kurumlarını tanımalarına imkân vermek.',ciktilar:['Türk Eğitim Sistemi\'ni ve MEB\'in yapılanmasını kavrar.','Ulusal/uluslararası öğretim programlarını karşılaştırmalı olarak değerlendirir.','Okul tabanlı afet eğitiminin önemini açıklar.','Rehberlik ve Araştırma Merkezleri\'nin (RAM) işlevini tanımlar.','Bilim ve Sanat Merkezleri\'nin (BİLSEM) yapısını ve hedef kitlesini açıklar.','Okul sosyal etkinliklerinin ve kulüp faaliyetlerinin eğitime katkısını değerlendirir.','Dönüşümcü liderlik anlayışını eğitim bağlamında yorumlar.','Öğretmenlikle ilgili temel mevzuatı kavrar.','Çevre ve sıfır atık konularında farkındalık kazanır.','Farklı okul kademelerini (alt ve üst düzey) ziyaret ederek gözlem yapar.'],haftalar:['Türk Eğitim Sistemi, MEB Tanıtımı Semineri · Okul Ziyareti (Alt Kademe)','Ulusal/Uluslararası Programlar Semineri · Okul Ziyareti (Üst Kademe)','Okul Tabanlı Afet Eğitimi Semineri · Okul Ziyareti','MEB Rehberlik ve Psikolojik Danışma Hizmetleri Semineri · RAM Ziyareti ve Gözlem','Bilim ve Sanat Merkezleri (BİLSEM) Semineri · BİLSEM Ziyareti · Özel Eğitim ve Okul Öncesi Eğitim Yönetmelikleri Seminerleri','MEB Sosyal Etkinlikler Yönetmeliği Semineri · Kulüp Faaliyetleri ve Toplum Hizmeti Çalışmaları · Okul Ziyareti','Dönüşümcü Liderlik Semineri · MEB Ortaöğretim Kurumları Yönetmeliği Semineri · Okul Ziyareti','Öğretmenlikle İlgili MEB Mevzuatı Semineri · Okul Ziyareti','Öğretmenlikle İlgili MEB Mevzuatı Semineri (Devam) · Okul Ziyareti','Çevre ve Sıfır Atık Semineri · Okul Ziyareti'],yontemler:['Durum Çalışması','Saha Araştırması','Gözlem','Doküman İncelemesi','Görüşme','Örnek Olay İncelemesi','Yansıtıcı Günlük'],kaynaklar:['Eğitime Giriş – Emin Karip','Dönüşümsel Liderlik – Cevat Celep','Türkiye Yüzyılı Maarif Modeli Öğretim Programları Ortak Metni','Visible Learning for Teachers – John Hattie'],degerlendirme:[{ad:'Uygulama',oran:'%100'}],notlar:'',flashcards:[]}};let _currentModalKod=null;function switchModalTab(tab){_currentModalTab=tab;document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));var tabEl=document.getElementById('tab-'+tab);if(tabEl)tabEl.classList.add('active');if(tab==='izlence'){renderIzlenceContent(_currentModalKod);}}
-let _currentModalTab='izlence';const islenmisDersHaftalari={'105':[1,2,3,4,5,6,7,8],'110':[1,2,3,4,5,6,7,8],'104':[1,2,3,4,5,6,7],'102':[1,2,3,4,5,6,7,8],'103':[1,2,3,4,5,6,7,8],'108':[1,2,3,4,5,6,7],'106':[1,2,3,4,5,6,7],'107':[1,2,3,4,5,6,7,8],'101':[1,2,3,4,5,6,7,9],'109':[1,2,3,4,5,6,7],};function getIslenmiHaftalar(kod){if(islenmisDersHaftalari[kod]!==undefined)return islenmisDersHaftalari[kod];return[1,2,3,4];}
+let _currentModalTab='izlence';const islenmisDersHaftalari={'105':[1,2,3,4,5,6,7,8],'110':[1,2,3,4,5,6,7,8,9],'104':[1,2,3,4,5,6,7,8],'102':[1,2,3,4,5,6,7,8,9],'103':[1,2,3,4,5,6,7,8],'108':[1,2,3,4,5,6,7],'106':[1,2,3,4,5,6,7,8,9],'107':[1,2,3,4,5,6,7,8,9],'101':[1,2,3,4,5,6,7,8,9,10],'109':[1,2,3,4,5,6,7,8],};function getIslenmiHaftalar(kod){if(islenmisDersHaftalari[kod]!==undefined)return islenmisDersHaftalari[kod];return[1,2,3,4];}
 
 
 
@@ -558,32 +550,44 @@ function highlightCurrentLesson(){document.querySelectorAll('.ci.current-lesson'
 function updateLiveBanner(){const cur=getCurrentLesson();if(cur){highlightCurrentLesson();}
 else{document.querySelectorAll('.ci.current-lesson').forEach(el=>el.classList.remove('current-lesson'));}}
 function applyTodayRowHighlight(){const todayDow=new Date().getDay();if(todayDow<1||todayDow>5)return;document.querySelectorAll('tr.today-row').forEach(tr=>tr.classList.remove('today-row'));const todayRow=document.querySelector(`table.prog tbody tr[data-dow="${todayDow}"]`);if(todayRow)todayRow.classList.add('today-row');}
+function _diSinavDate(d){
+  var iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  return {'2026-06-27':true,'2026-06-28':true,'2026-06-29':true,'2026-06-30':true,'2026-07-01':true}[iso]||false;
+}
+function _diDersSonrasi(d){
+  var iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  return iso>'2026-06-26'&&!_diSinavDate(d);
+}
 function diInit(){
   var pill=document.getElementById('di-pill');
   if(!pill)return;
-  var dow=new Date().getDay();
-  if(dow<1||dow>5){pill.style.display='none';_diHideDesktop();return;}
+  var now=new Date();
+  // Sınav günleri: hafta içi kısıtlaması yok (Cmt/Paz da olabilir)
+  if(_diSinavDate(now)){
+    // sınav modunda her zaman başlat
+  } else {
+    var dow=now.getDay();
+    if(dow<1||dow>5){pill.style.display='none';_diHideDesktop();return;}
+  }
+  if(_diDersSonrasi(now)){pill.style.display='none';_diHideDesktop();return;}
   var cur=getCurrentLesson();
   var nxt=getNextLesson();
-  if(!cur&&!nxt){pill.style.display='none';_diHideDesktop();return;}
-  // On desktop: move pill into session-pill-wrap
-  if(window.innerWidth>=661){
-    var wrap=document.getElementById('session-pill-wrap');
-    if(wrap&&pill.parentNode!==wrap){wrap.appendChild(pill);}
-    pill.style.position='static';
-    pill.style.transform='none';
-    pill.style.bottom='auto';
-    pill.style.left='auto';
-    pill.style.borderRadius='8px';
-    pill.style.maxWidth='none';
-  } else {
-    // Mobile: restore fixed positioning
-    pill.style.position='fixed';
-    pill.style.transform='translateX(-50%)';
-    pill.style.bottom='74px';
-    pill.style.left='50%';
+  if(!cur&&!nxt&&!_diSinavDate(now)){pill.style.display='none';_diHideDesktop();return;}
+  // Sınav gününde diTick içindeki _diTickSinav konumlandırmayı halleder
+  if(!_diSinavDate(now)){
+    // Normal ders günü konumlandırma
+    if(window.innerWidth>=661){
+      var wrap=document.getElementById('session-pill-wrap');
+      if(wrap&&pill.parentNode!==wrap){wrap.appendChild(pill);}
+      pill.style.position='static';pill.style.transform='none';
+      pill.style.bottom='auto';pill.style.left='auto';
+      pill.style.borderRadius='8px';pill.style.maxWidth='none';
+    } else {
+      pill.style.position='fixed';pill.style.transform='translateX(-50%)';
+      pill.style.bottom='74px';pill.style.left='50%';
+    }
+    pill.style.display='flex';
   }
-  pill.style.display='flex';
   diTick();
   if(window._diTimer)clearInterval(window._diTimer);
   window._diTimer=setInterval(diTick,1000);
@@ -592,14 +596,158 @@ function _diHideDesktop(){
   var wrap=document.getElementById('session-pill-wrap');
   if(wrap)wrap.style.display='none';
 }
+
+function _diTickSinav(pill,now){
+  var nm=now.getHours()*60+now.getMinutes();
+  var ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  function toM(s){var p=s.split(':');return+p[0]*60+ +p[1];}
+  function p2(n){return String(n).padStart(2,'0');}
+  function fmt(s){return p2(Math.floor(s/60))+':'+p2(s%60);}
+  var S1S=toM('10:00'),S1E=toM('10:50');
+  var ARS=toM('10:50'),ARE=toM('11:50');
+  var S2S=toM('11:50'),S2E=toM('12:40');
+  var isMob=window.innerWidth<661;
+  // Masaüstü: pill'i session-pill-wrap'a taşı
+  if(!isMob){
+    var wrap=document.getElementById('session-pill-wrap');
+    if(wrap&&pill.parentNode!==wrap){wrap.appendChild(pill);}
+    pill.style.position='static';pill.style.transform='none';
+    pill.style.bottom='auto';pill.style.left='auto';
+    pill.style.borderRadius='8px';pill.style.maxWidth='none';
+  } else {
+    // Mobil: #mob-floating-pill görünür yap, #di-pill'i oraya taşı
+    var mobFloat=document.getElementById('mob-floating-pill');
+    var mobWrap=document.getElementById('session-pill-wrap-mob');
+    if(mobFloat)mobFloat.style.display='flex';
+    if(mobWrap&&pill.parentNode!==mobWrap){mobWrap.appendChild(pill);}
+    pill.style.position='static';pill.style.transform='none';
+    pill.style.bottom='auto';pill.style.left='auto';
+    pill.style.borderRadius='8px';pill.style.maxWidth='none';
+    // mobil pill sınıfları
+    pill.style.fontSize='11.5px';
+    pill.style.padding='7px 14px';
+    pill.style.gap='7px';
+    pill.style.borderRadius='99px';
+    pill.style.boxShadow='0 4px 20px rgba(0,0,0,0.25)';
+  }
+  if(nm>=S1S&&nm<S1E){
+    // 1. Sınav devam ediyor
+    var rem=S1E*60-ns; if(rem<0)rem=0;
+    var dur=(S1E-S1S)*60;
+    var pct=Math.min(100,((dur-rem)/dur*100)).toFixed(1);
+    var t=fmt(rem);
+    var warn=rem<=120;
+    pill.innerHTML=
+      '<div class="dip-row">'+
+        '<div class="dip-icon-wrap" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);">📝</div>'+
+        '<div class="dip-body">'+
+          '<div class="dip-label">Devam ediyor</div>'+
+          '<div class="dip-name">1. Sınav</div>'+
+        '</div>'+
+        '<div class="dip-timer-wrap">'+
+          '<div class="dip-timer" style="color:'+(warn?'rgba(220,100,100,0.95)':'rgba(255,255,255,0.9)')+'">'+t+'</div>'+
+          '<div class="dip-timer-label">Kalan</div>'+
+        '</div>'+
+        '<span class="dip-badge">10:00–10:50</span>'+
+      '</div>'+
+      '<div class="dip-progress-wrap">'+
+        '<div class="dip-progress-track" style="background:rgba(255,255,255,0.08)">'+
+          '<div class="dip-progress-fill" style="width:'+pct+'%;background:'+(warn?'rgba(220,100,100,0.7)':'rgba(255,255,255,0.4)')+'"></div>'+
+        '</div>'+
+      '</div>';
+    pill.style.cssText+='background:linear-gradient(135deg,rgba(20,20,20,0.92),rgba(35,35,35,0.88));border:1px solid rgba(255,255,255,0.12);color:#fff;';
+    pill.style.display='flex';
+  } else if(nm>=ARS&&nm<ARE){
+    // Ara
+    var rem=ARE*60-ns; if(rem<0)rem=0;
+    var dur=(ARE-ARS)*60;
+    var pct=Math.min(100,((dur-rem)/dur*100)).toFixed(1);
+    var t=fmt(rem);
+    pill.innerHTML=
+      '<div class="dip-row">'+
+        '<div class="dip-icon-wrap" style="background:rgba(217,119,6,0.15);border:1px solid rgba(245,158,11,0.3)">☕</div>'+
+        '<div class="dip-body">'+
+          '<div class="dip-label">Sınav arası</div>'+
+          '<div class="dip-name">2. Sınav bekleniyor</div>'+
+        '</div>'+
+        '<div class="dip-timer-wrap">'+
+          '<div class="dip-timer" style="color:rgba(251,191,36,0.95)">'+t+'</div>'+
+          '<div class="dip-timer-label">Başlamaya</div>'+
+        '</div>'+
+        '<span class="dip-badge" style="background:rgba(217,119,6,0.18);color:rgba(251,191,36,0.9);border-color:rgba(245,158,11,0.25)">11:50–12:40</span>'+
+      '</div>'+
+      '<div class="dip-progress-wrap">'+
+        '<div class="dip-progress-track" style="background:rgba(217,119,6,0.12)">'+
+          '<div class="dip-progress-fill" style="width:'+pct+'%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div>'+
+        '</div>'+
+      '</div>';
+    pill.style.cssText+='background:linear-gradient(135deg,rgba(26,18,0,0.92),rgba(44,30,0,0.88));border:1px solid rgba(245,158,11,0.22);';
+    pill.style.display='flex';
+  } else if(nm>=S2S&&nm<S2E){
+    // 2. Sınav devam ediyor
+    var rem=S2E*60-ns; if(rem<0)rem=0;
+    var dur=(S2E-S2S)*60;
+    var pct=Math.min(100,((dur-rem)/dur*100)).toFixed(1);
+    var t=fmt(rem);
+    var warn=rem<=120;
+    pill.innerHTML=
+      '<div class="dip-row">'+
+        '<div class="dip-icon-wrap" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);">📝</div>'+
+        '<div class="dip-body">'+
+          '<div class="dip-label">Devam ediyor</div>'+
+          '<div class="dip-name">2. Sınav</div>'+
+        '</div>'+
+        '<div class="dip-timer-wrap">'+
+          '<div class="dip-timer" style="color:'+(warn?'rgba(220,100,100,0.95)':'rgba(255,255,255,0.9)')+'">'+t+'</div>'+
+          '<div class="dip-timer-label">Kalan</div>'+
+        '</div>'+
+        '<span class="dip-badge">11:50–12:40</span>'+
+      '</div>'+
+      '<div class="dip-progress-wrap">'+
+        '<div class="dip-progress-track" style="background:rgba(255,255,255,0.08)">'+
+          '<div class="dip-progress-fill" style="width:'+pct+'%;background:'+(warn?'rgba(220,100,100,0.7)':'rgba(255,255,255,0.4)')+'"></div>'+
+        '</div>'+
+      '</div>';
+    pill.style.cssText+='background:linear-gradient(135deg,rgba(20,20,20,0.92),rgba(35,35,35,0.88));border:1px solid rgba(255,255,255,0.12);color:#fff;';
+    pill.style.display='flex';
+  } else if(nm<S1S){
+    // Henüz başlamadı
+    var rem=S1S*60-ns; if(rem<0)rem=0;
+    var t=fmt(rem);
+    pill.innerHTML=
+      '<div class="dip-row">'+
+        '<div class="dip-icon-wrap" style="background:rgba(255,255,255,0.05);">⌚</div>'+
+        '<div class="dip-body">'+
+          '<div class="dip-label">Başlamadı</div>'+
+          '<div class="dip-name">1. Sınav</div>'+
+        '</div>'+
+        '<div class="dip-timer-wrap">'+
+          '<div class="dip-timer" style="color:rgba(255,255,255,0.5)">'+t+'</div>'+
+          '<div class="dip-timer-label">Başlamaya</div>'+
+        '</div>'+
+        '<span class="dip-badge" style="opacity:0.4">10:00–10:50</span>'+
+      '</div>';
+    pill.style.cssText+='background:rgba(15,15,15,0.75);border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);';
+    pill.style.display='flex';
+  } else {
+    // Günün sınavları bitti
+    pill.style.display='none';
+  }
+}
 function diTick(){
   var pill=document.getElementById('di-pill');
   if(!pill)return;
-  var dow=new Date().getDay();
+  var now=new Date();
+  var dow=now.getDay();
+  // Sınav günü mü?
+  if(_diSinavDate(now)){
+    _diTickSinav(pill,now);
+    return;
+  }
+  if(_diDersSonrasi(now)){pill.style.display='none';return;}
   if(dow<1||dow>5){pill.style.display='none';return;}
   var cur=getCurrentLesson();
   var nxt=getNextLesson();
-  var now=new Date();
   var nowM=toMins(now.getHours(),now.getMinutes())*60+now.getSeconds();
 
   // --- ders süresi bilgileri ---
@@ -685,7 +833,11 @@ function diTick(){
     pill.className='di-pill-break';
     pill.style.display='flex';
   } else {
-    pill.style.display='none';return;
+    // Sınav günü bitti
+    pill.style.display='none';
+    var mobFloat=document.getElementById('mob-floating-pill');
+    if(mobFloat)mobFloat.style.display='none';
+    return;
   }
 }
 function buildDesktopSidebar(){var el=document.getElementById('desktop-sidebar');if(!el)return;if(window.innerWidth<=900){el.innerHTML='';return;}
@@ -786,21 +938,108 @@ document.addEventListener('DOMContentLoaded',()=>{buildDonemProgress();buildCoun
     <div style="display:flex;align-items:flex-start;gap:12px;"> <div style="font-size:24px;flex-shrink:0;margin-top:1px;">🏥</div> <div style="flex:1;min-width:0;"> <div class="ram-title">Kocasinan RAM Ziyareti</div> <div class="ram-body"> <strong>Tarih:</strong> 18 Mayıs 2026, Pazartesi · <strong>Saat:</strong> 10:00<br> <strong>Kapsam:</strong> <span class="ram-kapsam">D8'in Tamamı</span><br> <strong>Sorumlu:</strong> Prof. Dr. M. Kasım Özgen
         </div> </div> </div>`;card.className='ram-notice-card';var bar=document.getElementById('sticky-widget-bar');if(bar&&bar.parentNode){bar.parentNode.insertBefore(card,bar.nextSibling);}else{var target=document.getElementById('holiday-week-wrap');if(target&&target.parentNode)target.parentNode.insertBefore(card,target);}})();var idleTasks=[buildMobileSchedule,buildHolidayWeekBanner,applyHolidayOverlaysToTable,applyTodayRowHighlight,setWeeklyQuote,];if(typeof requestIdleCallback!=='undefined'){idleTasks.forEach(function(fn){requestIdleCallback(fn,{timeout:1500});});}else{setTimeout(function(){idleTasks.forEach(function(fn){fn();});},100);}
 (function(){function scheduleNextUpdate(){var now=new Date(),dow=now.getDay(),h=now.getHours();var delay=(dow===0||dow===6||h>=21||h<8)?5*60*1000:60*1000;setTimeout(function(){updateLiveBanner();scheduleNextUpdate();},delay);}
-scheduleNextUpdate();})();(function(){var b=new Date();var bugunDow=b.getDay();var bugunIso=b.getFullYear()+'-'+String(b.getMonth()+1).padStart(2,'0')+'-'+String(b.getDate()).padStart(2,'0');setTimeout(function(){if(window.innerWidth<=660){var hedef=document.getElementById('mob-ders-gun-'+bugunDow);if(hedef){hedef.scrollIntoView({behavior:'instant',block:'start'});}}else{var _hdr=document.querySelector('.header');var _tabs=document.querySelector('.main-tabs');var headerH=(_hdr?_hdr.offsetHeight:0);var tabsH=(_tabs?_tabs.offsetHeight:0);var todayTr=document.querySelector('tr.today-row');if(todayTr){var y2=todayTr.getBoundingClientRect().top+window.pageYOffset-headerH-tabsH-12;window.scrollTo({top:Math.max(0,y2),behavior:'instant'});}}},700);})();});const sinavGunleri=[{name:'Pazartesi',tarih:'11.05.2026',dateStr:'2026-05-11',don:true,dersler:[]},{name:'Salı',tarih:'12.05.2026',dateStr:'2026-05-12',dersler:[{ad:'İngilizce Öğretiminde Farklılaştırma',saat:'09:20–10:10',bitis:'10:10',ders:1,sinav:true,kod:'109'},{ad:'Veri Temelli İzleme ve Değerlendirme',saat:'10:20–11:10',bitis:'11:10',ders:2,sinav:true,kod:'103'},{ad:'Eğitimde Hak ve Sorumluluklar',saat:'11:20–12:10',bitis:'12:10',ders:3,sinav:true,kod:'105'},{ad:'Ders',saat:'13:10–14:00',ders:4,sinav:false},{ad:'Ders',saat:'14:10–15:00',ders:5,sinav:false},{ad:'Ders',saat:'15:10–16:00',ders:6,sinav:false}]},{name:'Çarşamba',tarih:'13.05.2026',dateStr:'2026-05-13',dersler:[{ad:'İngilizce Öğretim Yöntemleri',saat:'09:20–10:10',bitis:'10:10',ders:1,sinav:true,kod:'110'},{ad:'İnsan ve Öğrenme',saat:'10:20–11:10',bitis:'11:10',ders:2,sinav:true,kod:'104'},{ad:'Medya Toplum ve Eğitim',saat:'11:20–12:10',bitis:'12:10',ders:3,sinav:true,kod:'108'},{ad:'Ders',saat:'13:10–14:00',ders:4,sinav:false},{ad:'Ders',saat:'14:10–15:00',ders:5,sinav:false},{ad:'Ders',saat:'15:10–16:00',ders:6,sinav:false}]},{name:'Perşembe',tarih:'14.05.2026',dateStr:'2026-05-14',dersler:[{ad:'Program Okuryazarlığı',saat:'09:20–10:10',bitis:'10:10',ders:1,sinav:true,kod:'101'},{ad:'Türk Kültürünün Kurucu Metinleri',saat:'10:20–11:10',bitis:'11:10',ders:2,sinav:true,kod:'106'},{ad:'Türkçenin Söz Varlığı ve Maarif Sözlüğü',saat:'11:20–12:10',bitis:'12:10',ders:3,sinav:true,kod:'107'},{ad:'Ders',saat:'13:10–14:00',ders:4,sinav:false},{ad:'Ders',saat:'14:10–15:00',ders:5,sinav:false},{ad:'Ders',saat:'15:10–16:00',ders:6,sinav:false}]},{name:'Cuma',tarih:'15.05.2026',dateStr:'2026-05-15',soluk:true,dersler:[{ad:'Ders',saat:'09:20–10:10',ders:1,sinav:false},{ad:'Ders',saat:'10:20–11:10',ders:2,sinav:false},{ad:'Ders',saat:'11:20–12:10',ders:3,sinav:false},{ad:'Ders',saat:'13:30–14:20',ders:4,sinav:false},{ad:'Ders',saat:'14:30–15:20',ders:5,sinav:false},{ad:'Ders',saat:'15:30–16:20',ders:6,sinav:false}]}];function parseSinavDateTime(dateStr,timeStr){return new Date(dateStr+'T'+timeStr+':00');}
+scheduleNextUpdate();})();(function(){var b=new Date();var bugunDow=b.getDay();var bugunIso=b.getFullYear()+'-'+String(b.getMonth()+1).padStart(2,'0')+'-'+String(b.getDate()).padStart(2,'0');setTimeout(function(){if(window.innerWidth<=660){var hedef=document.getElementById('mob-ders-gun-'+bugunDow);if(hedef){hedef.scrollIntoView({behavior:'instant',block:'start'});}}else{var _hdr=document.querySelector('.header');var _tabs=document.querySelector('.main-tabs');var headerH=(_hdr?_hdr.offsetHeight:0);var tabsH=(_tabs?_tabs.offsetHeight:0);var todayTr=document.querySelector('tr.today-row');if(todayTr){var y2=todayTr.getBoundingClientRect().top+window.pageYOffset-headerH-tabsH-12;window.scrollTo({top:Math.max(0,y2),behavior:'instant'});}}},700);})();});const sinavGunleri=[{name:'Cumartesi',tarih:'27.06.2026',dateStr:'2026-06-27',dersler:[{ad:'İngilizce Öğretim Yöntemleri',saat:'10:00–10:50',bitis:'10:50',ders:1,sinav:true,kod:'110'},{ad:'Türkçenin Söz Varlığı ve Maarif Sözlüğü',saat:'11:50–12:40',bitis:'12:40',ders:2,sinav:true,kod:'107'}]},{name:'Pazar',tarih:'28.06.2026',dateStr:'2026-06-28',dersler:[{ad:'İngilizce Eğitiminde Farklılaştırma',saat:'10:00–10:50',bitis:'10:50',ders:1,sinav:true,kod:'109'},{ad:'Veri Temelli İzleme ve Değerlendirme',saat:'11:50–12:40',bitis:'12:40',ders:2,sinav:true,kod:'103'}]},{name:'Pazartesi',tarih:'29.06.2026',dateStr:'2026-06-29',dersler:[{ad:'Eğitimde Hak ve Sorumluluklar',saat:'10:00–10:50',bitis:'10:50',ders:1,sinav:true,kod:'105'},{ad:'İnsan ve Öğrenme',saat:'11:50–12:40',bitis:'12:40',ders:2,sinav:true,kod:'104'}]},{name:'Salı',tarih:'30.06.2026',dateStr:'2026-06-30',dersler:[{ad:'Program Okuryazarlığı',saat:'10:00–10:50',bitis:'10:50',ders:1,sinav:true,kod:'101'},{ad:'Türk Kültürünün Kurucu Metinleri',saat:'11:50–12:40',bitis:'12:40',ders:2,sinav:true,kod:'106'}]},{name:'Çarşamba',tarih:'01.07.2026',dateStr:'2026-07-01',dersler:[{ad:'Medya, Toplum ve Eğitim',saat:'10:00–10:50',bitis:'10:50',ders:1,sinav:true,kod:'108'}]}];function parseSinavDateTime(dateStr,timeStr){return new Date(dateStr+'T'+timeStr+':00');}
 function isSinavBitti(dateStr,bitisStr){if(!dateStr||!bitisStr)return false;var now=new Date();var bitis=parseSinavDateTime(dateStr,bitisStr);return now>=bitis;}
 function tumGunBitti(gun){if(!gun.dateStr)return false;var sinavlar=gun.dersler.filter(function(d){return d.sinav;});if(sinavlar.length===0)return false;return sinavlar.every(function(d){return isSinavBitti(gun.dateStr,d.bitis);});}
 function updateSinavTableCells(){sinavGunleri.forEach(function(gun){if(!gun.dateStr)return;var gunTamBitti=tumGunBitti(gun);var row=document.getElementById('sinav-row-'+gun.dateStr);if(row){if(gunTamBitti){row.classList.add('sinav-bitti-row');}else{row.classList.remove('sinav-bitti-row');}}
 var gunCell=document.getElementById('sinav-gun-'+gun.dateStr);if(gunCell){var badge=gunCell.querySelector('.sinav-bitti-gun-badge');if(gunTamBitti){gunCell.style.color='#1A6B3A';gunCell.style.background='#EAF7EF';if(!badge){var sp=document.createElement('span');sp.className='sinav-bitti-gun-badge';sp.style.cssText='display:block;font-size:8px;font-weight:700;color:#1A6B3A;margin-top:2px;letter-spacing:0.3px;';sp.textContent='✓ Tamamlandı';gunCell.appendChild(sp);}}else{gunCell.style.color='';gunCell.style.background='';if(badge)badge.remove();}}
 gun.dersler.forEach(function(d,idx){if(!d.sinav)return;var cellId='sinav-cell-'+gun.dateStr+'-'+(idx+1);var el=document.getElementById(cellId);if(!el)return;var bitti=isSinavBitti(gun.dateStr,d.bitis);if(bitti){el.classList.remove('band-sinav');el.classList.add('band-sinav-bitti');}else{el.classList.remove('band-sinav-bitti');el.classList.add('band-sinav');}});});}
-window.buildSinavMobile=function buildSinavMobile(){var container=document.getElementById('sinav-mobile-schedule');if(!container)return;container.innerHTML='';sinavGunleri.forEach(function(gun){var isDimmed=gun.don||gun.soluk;var gunTamBitti=tumGunBitti(gun);var header=document.createElement('div');header.className='mob-day-header';header.setAttribute('data-sinav-gun',gun.dateStr||'');if(gun.dateStr)header.id='mob-sinav-gun-'+gun.dateStr;if(isDimmed)header.style.opacity='0.45';if(gunTamBitti){header.style.background='linear-gradient(135deg,#1A6B3A,#2D9457)';header.style.opacity='0.75';header.innerHTML=gun.name+' <span style="font-size:9px;font-weight:400;opacity:.75;">· '+gun.tarih+'</span> <span style="font-size:9px;font-weight:700;background:rgba(255,255,255,0.2);padding:1px 6px;border-radius:6px;margin-left:4px;">✓ Tamamlandı</span>';}else{header.innerHTML=gun.name+' <span style="font-size:9px;font-weight:400;opacity:.75;">· '+gun.tarih+'</span>';}
-container.appendChild(header);if(gun.don){var donCard=document.createElement('div');donCard.className='mob-don-card';donCard.style.opacity='0.45';donCard.style.cursor='pointer';donCard.textContent='🔄 DÖNÜŞÜMSEL UYGULAMA';donCard.addEventListener('click',function(){openModal('111');});container.appendChild(donCard);return;}
-if(gun.dersler.length===0){var empty=document.createElement('div');empty.style.cssText='padding:12px 16px;font-size:11.5px;color:var(--muted);border-bottom:1px solid var(--border);background:var(--white);';empty.textContent='Sınav yok';if(isDimmed)empty.style.opacity='0.45';container.appendChild(empty);return;}
-gun.dersler.forEach(function(d,idx){var card=document.createElement('div');card.className='mob-lesson-card';if(gun.dateStr)card.setAttribute('data-sinav-mobil',gun.dateStr+'-'+(idx+1));var bireyselBitti=d.sinav&&isSinavBitti(gun.dateStr,d.bitis);if(d.sinav&&bireyselBitti){card.style.borderLeft='3px solid #2D9457';card.style.opacity=gunTamBitti?'0.6':'0.75';card.style.cursor='pointer';card.addEventListener('click',function(){openModal(d.kod);});card.innerHTML='<div class="mob-card-time" style="background:#D8F5EC;border-color:#9FDEC0;color:#1A6B3A;">'+d.saat.replace('–','<br>')+'<span class="mob-card-period">'+d.ders+'. ders</span></div><div class="mob-card-body"><div class="mob-card-name">'+d.ad+'</div><div class="mob-card-teacher" style="color:#2D9457;">✓ Tamamlandı</div></div>';}else if(d.sinav){card.style.borderLeft='3px solid #A0234E';card.style.cursor='pointer';card.addEventListener('click',function(){openModal(d.kod);});card.innerHTML='<div class="mob-card-time" style="background:#FFE5ED;border-color:#F0B8CA;color:#A0234E;">'+d.saat.replace('–','<br>')+'<span class="mob-card-period">'+d.ders+'. ders</span></div><div class="mob-card-body"><div class="mob-card-name">'+d.ad+'</div><div class="mob-card-teacher" style="color:#A0234E;">📝 Sınav ›</div></div>';}else{card.style.borderLeft='3px solid #ccc';card.style.opacity=isDimmed?'0.35':'0.45';card.innerHTML='<div class="mob-card-time" style="background:#f2f2f2;border-color:#ddd;color:#aaa;">'+d.saat.replace('–','<br>')+'<span class="mob-card-period">'+d.ders+'. ders</span></div><div class="mob-card-body"><div class="mob-card-name" style="color:#aaa;">Ders</div></div>';}
-container.appendChild(card);});});}
-function sinavTickerInit(){updateSinavTableCells();buildSinavMobile();var _sinavTimer=null;function _sinavTick(){updateSinavTableCells();buildSinavMobile();}
-function _startTick(){if(_sinavTimer)return;_sinavTimer=setInterval(_sinavTick,30000);}
-function _stopTick(){clearInterval(_sinavTimer);_sinavTimer=null;}
-document.addEventListener('visibilitychange',function(){document.hidden?_stopTick():(_sinavTick(),_startTick());});_startTick();}
+window.buildSinavMobile=function buildSinavMobile(){
+  var container=document.getElementById('sinav-mobile-schedule');
+  if(!container)return;
+  container.innerHTML='';
+  sinavGunleri.forEach(function(gun){
+    var gunTamBitti=tumGunBitti(gun);
+    var header=document.createElement('div');
+    header.className='mob-day-header';
+    header.setAttribute('data-sinav-gun',gun.dateStr||'');
+    if(gun.dateStr)header.id='mob-sinav-gun-'+gun.dateStr;
+    if(gunTamBitti){
+      header.style.background='linear-gradient(135deg,#1A6B3A,#2D9457)';
+      header.style.opacity='0.75';
+      header.innerHTML=gun.name+' <span style="font-size:9px;font-weight:400;opacity:.75;">\u00b7 '+gun.tarih+'</span> <span style="font-size:9px;font-weight:700;background:rgba(255,255,255,0.2);padding:1px 6px;border-radius:6px;margin-left:4px;">\u2713 Tamamland\u0131</span>';
+    } else {
+      header.innerHTML=gun.name+' <span style="font-size:9px;font-weight:400;opacity:.75;">\u00b7 '+gun.tarih+'</span>';
+    }
+    container.appendChild(header);
+    var sinavDersler=gun.dersler.filter(function(d){return d.sinav;});
+    if(sinavDersler.length===0){
+      var empty=document.createElement('div');
+      empty.style.cssText='padding:12px 16px;font-size:11.5px;color:var(--muted);border-bottom:1px solid var(--border);background:var(--white);';
+      empty.textContent='S\u0131nav yok';
+      container.appendChild(empty);
+      return;
+    }
+    sinavDersler.forEach(function(d,idx){
+      var card=document.createElement('div');
+      card.className='mob-lesson-card';
+      var bireyselBitti=isSinavBitti(gun.dateStr,d.bitis);
+      var sinavLabel=idx===0?'1. S\u0131nav':'2. S\u0131nav';
+      if(bireyselBitti){
+        card.style.borderLeft='3px solid #2D9457';
+        card.style.opacity=gunTamBitti?'0.6':'0.75';
+        card.style.cursor='pointer';
+        card.addEventListener('click',function(){openModal(d.kod);});
+        card.innerHTML='<div class="mob-card-time" style="background:#D8F5EC;border-color:#9FDEC0;color:#1A6B3A;">'+d.saat.replace('\u2013','<br>')+'<span class="mob-card-period">'+sinavLabel+'</span></div><div class="mob-card-body"><div class="mob-card-name">'+d.ad+'</div><div class="mob-card-teacher" style="color:#2D9457;">\u2713 Tamamland\u0131</div></div>';
+      } else {
+        card.style.borderLeft='3px solid #A0234E';
+        card.style.cursor='pointer';
+        card.addEventListener('click',function(){openModal(d.kod);});
+        card.innerHTML='<div class="mob-card-time" style="background:#FFE5ED;border-color:#F0B8CA;color:#A0234E;">'+d.saat.replace('\u2013','<br>')+'<span class="mob-card-period">'+sinavLabel+'</span></div><div class="mob-card-body"><div class="mob-card-name">'+d.ad+'</div><div class="mob-card-teacher" style="color:#A0234E;">\u{1F4DD} S\u0131nav \u203a</div></div>';
+      }
+      container.appendChild(card);
+      if(idx===0&&sinavDersler.length>1){
+        var araCard=document.createElement('div');
+        araCard.className='mob-lesson-card';
+        araCard.style.cssText='background:linear-gradient(135deg,#FFF8E6,#FEF3C7);border-left:3px solid #D97706;cursor:default;';
+        araCard.innerHTML='<div class="mob-card-time" style="background:#FEF3C7;border-color:#FBBF24;color:#92400E;">10:50<br>11:50<span class="mob-card-period">Ara</span></div><div class="mob-card-body"><div class="mob-card-name" style="color:#78350F;">S\u0131nav Aras\u0131</div><div class="mob-card-teacher" style="color:#B45309;">\u2615 1 saat</div></div>';
+        container.appendChild(araCard);
+      }
+    });
+  });
+}
+function sinavTickerInit(){
+  updateSinavTableCells();
+  buildSinavMobile();
+  var _sinavTimer=null;
+
+  function _getInterval(){
+    // Sınav gününde saate göre hassas güncelleme
+    var now=new Date();
+    if(_diSinavDate&&_diSinavDate(now)){
+      var nm=now.getHours()*60+now.getMinutes();
+      // Aktif sınav veya ara sırasında: 5 sn
+      if(nm>=600&&nm<760)return 5000;
+    }
+    return 30000;
+  }
+
+  function _sinavTick(){
+    updateSinavTableCells();
+    buildSinavMobile();
+    // Sınav gününde pill'i de güncelle
+    if(typeof _diSinavDate==='function'){
+      var now=new Date();
+      if(_diSinavDate(now)){
+        var pill=document.getElementById('di-pill');
+        if(pill)_diTickSinav(pill,now);
+      }
+    }
+    // Aralığı yeniden ayarla (değişmiş olabilir)
+    _stopTick();
+    _startTick();
+  }
+
+  function _startTick(){
+    if(_sinavTimer)return;
+    _sinavTimer=setInterval(_sinavTick,_getInterval());
+  }
+  function _stopTick(){clearInterval(_sinavTimer);_sinavTimer=null;}
+  document.addEventListener('visibilitychange',function(){
+    document.hidden?_stopTick():(_sinavTick(),_startTick());
+  });
+  _startTick();
+}
 
 
 
@@ -957,134 +1196,284 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
 
 <script>
 (function(){
-  var SS_SLOTS=[
-    {id:'p1',type:'lesson',period:1,  start:'09:20',end:'10:10',sc:null,   ec:null},
-    {id:'b1',type:'break', period:null,start:'10:10',end:'10:20',sc:null,   ec:null},
-    {id:'p2',type:'lesson',period:2,  start:'10:20',end:'11:10',sc:null,   ec:null},
-    {id:'b2',type:'break', period:null,start:'11:10',end:'11:20',sc:null,   ec:null},
-    {id:'p3',type:'lesson',period:3,  start:'11:20',end:'12:10',sc:null,   ec:null},
-    {id:'ln',type:'lunch', period:null,start:'12:10',end:'13:10',sc:'12:10',ec:'13:30'},
-    {id:'p4',type:'lesson',period:4,  start:'13:10',end:'14:00',sc:'13:30',ec:'14:20'},
-    {id:'b4',type:'break', period:null,start:'14:00',end:'14:10',sc:'14:20',ec:'14:30'},
-    {id:'p5',type:'lesson',period:5,  start:'14:10',end:'15:00',sc:'14:30',ec:'15:20'},
-    {id:'b5',type:'break', period:null,start:'15:00',end:'15:10',sc:'15:20',ec:'15:30'},
-    {id:'p6',type:'lesson',period:6,  start:'15:10',end:'16:00',sc:'15:30',ec:'16:20'},
+  // ── DERS günleri slotları (normal hafta) ──
+  var DERS_SLOTS=[
+    {id:'p1',  type:'lesson',label:'1. DERS',  start:'09:20',end:'10:10'},
+    {id:'b1',  type:'break', label:'TENEFFÜS', start:'10:10',end:'10:20'},
+    {id:'p2',  type:'lesson',label:'2. DERS',  start:'10:20',end:'11:10'},
+    {id:'b2',  type:'break', label:'TENEFFÜS', start:'11:10',end:'11:20'},
+    {id:'p3',  type:'lesson',label:'3. DERS',  start:'11:20',end:'12:10'},
+    {id:'ln',  type:'lunch', label:'ÖĞLE',     start:'12:10',end:'13:10'},
+    {id:'p4',  type:'lesson',label:'4. DERS',  start:'13:10',end:'14:00'},
+    {id:'b4',  type:'break', label:'TENEFFÜS', start:'14:00',end:'14:10'},
+    {id:'p5',  type:'lesson',label:'5. DERS',  start:'14:10',end:'15:00'},
+    {id:'b5',  type:'break', label:'TENEFFÜS', start:'15:00',end:'15:10'},
+    {id:'p6',  type:'lesson',label:'6. DERS',  start:'15:10',end:'16:00'},
   ];
+
+  // ── SINAV günleri slotları ──
+  var SINAV_SLOTS=[
+    {id:'pre',  type:'pre',    label:'BAŞLAMADI', start:'00:00',end:'10:00'},
+    {id:'s1',   type:'sinav',  label:'1. SINAV',  start:'10:00',end:'10:50'},
+    {id:'ara',  type:'ara',    label:'ARA',       start:'10:50',end:'11:50'},
+    {id:'s2',   type:'sinav',  label:'2. SINAV',  start:'11:50',end:'12:40'},
+    {id:'post', type:'post',   label:'BİTTİ',     start:'12:40',end:'23:59'},
+  ];
+
+  // Sınav tarihleri (ISO yyyy-mm-dd) — 26 Haz sonrası sınav haftası
+  var SINAV_TARIHLERI={
+    '2026-06-27':true,'2026-06-28':true,'2026-06-29':true,
+    '2026-06-30':true,'2026-07-01':true
+  };
+  // Son ders günü (26 Haziran dahil, bu gün dersler biter)
+  var DERS_SON_TARIH='2026-06-26';
+
+  function toIso(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
+
+  function isSinavGunu(d){return !!SINAV_TARIHLERI[toIso(d)];}
+
+  function isDersSonrasiBoşGun(d){
+    // 26 Haz'dan sonra ama sınav günü değilse → araSınav boşluk
+    var sonISO=DERS_SON_TARIH;
+    return toIso(d)>sonISO && !isSinavGunu(d);
+  }
+
+  function getSlots(now){
+    if(isSinavGunu(now))return SINAV_SLOTS;
+    return DERS_SLOTS;
+  }
 
   function toMin(s){var p=s.split(':');return+p[0]*60+ +p[1];}
   function p2(n){return String(n).padStart(2,'0');}
-  function fmtSec(s){return p2(Math.floor(s/60))+':'+p2(s%60);}
+  function fmtSec(s){var s2=Math.max(0,s);return p2(Math.floor(s2/60))+':'+p2(s2%60);}
   function fmtMin(m){return p2(Math.floor(m/60))+':'+p2(m%60);}
 
-  function getCur(nm,fr){
-    for(var i=0;i<SS_SLOTS.length;i++){
-      var s=SS_SLOTS[i];
-      var st=fr&&s.sc?toMin(s.sc):toMin(s.start);
-      var en=fr&&s.ec?toMin(s.ec):toMin(s.end);
-      if(nm>=st&&nm<en)return{s:s,st:st,en:en};
-    }return null;
+  function getCur(slots,nm){
+    for(var i=0;i<slots.length;i++){
+      var sl=slots[i];
+      if(nm>=toMin(sl.start)&&nm<toMin(sl.end))return sl;
+    }
+    return slots[slots.length-1];
   }
 
   var ssTimer=null;
 
   function ssTick(){
     var now=new Date();
-    var fr=now.getDay()===5;
     var nm=now.getHours()*60+now.getMinutes();
     var ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
 
     document.getElementById('ss-clock').textContent=p2(now.getHours())+':'+p2(now.getMinutes());
 
-    var bg=document.getElementById('ss-bg');
+    // Ders sonu sonrası boş gün (sınav haftası bekleme)
+    if(isDersSonrasiBoşGun(now)){
+      var bg=document.getElementById('ss-bg');
+      var badge=document.getElementById('ss-badge');
+      var dot=document.getElementById('ss-dot');
+      var btxt=document.getElementById('ss-badge-txt');
+      var timer=document.getElementById('ss-timer');
+      var sub=document.getElementById('ss-sub');
+      var bwrap=document.getElementById('ss-bar-wrap');
+      bg.style.background='#000';bg.style.transition='background 1.5s ease';
+      badge.style.background='rgba(255,255,255,0.02)';
+      badge.style.borderColor='rgba(255,255,255,0.07)';
+      badge.style.color='rgba(255,255,255,0.2)';
+      dot.style.background='rgba(255,255,255,0.12)';dot.style.animation='none';
+      btxt.textContent='ARA';
+      // Sınav başlangıcına kaç gün+saat kaldı
+      var sinavBaslangic=new Date('2026-06-27T10:00:00');
+      var diffMs=sinavBaslangic-now;
+      if(diffMs>0){
+        var diffH=Math.floor(diffMs/3600000);
+        var diffM=Math.floor((diffMs%3600000)/60000);
+        timer.textContent=diffH>99?diffH+'s':(diffH>0?diffH+'s '+p2(diffM)+'d':p2(diffM)+':'+p2(Math.floor((diffMs%60000)/1000)));
+        sub.textContent='SINAVA KALAN';
+      } else {
+        timer.textContent='--:--';sub.textContent='';
+      }
+      timer.style.color='rgba(255,255,255,0.28)';timer.style.animation='none';timer.style.textShadow='none';
+      sub.style.color='rgba(255,255,255,0.12)';
+      bwrap.style.opacity='0';
+      return;
+    }
+
+    var bg   =document.getElementById('ss-bg');
     var badge=document.getElementById('ss-badge');
-    var dot=document.getElementById('ss-dot');
-    var btxt=document.getElementById('ss-badge-txt');
+    var dot  =document.getElementById('ss-dot');
+    var btxt =document.getElementById('ss-badge-txt');
     var timer=document.getElementById('ss-timer');
-    var sub=document.getElementById('ss-sub');
+    var sub  =document.getElementById('ss-sub');
     var bwrap=document.getElementById('ss-bar-wrap');
-    var bar=document.getElementById('ss-bar');
-    var bs=document.getElementById('ss-bar-s');
-    var be=document.getElementById('ss-bar-e');
+    var bar  =document.getElementById('ss-bar');
+    var bs   =document.getElementById('ss-bar-s');
+    var be   =document.getElementById('ss-bar-e');
 
-    var cur=getCur(nm,fr);
+    var slots=getSlots(now);
+    var fr=now.getDay()===5;
+    var sl=getCur(slots,nm);
+    var st=toMin(sl.start), en=toMin(sl.end);
+    var total=(en-st)*60;
+    var elapsed=ns-st*60;
+    var remain=en*60-ns;
+    var pct=total>0?Math.min(100,elapsed/total*100):0;
+    var isSinavSlot=(sl.type==='sinav'||sl.type==='ara'||sl.type==='pre'||sl.type==='post');
+    var warn=remain<=120&&sl.type==='sinav';
 
-    if(!cur){
-      var after=nm>=toMin('16:20');
+    btxt.textContent=sl.label;
+
+    if(sl.type==='lesson'){
+      /* ── DERS (normal mavi) ── */
       bg.style.background='radial-gradient(ellipse 80% 60% at 20% 10%,rgba(12,36,97,0.9) 0%,transparent 65%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(26,58,143,0.7) 0%,transparent 60%),linear-gradient(160deg,#060d1f 0%,#0c2461 40%,#07112e 100%)';
+      bg.style.transition='background 1.5s ease';
+      badge.style.background='rgba(255,255,255,0.04)';
+      badge.style.borderColor='rgba(255,255,255,0.10)';
+      badge.style.color='rgba(255,255,255,0.4)';
+      dot.style.background='rgba(255,255,255,0.4)';
+      dot.style.animation='ss-pulse 2.5s ease-in-out infinite';
+      var warnD=remain<=120;
+      if(warnD){timer.style.color='rgba(220,140,140,0.9)';timer.style.animation='ss-warn 1.2s ease-in-out infinite';}
+      else{timer.style.color='rgba(255,255,255,0.88)';timer.style.animation='none';}
+      timer.style.textShadow='none';
+      sub.style.color='rgba(255,255,255,0.18)';
+      sub.textContent='DERS BİTİMİNE KALAN';
+      bwrap.style.opacity='1';
+      bar.style.background=warnD?'rgba(210,120,120,0.5)':'rgba(255,255,255,0.22)';
+
+    } else if(sl.type==='break'){
+      bg.style.background='linear-gradient(160deg,#071410 0%,#0c1e18 100%)';
+      bg.style.transition='background 1.5s ease';
+      badge.style.background='rgba(255,255,255,0.04)';
+      badge.style.borderColor='rgba(255,255,255,0.12)';badge.style.color='rgba(180,230,210,0.6)';
+      dot.style.background='rgba(100,200,160,0.6)';dot.style.animation='ss-pulse 3s ease-in-out infinite';
+      timer.style.color='rgba(180,230,210,0.75)';timer.style.animation='none';timer.style.textShadow='none';
+      sub.style.color='rgba(180,230,210,0.22)';sub.textContent='TENEFFÜS BİTİMİNE KALAN';
+      bwrap.style.opacity='1';bar.style.background='rgba(100,200,160,0.22)';
+
+    } else if(sl.type==='lunch'){
+      bg.style.background='linear-gradient(160deg,#10100a 0%,#181508 100%)';
+      bg.style.transition='background 1.5s ease';
+      badge.style.background='rgba(255,255,255,0.04)';
+      badge.style.borderColor='rgba(255,255,255,0.12)';badge.style.color='rgba(230,200,130,0.6)';
+      dot.style.background='rgba(210,170,80,0.6)';dot.style.animation='ss-pulse 3s ease-in-out infinite';
+      timer.style.color='rgba(230,200,130,0.75)';timer.style.animation='none';timer.style.textShadow='none';
+      sub.style.color='rgba(230,200,130,0.22)';sub.textContent='ÖĞLE ARASI BİTİMİNE KALAN';
+      bwrap.style.opacity='1';bar.style.background='rgba(210,170,80,0.22)';
+
+    } else if(sl.type==='sinav'){
+      /* ── SİYAH BEYAZ ── */
+      bg.style.background='#000';
+      bg.style.transition='background 1.5s ease';
+
+      badge.style.background='rgba(255,255,255,0.04)';
+      badge.style.borderColor='rgba(255,255,255,0.15)';
+      badge.style.color='rgba(255,255,255,0.55)';
+      dot.style.background=warn?'rgba(200,80,80,0.8)':'rgba(255,255,255,0.5)';
+      dot.style.animation='ss-pulse '+(warn?'0.8s':'2.5s')+' ease-in-out infinite';
+
+      if(warn){
+        timer.style.color='rgba(220,130,130,0.95)';
+        timer.style.animation='ss-warn 1s ease-in-out infinite';
+      } else {
+        timer.style.color='rgba(255,255,255,0.92)';
+        timer.style.animation='none';
+      }
+      timer.style.textShadow='none';
+      sub.style.color='rgba(255,255,255,0.2)';
+      sub.textContent='SINAV BİTİMİNE KALAN';
+
+      bwrap.style.opacity='1';
+      bar.style.background=warn?'rgba(200,80,80,0.5)':'rgba(255,255,255,0.18)';
+
+    } else if(sl.type==='ara'){
+      /* ── SICAK AMBER / KAHVE ── */
+      bg.style.background='linear-gradient(160deg,#1a1200 0%,#2c1e00 50%,#1a1200 100%)';
+      bg.style.transition='background 1.5s ease';
+
+      badge.style.background='rgba(255,200,80,0.06)';
+      badge.style.borderColor='rgba(255,190,60,0.22)';
+      badge.style.color='rgba(255,195,80,0.65)';
+      dot.style.background='rgba(255,180,50,0.65)';
+      dot.style.animation='ss-pulse 3s ease-in-out infinite';
+
+      timer.style.color='rgba(255,210,100,0.88)';
+      timer.style.animation='none';
+      timer.style.textShadow='none';
+      sub.style.color='rgba(255,190,60,0.28)';
+      sub.textContent='ARA BİTİMİNE KALAN';
+
+      bwrap.style.opacity='1';
+      bar.style.background='rgba(255,185,55,0.28)';
+
+    } else if(sl.type==='pre'){
+      /* ── BAŞLAMADI — son 10dk kırmızı ── */
+      var remToStart=toMin('10:00')*60-ns;
+      var warnPre=remToStart<=600&&remToStart>0;
+      bg.style.background=warnPre?'linear-gradient(160deg,#1a0000 0%,#2d0505 50%,#1a0000 100%)':'#000';
+      bg.style.transition='background 1.5s ease';
+      badge.style.background=warnPre?'rgba(220,50,50,0.08)':'rgba(255,255,255,0.02)';
+      badge.style.borderColor=warnPre?'rgba(220,80,80,0.25)':'rgba(255,255,255,0.08)';
+      badge.style.color=warnPre?'rgba(255,120,120,0.75)':'rgba(255,255,255,0.2)';
+      dot.style.background=warnPre?'rgba(220,80,80,0.7)':'rgba(255,255,255,0.15)';
+      dot.style.animation=warnPre?'ss-pulse 1s ease-in-out infinite':'none';
+      timer.textContent=fmtSec(remToStart);
+      timer.style.color=warnPre?'rgba(220,100,100,0.92)':'rgba(255,255,255,0.35)';
+      timer.style.animation=warnPre?'ss-warn 1s ease-in-out infinite':'none';
+      timer.style.textShadow='none';
+      sub.style.color=warnPre?'rgba(220,100,100,0.35)':'rgba(255,255,255,0.15)';
+      sub.textContent='1. SINAVA KALAN';
+      if(warnPre){
+        bwrap.style.opacity='1';
+        bar.style.width=(Math.min(100,(600-remToStart)/600*100))+'%';
+        bar.style.background='rgba(200,60,60,0.45)';
+        bs.textContent='09:50'; be.textContent='10:00';
+      } else {
+        bwrap.style.opacity='0';
+      }
+      return;
+
+    } else if(!isSinavSlot){
+      /* ── DERS günü ama saat dışı (BAŞLAMADI / BİTTİ) ── */
+      bg.style.background='radial-gradient(ellipse 80% 60% at 20% 10%,rgba(12,36,97,0.9) 0%,transparent 65%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(26,58,143,0.7) 0%,transparent 60%),linear-gradient(160deg,#060d1f 0%,#0c2461 40%,#07112e 100%)';
+      bg.style.transition='background 1.5s ease';
       badge.style.background='rgba(255,255,255,0.03)';
       badge.style.borderColor='rgba(255,255,255,0.08)';
       badge.style.color='rgba(255,255,255,0.25)';
-      dot.style.background='rgba(255,255,255,0.2)';
-      dot.style.animation='none';
+      dot.style.background='rgba(255,255,255,0.2)';dot.style.animation='none';
+      var after=nm>=toMin('16:00');
       btxt.textContent=after?'BİTTİ':'BAŞLAMADI';
       if(!after){
         var rem=toMin('09:20')*60-ns;
         timer.textContent=fmtSec(rem>0?rem:0);
         sub.textContent='1. DERS BAŞLAMASINA KALAN';
       } else {
-        timer.textContent='00:00';
-        sub.textContent='';
+        timer.textContent='00:00';sub.textContent='';
       }
-      timer.style.color='rgba(255,255,255,0.5)';
-      timer.style.textShadow='none';
+      timer.style.color='rgba(255,255,255,0.5)';timer.style.animation='none';timer.style.textShadow='none';
+      sub.style.color='rgba(255,255,255,0.18)';
+      bwrap.style.opacity='0';
+      return;
+
+    } else {
+      /* ── BİTTİ ── */
+      bg.style.background='#000';
+      bg.style.transition='background 1.5s ease';
+      badge.style.background='rgba(255,255,255,0.02)';
+      badge.style.borderColor='rgba(255,255,255,0.06)';
+      badge.style.color='rgba(255,255,255,0.18)';
+      dot.style.background='rgba(255,255,255,0.12)';
+      dot.style.animation='none';
+      timer.textContent='00:00';
+      timer.style.color='rgba(255,255,255,0.25)';
       timer.style.animation='none';
+      timer.style.textShadow='none';
+      sub.style.color='rgba(255,255,255,0.12)';
+      sub.textContent='';
       bwrap.style.opacity='0';
       return;
     }
 
-    var s=cur.s, st=cur.st, en=cur.en;
-    var total=(en-st)*60;
-    var elapsed=ns-st*60;
-    var remain=en*60-ns;
-    var pct=Math.min(100,elapsed/total*100);
-    var warn=remain<=120&&s.type!=='break';
-
-    // bg
-    if(s.type==='break'){
-      bg.style.background='linear-gradient(160deg,#071410 0%,#0c1e18 100%)';
-    } else if(s.type==='lunch'){
-      bg.style.background='linear-gradient(160deg,#10100a 0%,#181508 100%)';
-    } else {
-      bg.style.background='radial-gradient(ellipse 80% 60% at 20% 10%,rgba(12,36,97,0.9) 0%,transparent 65%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(26,58,143,0.7) 0%,transparent 60%),linear-gradient(160deg,#060d1f 0%,#0c2461 40%,#07112e 100%)';
-    }
-
-    // badge — sadece metin rengi değişir, parlak değil
-    badge.style.background='rgba(255,255,255,0.04)';
-    if(s.type==='break'){
-      badge.style.borderColor='rgba(255,255,255,0.12)';badge.style.color='rgba(180,230,210,0.6)';
-      dot.style.background='rgba(100,200,160,0.6)';dot.style.animation='ss-pulse 3s ease-in-out infinite';
-      btxt.textContent='TENEFFÜS';
-    } else if(s.type==='lunch'){
-      badge.style.borderColor='rgba(255,255,255,0.12)';badge.style.color='rgba(230,200,130,0.6)';
-      dot.style.background='rgba(210,170,80,0.6)';dot.style.animation='ss-pulse 3s ease-in-out infinite';
-      btxt.textContent='ÖĞLE ARASI';
-    } else {
-      badge.style.borderColor='rgba(255,255,255,0.10)';badge.style.color='rgba(255,255,255,0.4)';
-      dot.style.background='rgba(255,255,255,0.4)';dot.style.animation='ss-pulse 2.5s ease-in-out infinite';
-      btxt.textContent=s.period+'. DERS';
-    }
-
-    // timer — beyaz, glow yok, uyarıda sadece kırmızımsı
-    timer.textContent=fmtSec(remain>0?remain:0);
-    if(warn){
-      timer.style.color='rgba(220,140,140,0.9)';
-      timer.style.animation='ss-warn 1.2s ease-in-out infinite';
-    } else {
-      timer.style.color='rgba(255,255,255,0.88)';
-      timer.style.animation='none';
-    }
-    timer.style.textShadow='none';
-
-    // sublabel
-    if(s.type==='lesson')sub.textContent='DERS BİTİMİNE KALAN';
-    else if(s.type==='break')sub.textContent='TENEFFÜS BİTİMİNE KALAN';
-    else sub.textContent='ÖĞLE MOLASI BİTİMİNE KALAN';
-
-    // bar — tek düz renk, ince
-    bwrap.style.opacity='1';
+    timer.textContent=fmtSec(remain);
     bar.style.width=pct+'%';
-    bar.style.background=warn?'rgba(210,120,120,0.5)':'rgba(255,255,255,0.22)';
-
     bs.textContent=fmtMin(st);
     be.textContent=fmtMin(en);
   }
