@@ -98,6 +98,40 @@ body.dark .dip-dot.break{background:#fbbf24}
   /* Takvim günleri daha iyi */
   .cal-day{cursor:pointer;transition:background .15s}
   .cal-day:hover{background:#F0F5FF}
+
+  /* Mobil geçmiş günler — header ve kartlar */
+  .mob-past-header{
+    opacity:0.55;
+    background:linear-gradient(135deg,#3a4a6a,#4a5a80) !important;
+    position:relative;
+  }
+  .mob-past-header::after{
+    content:'✓ Tamamlandı';
+    font-size:9px;
+    font-weight:700;
+    background:rgba(16,185,129,0.25);
+    color:#6EE7B7;
+    border-radius:20px;
+    padding:2px 8px;
+    margin-left:auto;
+    letter-spacing:0.2px;
+    border:1px solid rgba(16,185,129,0.3);
+    display:inline-flex !important;
+  }
+  .mob-past-card{
+    opacity:0.48;
+    background:var(--bg) !important;
+  }
+  .mob-past-card .mob-card-name{color:var(--muted) !important;}
+  .mob-past-card .mob-card-teacher{opacity:0.7;}
+  .mob-past-card .mob-card-time{opacity:0.6;}
+  .mob-past-card .mob-card-arrow{opacity:0.15;}
+  body.dark .mob-past-header{
+    background:linear-gradient(135deg,#1a2040,#252d50) !important;
+  }
+  body.dark .mob-past-card{background:#0c1020 !important;}
+
+  /* Geçmiş gün stilleri - aşağıdaki <style> bloğunda */
   
   /* Modal overlay blur */
   .modal-overlay.open{backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
@@ -530,7 +564,7 @@ function mkDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d
 function fmtDate(y,m,d){return y+'-'+pad(m+1)+'-'+pad(d);}
 var _mkDateCache={};var _mkDateOrig=mkDate;mkDate=function(s){return _mkDateCache[s]||(_mkDateCache[s]=_mkDateOrig(s));};function getBands(ds){const d=mkDate(ds);return ranges.filter(r=>{const s=mkDate(r.start),e=mkDate(r.end);return d>=s&&d<=e;}).map(r=>{const s=mkDate(r.start),e=mkDate(r.end);const isStart=d.getTime()===s.getTime();const isEnd=d.getTime()===e.getTime();return{...r,isStart,isEnd,single:isStart&&isEnd};});}
 function renderCal(){document.getElementById('cal-title').textContent=TR_MONTHS[curMonth]+' '+curYear;const container=document.getElementById('cal-days');container.innerHTML='';const today=new Date();today.setHours(0,0,0,0);let startDow=new Date(curYear,curMonth,1).getDay();startDow=startDow===0?6:startDow-1;const daysInMonth=new Date(curYear,curMonth+1,0).getDate();for(let i=0;i<startDow;i++){const c=document.createElement('div');c.className='cal-day empty';container.appendChild(c);}
-for(let d=1;d<=daysInMonth;d++){const date=new Date(curYear,curMonth,d);const dow=date.getDay();const ds=fmtDate(curYear,curMonth,d);const cell=document.createElement('div');cell.className='cal-day';if(dow===0||dow===6)cell.classList.add('weekend');if(date.getTime()===today.getTime())cell.classList.add('today');const numEl=document.createElement('div');numEl.className='day-num';numEl.textContent=d;cell.appendChild(numEl);const bands=getBands(ds);if(bands.length){const bandsEl=document.createElement('div');bandsEl.className='bands';bands.forEach(b=>{const band=document.createElement('div');const pos=b.single?'single':(b.isStart?'start':(b.isEnd?'end':'middle'));band.className='band band-'+b.type+' '+pos;if(b.isStart||b.single||b.isEnd)band.textContent=b.label;band.addEventListener('click',(e)=>{e.stopPropagation();showBandPopup(e,b.tip||b.label);});bandsEl.appendChild(band);});cell.appendChild(bandsEl);if(bands.some(b=>b.type==='tatil'))cell.classList.add('has-holiday');}
+for(let d=1;d<=daysInMonth;d++){const date=new Date(curYear,curMonth,d);const dow=date.getDay();const ds=fmtDate(curYear,curMonth,d);const cell=document.createElement('div');cell.className='cal-day';if(dow===0||dow===6)cell.classList.add('weekend');if(date.getTime()===today.getTime())cell.classList.add('today');if(date.getTime()<today.getTime())cell.classList.add('past');const numEl=document.createElement('div');numEl.className='day-num';numEl.textContent=d;cell.appendChild(numEl);const bands=getBands(ds);if(bands.length){const bandsEl=document.createElement('div');bandsEl.className='bands';bands.forEach(b=>{const band=document.createElement('div');const pos=b.single?'single':(b.isStart?'start':(b.isEnd?'end':'middle'));band.className='band band-'+b.type+' '+pos;if(b.isStart||b.single||b.isEnd)band.textContent=b.label;band.addEventListener('click',(e)=>{e.stopPropagation();showBandPopup(e,b.tip||b.label);});bandsEl.appendChild(band);});cell.appendChild(bandsEl);if(bands.some(b=>b.type==='tatil'))cell.classList.add('has-holiday');}
 container.appendChild(cell);}}
 function changeMonth(dir){curMonth+=dir;if(curMonth>11){curMonth=0;curYear++;}
 if(curMonth<0){curMonth=11;curYear--;}
@@ -898,11 +932,11 @@ function diToggle(){}
 function diNav(){}
 function diCardClick(){}
 function diToggleStack(){}
-const colorMap={'101':'var(--c101t)','102':'var(--c102t)','103':'var(--c103t)','104':'var(--c104t)','105':'var(--c105t)','106':'var(--c106t)','107':'var(--c107t)','108':'var(--c108t)','109':'var(--c109t)','110':'var(--c110t)','111':'var(--c111t)'};const bgMap={'101':'var(--c101)','102':'var(--c102)','103':'var(--c103)','104':'var(--c104)','105':'var(--c105)','106':'var(--c106)','107':'var(--c107)','108':'var(--c108)','109':'var(--c109)','110':'var(--c110)','111':'var(--c111)'};function buildMobileSchedule(){const container=document.getElementById('mobile-schedule');if(!container)return;container.innerHTML='';const days=[{name:'Pazartesi',dowNo:1,don:true},{name:'Salı',dowNo:2,lessons:[{kod:'106',p:1},{kod:'106',p:2},{kod:'105',p:3},{kod:'110',p:4},{kod:'104',p:5},{kod:'109',p:6}],times:dayTimes.normal},{name:'Çarşamba',dowNo:3,lessons:[{kod:'107',p:1},{kod:'107',p:2},{kod:'101',p:3},{kod:'101',p:4},{kod:'102',p:5},{kod:'102',p:6}],times:dayTimes.normal},{name:'Perşembe',dowNo:4,lessons:[{kod:'109',p:1},{kod:'109',p:2},{kod:'103',p:3},{kod:'103',p:4},{kod:'110',p:5},{kod:'110',p:6}],times:dayTimes.normal},{name:'Cuma',dowNo:5,cuma:true,lessons:[{kod:'104',p:1},{kod:'104',p:2},{kod:'105',p:3},{kod:'105',p:4},{kod:'108',p:5},{kod:'108',p:6}],times:dayTimes.cuma}];days.forEach(day=>{const header=document.createElement('div');header.className='mob-day-header';if(day.dowNo)header.id='mob-ders-gun-'+day.dowNo;if(day.dowNo){const now=new Date();if(now.getDay()===day.dowNo){header.classList.add('today-header');header.innerHTML=day.name+(day.cuma?' <span style="font-size:9px;opacity:0.7">+20dk öğle</span>':'')+'<span class="today-badge">▶ Bugün</span>';}else{header.innerHTML=day.name+(day.cuma?' <span style="font-size:9px;opacity:0.7;font-weight:400">· +20dk öğle</span>':'');}}else{header.textContent=day.name;}
+const colorMap={'101':'var(--c101t)','102':'var(--c102t)','103':'var(--c103t)','104':'var(--c104t)','105':'var(--c105t)','106':'var(--c106t)','107':'var(--c107t)','108':'var(--c108t)','109':'var(--c109t)','110':'var(--c110t)','111':'var(--c111t)'};const bgMap={'101':'var(--c101)','102':'var(--c102)','103':'var(--c103)','104':'var(--c104)','105':'var(--c105)','106':'var(--c106)','107':'var(--c107)','108':'var(--c108)','109':'var(--c109)','110':'var(--c110)','111':'var(--c111)'};function buildMobileSchedule(){const container=document.getElementById('mobile-schedule');if(!container)return;container.innerHTML='';const days=[{name:'Pazartesi',dowNo:1,don:true},{name:'Salı',dowNo:2,lessons:[{kod:'106',p:1},{kod:'106',p:2},{kod:'105',p:3},{kod:'110',p:4},{kod:'104',p:5},{kod:'109',p:6}],times:dayTimes.normal},{name:'Çarşamba',dowNo:3,lessons:[{kod:'107',p:1},{kod:'107',p:2},{kod:'101',p:3},{kod:'101',p:4},{kod:'102',p:5},{kod:'102',p:6}],times:dayTimes.normal},{name:'Perşembe',dowNo:4,lessons:[{kod:'109',p:1},{kod:'109',p:2},{kod:'103',p:3},{kod:'103',p:4},{kod:'110',p:5},{kod:'110',p:6}],times:dayTimes.normal},{name:'Cuma',dowNo:5,cuma:true,lessons:[{kod:'104',p:1},{kod:'104',p:2},{kod:'105',p:3},{kod:'105',p:4},{kod:'108',p:5},{kod:'108',p:6}],times:dayTimes.cuma}];days.forEach(day=>{const header=document.createElement('div');header.className='mob-day-header';if(day.dowNo)header.id='mob-ders-gun-'+day.dowNo;const _today=new Date();const _todayDow=_today.getDay();const _isPastDay=day.dowNo&&day.dowNo<_todayDow&&_todayDow>=1&&_todayDow<=5;if(_isPastDay)header.classList.add('mob-past-header');if(day.dowNo){const now=new Date();if(now.getDay()===day.dowNo){header.classList.add('today-header');header.innerHTML=day.name+(day.cuma?' <span style="font-size:9px;opacity:0.7">+20dk öğle</span>':'')+'<span class="today-badge">▶ Bugün</span>';}else{header.innerHTML=day.name+(day.cuma?' <span style="font-size:9px;opacity:0.7;font-weight:400">· +20dk öğle</span>':'');}}else{header.textContent=day.name;}
 container.appendChild(header);var now2=new Date();now2.setHours(0,0,0,0);var todayDow2=now2.getDay();var dayDate=new Date(now2);var diff2=day.dowNo-todayDow2;if(diff2<0)diff2+=7;dayDate.setDate(now2.getDate()+diff2);var dayIso=dayDate.getFullYear()+'-'+String(dayDate.getMonth()+1).padStart(2,'0')+'-'+String(dayDate.getDate()).padStart(2,'0');var TR_MONTHS_MOB=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];var dayDateLabel=dayDate.getDate()+' '+TR_MONTHS_MOB[dayDate.getMonth()];var tatilBugün=null;if(typeof ranges!=='undefined'){ranges.forEach(function(r){if(r.type==='tatil'){var rs=new Date(r.start.replace(/-/g,','));rs.setHours(0,0,0,0);var re=new Date(r.end.replace(/-/g,','));re.setHours(0,0,0,0);if(dayDate>=rs&&dayDate<=re&&!tatilBugün){tatilBugün=r;}}});}
 if(tatilBugün){var tatilIcon2=getTatilIcon?getTatilIcon(tatilBugün.label):'🎉';var tatilBadgeHtml='<span class="mob-tatil-badge">'+tatilIcon2+' '+tatilBugün.label.split(' ').slice(0,3).join(' ')+' · '+dayDateLabel+'</span>';header.innerHTML+=tatilBadgeHtml;}
 if(day.don){const card=document.createElement('div');card.className='mob-don-card';card.textContent='🔄 DÖNÜŞÜMSEL UYGULAMA';card.style.cursor='pointer';card.addEventListener('click',()=>openModal('111'));container.appendChild(card);return;}
-const grouped=[];day.lessons.forEach(l=>{const last=grouped[grouped.length-1];if(last&&last.kod===l.kod){last.periods.push(l.p);}else{grouped.push({kod:l.kod,periods:[l.p]});}});const times=day.times;grouped.forEach(g=>{const info=izlenceler[g.kod];if(!info)return;g.periods.forEach(p=>{const timeStr=times[p-1];const card=document.createElement('div');card.className='mob-lesson-card';card.id='mob-ders-card-'+day.dowNo+'-'+p;const now=new Date();const isTodayDay=now.getDay()===day.dowNo;if(isTodayDay){const curLesson=getCurrentLesson();if(curLesson&&curLesson.periyot===p&&curLesson.kod===g.kod){card.classList.add('mob-current');}}
+const grouped=[];day.lessons.forEach(l=>{const last=grouped[grouped.length-1];if(last&&last.kod===l.kod){last.periods.push(l.p);}else{grouped.push({kod:l.kod,periods:[l.p]});}});const times=day.times;grouped.forEach(g=>{const info=izlenceler[g.kod];if(!info)return;g.periods.forEach(p=>{const timeStr=times[p-1];const card=document.createElement('div');card.className='mob-lesson-card';card.id='mob-ders-card-'+day.dowNo+'-'+p;if(_isPastDay)card.classList.add('mob-past-card');const now=new Date();const isTodayDay=now.getDay()===day.dowNo;if(isTodayDay){const curLesson=getCurrentLesson();if(curLesson&&curLesson.periyot===p&&curLesson.kod===g.kod){card.classList.add('mob-current');}}
 card.style.borderLeft=`3px solid ${colorMap[g.kod]}`;card.onclick=()=>openModal(g.kod);const bgStyle=`background:${bgMap[g.kod]};border-radius:6px;padding:4px 5px;border:none;`;card.innerHTML=`
 <div class="mob-card-time" style="${bgStyle}color:${colorMap[g.kod]}">${timeStr.replace('–','<br>')}<span class="mob-card-period">${p}. ders</span></div>
 <div class="mob-card-body">
@@ -1163,6 +1197,41 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
 #ss-brand{position:fixed;bottom:clamp(16px,2.8vh,36px);right:clamp(16px,3vw,40px);z-index:10;
   font-family:'Sora',sans-serif;font-size:clamp(9px,1.1vmin,11px);font-weight:600;
   color:rgba(255,255,255,0.10);letter-spacing:1.5px;text-transform:uppercase;}
+
+/* ===== GEÇMİŞ TAKVİM GÜNLERİ ===== */
+/* Takvimde bugünden önceki günleri soluk göster */
+.cal-day.past { background: #F4F6FC !important; }
+.cal-day.past .day-num {
+  color: #94A3B8 !important;
+  opacity: 1 !important;
+  font-weight: 400 !important;
+  position: relative !important;
+  font-size: 11px !important;
+}
+.cal-day.past .day-num::before {
+  content: "✓";
+  font-size: 6px;
+  font-weight: 700;
+  color: #10B981;
+  display: block;
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  line-height: 1;
+  opacity: 0.7;
+}
+.cal-day.past .bands { opacity: 0.35 !important; }
+.cal-day.past .band { filter: grayscale(0.5) brightness(1.05) !important; }
+.cal-day.past:hover { background: #E8EDF8 !important; }
+.cal-day.past:hover .bands { opacity: 0.55 !important; }
+.cal-day.past.weekend .day-num { color: #F87171 !important; }
+.cal-day.past.has-holiday { background: #EDE9F8 !important; }
+body.dark .cal-day.past { background: #07090F !important; }
+body.dark .cal-day.past .day-num { color: #475569 !important; }
+body.dark .cal-day.past .day-num::before { color: #34D399; }
+body.dark .cal-day.past:hover { background: #0B0E18 !important; }
+body.dark .cal-day.past.has-holiday { background: #0E0920 !important; }
+body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
 </style>
 
 <div id="ss-overlay">
