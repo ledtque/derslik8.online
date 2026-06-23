@@ -989,11 +989,16 @@ window.buildSinavMobile=function buildSinavMobile(){
       container.appendChild(empty);
       return;
     }
+    // Sınavlar arası ara saatlerini derslerden hesapla
+    var araSlotlar=[
+      {araStart:'10:50',araEnd:'11:50'},  // 1.→2. sınav arası
+      {araStart:'12:40',araEnd:'13:40'}   // 2.→3. sınav arası
+    ];
     sinavDersler.forEach(function(d,idx){
       var card=document.createElement('div');
       card.className='mob-lesson-card';
       var bireyselBitti=isSinavBitti(gun.dateStr,d.bitis);
-      var sinavLabel=idx===0?'1. S\u0131nav':'2. S\u0131nav';
+      var sinavLabel=(idx+1)+'. S\u0131nav';
       if(bireyselBitti){
         card.style.borderLeft='3px solid #2D9457';
         card.style.opacity=gunTamBitti?'0.6':'0.75';
@@ -1007,11 +1012,13 @@ window.buildSinavMobile=function buildSinavMobile(){
         card.innerHTML='<div class="mob-card-time" style="background:#FFE5ED;border-color:#F0B8CA;color:#A0234E;">'+d.saat.replace('\u2013','<br>')+'<span class="mob-card-period">'+sinavLabel+'</span></div><div class="mob-card-body"><div class="mob-card-name">'+d.ad+'</div><div class="mob-card-teacher" style="color:#A0234E;">\u{1F4DD} S\u0131nav \u203a</div></div>';
       }
       container.appendChild(card);
-      if(idx===0&&sinavDersler.length>1){
+      // Sonraki sınav varsa aralarına ara kartı ekle
+      if(idx<sinavDersler.length-1){
+        var ara=araSlotlar[idx];
         var araCard=document.createElement('div');
         araCard.className='mob-lesson-card';
         araCard.style.cssText='background:linear-gradient(135deg,#FFF8E6,#FEF3C7);border-left:3px solid #D97706;cursor:default;';
-        araCard.innerHTML='<div class="mob-card-time" style="background:#FEF3C7;border-color:#FBBF24;color:#92400E;">10:50<br>11:50<span class="mob-card-period">Ara</span></div><div class="mob-card-body"><div class="mob-card-name" style="color:#78350F;">S\u0131nav Aras\u0131</div><div class="mob-card-teacher" style="color:#B45309;">\u2615 1 saat</div></div>';
+        araCard.innerHTML='<div class="mob-card-time" style="background:#FEF3C7;border-color:#FBBF24;color:#92400E;">'+ara.araStart+'<br>'+ara.araEnd+'<span class="mob-card-period">Ara</span></div><div class="mob-card-body"><div class="mob-card-name" style="color:#78350F;">S\u0131nav Aras\u0131</div><div class="mob-card-teacher" style="color:#B45309;">\u2615 1 saat</div></div>';
         container.appendChild(araCard);
       }
     });
