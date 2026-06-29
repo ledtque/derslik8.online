@@ -1155,40 +1155,40 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
 #ss-stage{position:relative;z-index:1;width:100%;height:100%;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:clamp(16px,4vh,60px) clamp(16px,4vw,60px);}
-#ss-badge{display:inline-flex;align-items:center;gap:7px;
-  padding:clamp(4px,0.7vh,7px) clamp(10px,1.8vw,16px);
-  border-radius:99px;font-size:clamp(8px,1.1vmin,11px);font-weight:600;
-  letter-spacing:1.4px;text-transform:uppercase;border:1px solid;
-  margin-bottom:clamp(16px,3vh,40px);transition:all 1s ease;
-  background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.10);color:rgba(255,255,255,0.4);
+#ss-badge{display:inline-flex;align-items:center;gap:10px;
+  padding:clamp(8px,1.4vh,14px) clamp(20px,3.2vw,32px);
+  border-radius:99px;font-size:clamp(16px,2.2vmin,28px);font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;border:1px solid;
+  margin-bottom:clamp(20px,3.5vh,48px);transition:all 1s ease;
+  background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.10);color:rgba(255,255,255,0.6);
   font-family:'Space Mono',monospace;}
-#ss-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.4);flex-shrink:0;
+#ss-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,0.4);flex-shrink:0;
   animation:ss-pulse 2.5s ease-in-out infinite;}
 #ss-timer{font-family:'Space Mono',monospace;
-  font-size:clamp(48px,min(18vw,22vh),180px);
+  font-size:clamp(80px,min(26vw,32vh),280px);
   font-weight:700;letter-spacing:-0.04em;line-height:1;
   color:rgba(255,255,255,0.88);text-shadow:none;
   transition:color 1s,opacity .5s;white-space:nowrap;}
 #ss-sub{font-family:'Sora',sans-serif;
-  font-size:clamp(9px,min(1.2vw,1.4vh),13px);
-  color:rgba(255,255,255,0.18);letter-spacing:1.6px;text-transform:uppercase;
-  margin-top:clamp(8px,1.5vh,16px);font-weight:400;white-space:nowrap;}
-#ss-bar-wrap{width:min(480px,68vw);margin-top:clamp(20px,4vh,48px);
+  font-size:clamp(16px,min(2.2vw,2.6vh),26px);
+  color:rgba(255,255,255,0.35);letter-spacing:3px;text-transform:uppercase;
+  margin-top:clamp(10px,2vh,20px);font-weight:500;white-space:nowrap;}
+#ss-bar-wrap{width:min(600px,75vw);margin-top:clamp(24px,4.5vh,56px);
   opacity:0;transition:opacity .6s .2s;}
-#ss-bar-track{width:100%;height:2px;background:rgba(255,255,255,0.06);
+#ss-bar-track{width:100%;height:5px;background:rgba(255,255,255,0.06);
   border-radius:99px;overflow:hidden;}
 #ss-bar{height:100%;border-radius:99px;width:0%;
-  background:rgba(255,255,255,0.25);transition:width 1s linear,background 1s;}
+  background:rgba(255,255,255,0.35);transition:width 1s linear,background 1s;}
 #ss-bar-meta{display:flex;justify-content:space-between;
   font-family:'Space Mono',monospace;
-  font-size:clamp(8px,1vmin,10px);color:rgba(255,255,255,0.15);margin-top:7px;}
-#ss-clock{position:fixed;bottom:clamp(14px,2.5vh,32px);left:clamp(16px,3vw,40px);z-index:10;
+  font-size:clamp(13px,1.6vmin,20px);color:rgba(255,255,255,0.30);margin-top:10px;}
+#ss-clock{position:fixed;bottom:clamp(18px,3vh,40px);left:clamp(20px,3.5vw,50px);z-index:10;
   font-family:'Space Mono',monospace;
-  font-size:clamp(13px,2vmin,22px);font-weight:400;
-  color:rgba(255,255,255,0.25);letter-spacing:2px;}
-#ss-brand{position:fixed;bottom:clamp(16px,2.8vh,36px);right:clamp(16px,3vw,40px);z-index:10;
-  font-family:'Sora',sans-serif;font-size:clamp(9px,1.1vmin,11px);font-weight:600;
-  color:rgba(255,255,255,0.10);letter-spacing:1.5px;text-transform:uppercase;}
+  font-size:clamp(22px,3.5vmin,44px);font-weight:400;
+  color:rgba(255,255,255,0.55);letter-spacing:3px;}
+#ss-brand{position:fixed;bottom:clamp(18px,3vh,40px);right:clamp(20px,3.5vw,50px);z-index:10;
+  font-family:'Sora',sans-serif;font-size:clamp(14px,2vmin,22px);font-weight:600;
+  color:rgba(255,255,255,0.35);letter-spacing:0.5px;}
 
 /* ===== GEÇMİŞ TAKVİM GÜNLERİ ===== */
 /* Takvimde bugünden önceki günleri soluk göster */
@@ -1252,7 +1252,7 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
   </div>
 
   <div id="ss-clock"></div>
-  <div id="ss-brand">Derslik<span style="color:rgba(255,180,60,0.4);">8</span></div>
+  <div id="ss-brand">derslik<span style="color:rgba(255,180,60,0.7);">8</span><span style="color:rgba(255,255,255,0.20);">.online</span></div>
 </div>
 
 <script>
