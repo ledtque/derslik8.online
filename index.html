@@ -223,6 +223,21 @@ body.dark .d8-note-entry:hover{background:rgba(255,255,255,0.03)}
 .d8-notes-statusbar .d8-saving-dot::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0}
 .d8-notes-statusbar.saving .d8-saving-dot::before{background:var(--amber);animation:d8SavePulse 1s ease-in-out infinite}
 @keyframes d8SavePulse{0%,100%{opacity:1}50%{opacity:0.35}}
+#d8-notes-overlay{display:none;position:fixed;inset:0;z-index:100050;background:var(--white);flex-direction:column;overflow:hidden}
+#d8-notes-overlay.open{display:flex}
+#d8np-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.d8np-back{background:var(--bg);border:none;border-radius:9px;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--muted);flex-shrink:0;transition:background .15s}
+.d8np-back:hover{background:var(--border)}
+#d8np-titleblock{min-width:0}
+#d8np-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:600;color:var(--navy);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#d8np-sub{font-family:'Sora',sans-serif;font-size:11.5px;color:var(--muted);margin-top:2px}
+#d8np-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#d8np-body{max-width:640px;margin:0 auto;padding:36px 24px 80px}
+@media(max-width:660px){#d8np-body{padding:24px 18px 100px}#d8np-header{padding:12px 14px}}
+body.dark #d8-notes-overlay{background:#0B0F1C}
+body.dark #d8np-header{border-color:#1E2840}
+body.dark .d8np-back{background:#111827;color:#94A3B8}
+body.dark .d8np-back:hover{background:#1E2840}
 #d8-activity-overlay{display:none;position:fixed;inset:0;z-index:100000;background:var(--bg);flex-direction:column;overflow-y:auto}
 #d8-activity-overlay.open{display:flex}
 .d8-act-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;flex-shrink:0}
@@ -634,10 +649,20 @@ else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})
 </div>
 <div class="modal-tabs">
 <button class="modal-tab active" id="tab-izlence" onclick="switchModalTab('izlence')">📋 İzlence</button>
-<button class="modal-tab" id="tab-notlar" onclick="switchModalTab('notlar')">📝 Notlar</button>
+<button class="modal-tab" id="tab-notlar" onclick="d8OpenNotesPage(_currentModalKod)">📝 Notlar</button>
 </div>
 <div class="modal-body" id="modal-body"></div>
 </div>
+</div>
+<div id="d8-notes-overlay">
+<div id="d8np-header">
+<button class="d8np-back" onclick="d8CloseNotesPage()" aria-label="Geri dön">←</button>
+<div id="d8np-titleblock">
+<div id="d8np-title"></div>
+<div id="d8np-sub"></div>
+</div>
+</div>
+<div id="d8np-scroll"><div id="d8np-body"></div></div>
 </div> <script>const izlenceler={'101':{ad:'Program Okuryazarlığı ve Türkiye Yüzyılı Maarif Modeli',ogretmen:'Dr. Reha Karaman',donem:'1. Dönem',saat:20,teori:2,uyg:0,driveLink:'https://drive.google.com/drive/u/0/folders/19U3VZFrfJ_hOKe48RilbOhZqASfBoW0a',amac:'Öğretim programları ile ilgili yaklaşım, model ve süreçleri kavrayan, bu unsurlar arasındaki ilişkileri analiz edebilen, farklı öğretim ortamlarına göre programı uyarlayabilen, program ögelerini analiz edebilen, Türkiye Yüzyılı Maarif Modeli\'ni bu kapsamda inceleyip değerlendirebilen bireyler yetiştirmek.',ciktilar:['Program kavramı, türleri, düzeyleri ve program okuryazarlığı kavramını açıklar.','Öğretim programlarının bileşenlerini kavrar.','Eğitim programı tasarımı ve modellerini açıklar.','Türkiye Yüzyılı Maarif Modeli\'ni değerlendirir.','Türkiye Yüzyılı Maarif Modeli\'nin öğretim programlarında yer alan öğrenme ve öğretme yaşantılarıyla ilgili farkındalık kazanır.'],haftalar:['Program Kavramı, Türleri, Düzeyleri ve Program Okuryazarlığı Kavramı','Öğretim Programlarının Bileşenleri','Eğitim Programı Tasarımı ve Modelleri','Türkiye Yüzyılı Maarif Modeli: Öğrenme ve Öğretme Yaşantıları','Öğrenme Çıktıları Çerçevesi','Programlar Arası Bileşenler','Öğrenme-Öğretme Yaşantıları','Farklılaştırma','Okul Temelli Planlama, Program Dışı Etkinlikler','Öğretmen Yansıtmaları'],yontemler:['Vaka Analizi','Karşılaştırmalı Analiz','Problem Temelli Öğrenme','Doküman Analizi','Eleştirel Metin Çözümlemesi'],kaynaklar:['Eğitimde Program Geliştirme – Özcan Demirel','MEB 2024-2028 Stratejik Planı','On İkinci Kalkınma Planı (2024-2028)','Öğretmenlik Mesleği Genel Yeterlikleri','Türkiye Yüzyılı Maarif Modeli – Öğretim Programları Ortak Metni'],degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'102':{ad:'Akademide Kültür ve Sanat Uygulamaları',ogretmen:'Dr. Tuba Kurt',donem:'1. Dönem',saat:20,teori:2,uyg:0,formLink:'https://drive.google.com/drive/folders/1SOGb0-OBVK5ef3LMlV89ngBzIIfKMb5o?usp=sharing',amac:'Kültür, sanat ve eğitim ilişkisini kuramsal çerçevede ele alarak kültür/sanat etkinliklerine katılım ve yansıtıcı değerlendirme becerisi kazandırmak.',ciktilar:['Kültür, sanat ve eğitim arasındaki ilişkiyi açıklar.','Kültür/sanat etkinliklerine katılım sağlar.','Yansıtıcı değerlendirme yapar.'],haftalar:['Kuramsal Çerçeve (Kültür, Sanat ve Eğitim İlişkisi)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Öğretmen Tecrübe Paylaşımı)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Eğitimde İyi Örnekler)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Türk Müziği)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Yönetici Buluşmaları)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Şehir Kültürü)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Biyografik Anlatı)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Sinema ve Film Gösterimi)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Öğretmen Akademileri)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Akademi Konuşmaları)'],yontemler:['Katılımlı Gözlem','Yansıtıcı Değerlendirme','Tecrübe Paylaşımı'],kaynaklar:[],degerlendirme:[],notlar:'',flashcards:[]},'103':{ad:'Veri Temelli İzleme ve Değerlendirme',ogretmen:'Dr. Yeşim Ay Değirmenci',donem:'1. Dönem',saat:20,teori:2,uyg:0,amac:'Öğretmen adaylarına veri biliminin temelleri, verileri analiz etme ve bilgi çıkarma ile ilgili yöntemleri kavratmak.',ciktilar:['Öğretimin planlanması bağlamında ölçme değerlendirme araçlarını seçer.','Performans kriterlerini belirler.','Ölçme ve değerlendirme araçlarının tasarımını yapar.','Verileri toplar ve onları analiz ederek geri bildirim sağlar.','Öğrenme-öğretme tasarımlarını güncelleyerek sürekli iyileştirme sağlar.'],haftalar:['Veri Kavramı ve Veri Türleri','Öğretimde Kanıt ve İzleme','Eğitimde Kullanılan Ölçme Araçlarının Özellikleri','Eğitimde Değerlendirme ve Değerlendirme Türleri','Geliştirici (Biçimlendirici) Değerlendirme Süreci','Süreç Değerlendirme ve Araçları','Okul Dışı Öğrenme Ortamlarında Ölçme ve Değerlendirme','Geri Bildirim ve Düzeltme','Ölçme ve Değerlendirme Uygulamaları','Türkiye Yüzyılı Maarif Modeli\'nde Öğrenme Kanıtları'],yontemler:['Kavram Haritası','Vaka Analizi','Analoji (Benzetim) Kurma','Ders Planına Biçimlendirici Anlar Yerleştirme','Çıkış Bileti Uygulaması'],kaynaklar:['Eğitimde Ölçme ve Değerlendirme – Halil Tekin','Eğitimde Ölçme ve Değerlendirme – M. Fuat Turgut, Yaşar Baykul','Eğitimde Ölçme ve Değerlendirme – Nuri Doğan','Eğitimde Program Değerlendirme – Salih Uşun','Ölçme ve Değerlendirme – Hakan Atılgan, Adnan Kan, Burak Aydın'],driveLink:'https://drive.google.com/drive/folders/1IhVGEe6O0tskEbL_LivMyLs97Gc1gVim?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'104':{ad:'İnsan ve Öğrenme',ogretmen:'Dr. Mürşide Emiroğlu',donem:'1. Dönem',saat:30,teori:3,uyg:0,amac:'Öğretmen adaylarının insan doğası ve gelişimi ile öğrenme süreçlerini bütüncül bir yaklaşımla anlamalarını, gelişim ve öğrenme psikolojisi alanında edindikleri bilgileri, Türkiye Yüzyılı Maarif Modeli çerçevesinde eğitim uygulamalarına entegre ederek etkili öğretim stratejileri geliştirebilmelerini sağlamak.',ciktilar:['Psikoloji ve eğitim psikolojisinin temel kavramlarını anlar.','Çocuğun gelişim dönemleri, dil, kişilik, ahlak ve bilişsel gelişimi gibi alanlarda bilgi sahibi olur.','Öğrenmeyi etkileyen faktörleri fark eder.','Farklı öğrenme yaklaşımlarını öğrenir.','Öğrendiği bu teorileri sınıf ortamında uygulama becerisi kazanır.'],haftalar:['İnsan ve Öğrenme Kavramları','Öğrenmenin Eğitsel ve Kültürel Temelleri','Dil Gelişimi','Fiziksel ve Bilişsel Gelişim Özellikleri','Bireyin Duygusal ve Sosyal Gelişim Özellikleri','Bireysel Farklılıklar: Öğrenme Yaklaşımları','Öğrenme Kuramları','Öğrenmede Aile ve Çevre Faktörleri','Kültürel Duyarlılık','Türkiye Yüzyılı Maarif Modeli\'nde Öğrenen Profili'],yontemler:['Sokratik Sorgulama','Vaka Analizi','Belgesel/Film Çözümlemesi','Grup Tartışması','Vaka İncelemesi'],kaynaklar:['Çocuğunuzun Beynini Geliştirin – Dana Suskind','Çocuk ve Ergen Gelişimi – Helen Bee, Denise Boyd','Frames of Mind: The Theory of Multiple Intelligences – Howard Gardner','Gelişim, Öğrenme ve Öğretim – Nuray Senemoğlu','Mind in Society – Lev Vygotsky','Var mısın? – Doğan Cüceloğlu','Film: Can Dostum, 3 Idiots'],driveLink:'https://drive.google.com/drive/folders/1c9QL7cw6jYkJ4uzfXqEen2WFV8j2INdo?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'105':{ad:'Eğitimde Hak ve Sorumluluklar',ogretmen:'Uzm. Öğr. Sevgi Özder',donem:'1. Dönem',saat:30,teori:3,uyg:0,amac:'Eğitim sürecinde öğrenci, öğretmen, aile ve toplumun hak ve sorumluluklarını kavratmak, hak bilinci ve sorumluluk duygusunun önemini kavratmak, eğitimde adalet, insan hakları ve demokrasi, eşitlik ve ahlak ilkeleri çerçevesinde davranış ve karar alma becerisi kazandırmak.',ciktilar:['Eğitimde hak ve sorumluluk kavramlarını açıklar.','Öğretmen, öğrenci, aile ve toplumun rollerini ahlaki çerçevede değerlendirir.','Ailenin ve toplumun eğitim sürecindeki katkılarını analiz eder.','Türkiye\'de eğitim hakkını engelleyen politik yaptırımları eleştirel olarak değerlendirir.','Eğitimde adalet, eşitlik ve ahlak ilkelerini uygulama becerisi kazanır.','Hak ve sorumluluk çerçevesinde problem çözme ve karar alma becerilerini geliştirir.','Eğitim hukuku ve yönetmeliklerini hak-sorumluluk bağlamında analiz eder.'],haftalar:['Eğitimde Hak ve Sorumluluk Kavramı','Öğretmen Hakları, Sorumlulukları ve Meslek Ahlakı','Öğrenci Hak ve Sorumlulukları','Ebeveynlerin Hak ve Sorumlulukları','Toplumsal Hak ve Sorumluluklar','Türkiye\'de Eğitim Hakkını Engelleyen Politik Uygulamalar','Demokrasi, İnsan Hakları ve Özgürlükler Bağlamında Eğitimde Engellerin Kaldırılması','Eğitim Mevzuatı 1: 222 ve 657 Sayılı Kanunlar','Eğitim Mevzuatı 2: 1739 ve 7528 Sayılı Kanunlar','Hak ve Sorumluluklarla İlgili Tartışma, Sunum ve Vaka Çalışmaları'],yontemler:['Ders Anlatımı','Tartışma','Örnek Olay Analizi','Vaka Çalışmaları','Problem Çözme','Etik Senaryolar'],kaynaklar:['Bitmeyen Gece – Mithat Enç','Eğitimde Dönüşüm – SETA','Eğitim Hukuku – Murat Bülbül','Eğitim Hukuku – Yasemin Karaman Kepenekci ve Pelin Taşkın','İlk Öğretmen – Cengiz Aytmatov','Türkiye\'nin Maarif Davası – Nurettin Topçu'],driveLink:'https://drive.google.com/drive/folders/1piV571qrIOiqeb0yhLiRWj2GXkJ5-aon?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'106':{ad:'Türk Kültürünün Kurucu Metinleri',ogretmen:'Dr. Hatice Gerekten',donem:'1. Dönem',saat:20,teori:2,uyg:0,amac:'Edebî metinleri bir kültür, değer ve kimlik aktarım aracı olarak analiz etmeyi öğretmek; Türk-İslam medeniyetinin düşünsel ve ahlaki kodlarını taşıyan kurucu edebî metinleri eğitim bağlamında değerlendirmek; öğretmen adaylarında edebî eserleri kültür temelli öğretim materyali olarak kullanma becerisi geliştirmek.',ciktilar:['Edebî metinlerin kültür ve eğitimdeki rolünü açıklar.','Türk-İslam düşüncesinde "kurucu metin" kavramını tanımlar.','Kutadgu Bilig, Risâletü\'n-Nushiyye, Mesnevi gibi eserleri eğitim açısından yorumlar.','Edebî metinlerdeki değer, erdem, insan ve toplum anlayışını çözümler.','Modern öğretimde edebî metinleri pedagojik materyal olarak kullanır.'],haftalar:['Kurucu Metin Kavramı ve Orhun Abideleri','Kutadgu Bilig','Dîvânu Lugâti\'t-Türk','Mesnevi – Mevlana','Risâletü\'n-Nushiyye','Mevlidi Nebi – Süleyman Çelebi','Dede Korkut Hikâyeleri','Seyahatname – Evliya Çelebi','Bâkî Divanı','Safahat'],yontemler:['Ders Anlatımı','Metin Çözümlemesi','Tartışma','Yorumlama Oturumları','Edebî Okuma Atölyeleri','Drama','Karşılaştırmalı Metin İncelemeleri'],kaynaklar:['Orhun Abideleri','Kutadgu Bilig','Dîvânu Lugâti\'t-Türk','Mesnevi','Mevlidi Nebi – Süleyman Çelebi','Dede Korkut Hikâyeleri','Safahat – Mehmet Akif Ersoy','Seyahatname – Evliya Çelebi','Yûnus Emre Divanı'],driveLink:'https://drive.google.com/drive/folders/1qmMQbtFkdI4o92kTJPnD4b99pKfQN78M?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'107':{ad:'Türkçenin Söz Varlığı ve Maarif Sözlüğü',ogretmen:'Dr. Akife Kurt',donem:'1. Dönem',saat:20,teori:2,uyg:0,amac:'Türkçenin söz varlığını tarihî ve kültürel boyutuyla kavramak, kelime ve kavram öğretimi yöntemlerini kullanmak, sözlük kullanma alışkanlığı kazanmak, maarif ile ilgili kavramları öğrenmek, öğrencilerin söz varlığını geliştirecek etkinlikler yürütmek.',ciktilar:['Türkçenin söz varlığının tarihsel gelişimini açıklar.','Türkçenin kültürel derinliğini fark eder.','Kelime öğretim yöntemlerini kavrar.','Sözlük kullanma alışkanlığı kazanır.','Maarif ile ilgili kavramları kullanır.','Söz varlığı gelişimini sağlayacak etkinlikler düzenler.'],haftalar:['Söz Varlığının Temel Kavramları','Tarihî Süreçte Türkçenin Söz Varlığı','Deyim, Atasözü ve Kalıplaşmış İfadeler','Sözlük Bilimi ve Türk Sözlük Geleneği','Sözlük Kullanımı','Maarif Sözlüğü','Kelime Öğretimi ve Önemi','Kelime Öğretim Yöntem ve Teknikleri','Dijital Çağda Türkçenin Kullanımı','Türkiye Yüzyılı Maarif Modeli, Söz Varlığı Gelişimi Okul Etkinlikleri'],yontemler:['Doküman Analizi','Problem Temelli Öğrenme','Karşılaştırmalı Analiz','Kavram Haritası','Eleştirel Metin Çözümlemesi'],kaynaklar:['Anlambilim – Doğan Aksan','Türkçenin Gücü – Doğan Aksan','İki Dirhem Bir Çekirdek – İskender Pala','Kuramdan Uygulamaya Kelime Öğretimi – Cafer Çarkıt, Hasan Kurnaz','Osmanlıca, Türkçe, Uydurmaca – Peyami Safa'],driveLink:'https://drive.google.com/drive/folders/1KcXNYOMWEKcKgvIVoNzzeYwfp3091-0p?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[
 {q:'Bergenholtz\u2019a göre sözlük nedir?',a:'İki temel biçimde tanımlar. İşlevsel tanım: metin anlama, yazma ve çeviri süreçlerinde başvurulan temel kaynak. İçeriksel tanım: sözcükler, dil ögeleri ve ek metinler hakkında çeşitli bilgiler barındıran kaynak. Bu tanımlardan hareketle sözlüğün çoklu bir yapıya sahip olduğu söylenir.'},
 {q:'Sözlükbilimi nedir ve hangi iki ana kola ayrılır?',a:'Sözlükleri ve başvuru kaynaklarını inceleyen akademik ve mesleki alandır. Uygulamalı sözlükbilim: sözlük hazırlama süreciyle ilgilenir (veri toplama, tanımlama, sunum). Teorik sözlükbilim: sözlüklerin tarihi, tipolojisi, eleştirisi ve kullanımı gibi konuları araştırır.'},
@@ -701,10 +726,10 @@ function d8EntryEditBlur(id,kod){
   if(window._d8NoteEditState&&window._d8NoteEditState.id===id){window.d8SaveNote(id,kod);}
 }
 function renderNotlarContent(kod){
-  var body=document.getElementById('modal-body');if(!body)return;
+  var body=document.getElementById('d8np-body');if(!body)return;
   var authUser=window._d8AuthUser||null;
   d8UpdateNotlarTabBadge(kod);
-  var html='<div class="modal-tab-content active" id="content-notlar"><div class="d8-notes-wrap">';
+  var html='<div class="d8-notes-wrap">';
   if(authUser){
     var allNotes=window._d8Notes||[];
     var notesForLesson=allNotes.filter(function(n){return n.lessonId===kod;});
@@ -734,7 +759,7 @@ function renderNotlarContent(kod){
   } else {
     html+='<div class="d8-note-empty-state"><div class="d8-note-empty-icon">🔒</div><div>Notların tüm cihazlarında görünsün diye önce giriş yapman gerekiyor.</div><div style="margin-top:14px;"><button class="d8-note-btn d8-note-btn-primary" onclick="handleAuthClick()">Google ile Giriş Yap</button></div></div>';
   }
-  html+='</div></div>';
+  html+='</div>';
   body.innerHTML=html;
   requestAnimationFrame(function(){
     body.querySelectorAll('.d8-note-entry-edit, .d8-notes-compose textarea').forEach(d8AutosizeTA);
@@ -742,6 +767,24 @@ function renderNotlarContent(kod){
     if(editTA){editTA.focus();editTA.selectionStart=editTA.selectionEnd=editTA.value.length;}
   });
 }
+window._d8NotesPageKod=null;
+window.d8OpenNotesPage=function(kod){
+  if(!kod)return;
+  var d=izlenceler[kod];if(!d)return;
+  window._d8NotesPageKod=kod;
+  document.getElementById('d8np-title').textContent=d.ad;
+  document.getElementById('d8np-sub').textContent=d.ogretmen||'';
+  var modalOv=document.getElementById('modal-overlay');
+  if(modalOv&&modalOv.classList.contains('open')){modalOv.classList.remove('open');}
+  renderNotlarContent(kod);
+  document.getElementById('d8-notes-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+};
+window.d8CloseNotesPage=function(){
+  window._d8NotesPageKod=null;
+  document.getElementById('d8-notes-overlay').classList.remove('open');
+  document.body.style.overflow='';
+};
 
 
 
@@ -2647,8 +2690,8 @@ function unsubscribeNotes(){
 }
 
 function refreshLessonNotesUI(kod){
-  if(_currentModalTab === 'notlar' && typeof window.renderNotlarContent === 'function'){
-    try{ window.renderNotlarContent(kod || _currentModalKod); }catch(e){}
+  if(window._d8NotesPageKod && typeof window.renderNotlarContent === 'function'){
+    try{ window.renderNotlarContent(kod || window._d8NotesPageKod); }catch(e){}
   }
 }
 
