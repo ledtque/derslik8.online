@@ -199,6 +199,9 @@ body.dark .dip-dot.break{background:#fbbf24}
 .d8-note-card:hover .d8-note-btn-danger{opacity:0.85}
 .d8-note-add-row{display:flex;justify-content:flex-end;margin-top:8px;gap:8px}
 .d8-note-empty-state{text-align:center;padding:28px 16px;color:var(--muted)}
+.d8-note-guest-banner{font-family:'Sora',sans-serif;font-size:11.5px;line-height:1.6;color:var(--muted);text-align:center;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:14px}
+.d8-note-guest-banner button{background:none;border:none;color:var(--navy);font-weight:700;font-size:11.5px;cursor:pointer;padding:0;text-decoration:underline;font-family:inherit}
+body.dark .d8-note-guest-banner{background:#111827;border-color:#1E2840}
 .d8-note-empty-state .d8-note-empty-icon{font-size:30px;margin-bottom:8px;opacity:0.7}
 .d8-note-meta-row{display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-top:2px}
 .d8-note-time{font-size:10px;color:var(--muted);opacity:0.75}
@@ -720,8 +723,22 @@ function d8RelTime(ts){if(!ts)return'';var diff=Date.now()-ts;var min=Math.floor
 function d8NoteTextToHtml(text){
   return d8EscHtml(text||'').replace(/\n/g,'<br>');
 }
+var D8_LOCAL_NOTES_KEY='d8_local_notes_v1';
+function d8LocalNotesAll(){
+  try{ return JSON.parse(localStorage.getItem(D8_LOCAL_NOTES_KEY)||'{}'); }catch(e){ return {}; }
+}
+function d8LocalNotesSaveAll(obj){
+  try{ localStorage.setItem(D8_LOCAL_NOTES_KEY, JSON.stringify(obj)); }catch(e){ console.warn('Yerel not kaydedilemedi:', e); }
+}
 function d8GetLessonNotes(kod){
-  return (window._d8Notes||[]).filter(function(n){return n.lessonId===kod && n.createdAt;}).sort(function(a,b){return a.createdAt-b.createdAt;});
+  var arr;
+  if(window._d8Uid){
+    arr=(window._d8Notes||[]).filter(function(n){return n.lessonId===kod && n.createdAt;});
+  } else {
+    var all=d8LocalNotesAll();
+    arr=Object.keys(all).map(function(id){var n=all[id];return {id:id,lessonId:n.lessonId,text:n.text,createdAt:n.createdAt,updatedAt:n.updatedAt};}).filter(function(n){return n.lessonId===kod && n.createdAt;});
+  }
+  return arr.sort(function(a,b){return a.createdAt-b.createdAt;});
 }
 function d8UpdateNotlarTabBadge(kod){
   var tab=document.getElementById('tab-notlar');if(!tab)return;
@@ -772,17 +789,16 @@ function renderNotlarContent(kod){
   var authUser=window._d8AuthUser||null;
   var compose=document.getElementById('d8np-compose');
   d8UpdateNotlarTabBadge(kod);
-  if(!authUser){
-    body.innerHTML='<div class="d8-note-empty-state"><div class="d8-note-empty-icon">🔒</div><div>Notların tüm cihazlarında görünsün diye önce giriş yapman gerekiyor.</div><div style="margin-top:14px;"><button class="d8-note-btn d8-note-btn-primary" onclick="handleAuthClick()">Google ile Giriş Yap</button></div></div>';
-    if(compose)compose.style.display='none';
-    return;
-  }
   if(compose)compose.style.display='flex';
   var notes=d8GetLessonNotes(kod);
+  var html='';
+  if(!authUser){
+    html+='<div class="d8-note-guest-banner">📱 Bu notlar şu an sadece bu cihazda saklanıyor. <button onclick="handleAuthClick()">Giriş yap</button> — notların hesabına taşınsın, tüm cihazlarında görünsün.</div>';
+  }
   if(!notes.length){
-    body.innerHTML='<div class="d8-note-empty-state"><div class="d8-note-empty-icon">📝</div><div>Henüz not yok. Aşağıdan ilk notunu ekle.</div></div>';
+    html+='<div class="d8-note-empty-state"><div class="d8-note-empty-icon">📝</div><div>Henüz not yok. Aşağıdan ilk notunu ekle.</div></div>';
   } else {
-    var html='',lastKey=null;
+    var lastKey=null;
     notes.forEach(function(n){
       var dk=d8NoteDateKey(n.createdAt);
       if(dk!==lastKey){html+='<div class="d8-note-date-sep"><span>'+d8NoteDateLabel(n.createdAt)+'</span></div>';lastKey=dk;}
@@ -793,8 +809,8 @@ function renderNotlarContent(kod){
           +'<button class="d8-note-btn-danger" onclick="event.stopPropagation();d8DeleteNote(\''+n.id+'\')" title="Sil">🗑</button></div>'
         +'</div>';
     });
-    body.innerHTML=html;
   }
+  body.innerHTML=html;
   if(window._d8NoteEditingId===null){
     requestAnimationFrame(function(){var sc=document.getElementById('d8np-scroll');if(sc)sc.scrollTop=sc.scrollHeight;});
   }
@@ -831,24 +847,36 @@ window.d8NoteEditSave=async function(id){
   var text=ta.value.trim();
   window._d8NoteEditingId=null;
   if(!text){return window.d8DeleteNote(id);}
-  try{
-    var fs=window.__d8fs;
-    await fs.setDoc(fs.doc(fs.notesColRef(window._d8Uid), id), {text:text, updatedAt:Date.now()}, {merge:true});
-  }catch(e){
-    console.warn('Not güncellenemedi:', e);
-    if(typeof window.d8ShowToast==='function')window.d8ShowToast('⚠️ Not güncellenemedi');
+  if(window._d8Uid){
+    try{
+      var fs=window.__d8fs;
+      await fs.setDoc(fs.doc(fs.notesColRef(window._d8Uid), id), {text:text, updatedAt:Date.now()}, {merge:true});
+    }catch(e){
+      console.warn('Not güncellenemedi:', e);
+      if(typeof window.d8ShowToast==='function')window.d8ShowToast('⚠️ Not güncellenemedi');
+      if(window._d8NotesPageKod)renderNotlarContent(window._d8NotesPageKod);
+    }
+  } else {
+    var all=d8LocalNotesAll();
+    if(all[id]){ all[id].text=text; all[id].updatedAt=Date.now(); d8LocalNotesSaveAll(all); }
     if(window._d8NotesPageKod)renderNotlarContent(window._d8NotesPageKod);
   }
 };
 window.d8DeleteNote=async function(id){
-  if(!window._d8Uid)return;
   window._d8NoteEditingId=null;
-  try{
-    var fs=window.__d8fs;
-    await fs.deleteDoc(fs.doc(fs.notesColRef(window._d8Uid), id));
-  }catch(e){
-    console.warn('Not silinemedi:', e);
-    if(typeof window.d8ShowToast==='function')window.d8ShowToast('⚠️ Not silinemedi');
+  if(window._d8Uid){
+    try{
+      var fs=window.__d8fs;
+      await fs.deleteDoc(fs.doc(fs.notesColRef(window._d8Uid), id));
+    }catch(e){
+      console.warn('Not silinemedi:', e);
+      if(typeof window.d8ShowToast==='function')window.d8ShowToast('⚠️ Not silinemedi');
+    }
+  } else {
+    var all=d8LocalNotesAll();
+    delete all[id];
+    d8LocalNotesSaveAll(all);
+    if(window._d8NotesPageKod)renderNotlarContent(window._d8NotesPageKod);
   }
 };
 function d8NPPinViewport(){
@@ -878,17 +906,43 @@ function d8NPComposeKeydown(ev){
 window.d8NPSendNote=async function(){
   var ta=document.getElementById('d8np-input');if(!ta)return;
   var text=ta.value.trim();if(!text)return;
-  var kod=window._d8NotesPageKod;if(!kod||!window._d8Uid)return;
+  var kod=window._d8NotesPageKod;if(!kod)return;
   ta.value='';d8AutosizeTA(ta,100000);ta.focus();
   var now=Date.now();
+  if(window._d8Uid){
+    var fs=window.__d8fs;
+    var ref=fs.doc(fs.notesColRef(window._d8Uid));
+    try{
+      await fs.setDoc(ref, {lessonId:kod, text:text, createdAt:now, updatedAt:now});
+    }catch(e){
+      console.warn('Not eklenemedi:', e);
+      if(typeof window.d8ShowToast==='function')window.d8ShowToast('⚠️ Not eklenemedi (bağlantı sorunu)');
+      ta.value=text;d8AutosizeTA(ta,100000);
+    }
+  } else {
+    var id='local_'+now+'_'+Math.random().toString(36).slice(2,8);
+    var all=d8LocalNotesAll();
+    all[id]={lessonId:kod,text:text,createdAt:now,updatedAt:now};
+    d8LocalNotesSaveAll(all);
+    renderNotlarContent(kod);
+  }
+};
+window.d8MigrateLocalNotesIfAny=async function(){
+  var all=d8LocalNotesAll();
+  var ids=Object.keys(all);
+  if(!ids.length || !window._d8Uid)return;
   var fs=window.__d8fs;
-  var ref=fs.doc(fs.notesColRef(window._d8Uid));
   try{
-    await fs.setDoc(ref, {lessonId:kod, text:text, createdAt:now, updatedAt:now});
+    await Promise.all(ids.map(function(id){
+      var n=all[id];
+      return fs.setDoc(fs.doc(fs.notesColRef(window._d8Uid)), {lessonId:n.lessonId, text:n.text, createdAt:n.createdAt, updatedAt:n.updatedAt||n.createdAt});
+    }));
+    localStorage.removeItem(D8_LOCAL_NOTES_KEY);
+    if(typeof window.d8ShowToast==='function')window.d8ShowToast('📥 '+ids.length+' not hesabına taşındı');
+    if(window._d8NotesPageKod){setTimeout(function(){renderNotlarContent(window._d8NotesPageKod);},500);}
   }catch(e){
-    console.warn('Not eklenemedi:', e);
-    if(typeof window.d8ShowToast==='function')window.d8ShowToast('⚠️ Not eklenemedi (bağlantı sorunu)');
-    ta.value=text;d8AutosizeTA(ta,100000);
+    console.warn('Yerel notlar taşınamadı:', e);
+    if(typeof window.d8ShowToast==='function')window.d8ShowToast('⚠️ Yerel notlar hesaba taşınamadı, tekrar denenecek');
   }
 };
 window._d8NotesPageKod=null;
@@ -3281,6 +3335,7 @@ onAuthStateChanged(auth, async function(user){
       updateAuthButton();
     }catch(e){ console.warn('Firestore okuma hatası:', e); }
     subscribeNotes(user.uid);
+    if(typeof window.d8MigrateLocalNotesIfAny==='function'){ try{ window.d8MigrateLocalNotesIfAny(); }catch(e){} }
   } else {
     unsubscribeNotes();
     if(typeof window.buildProfilPage === 'function'){ try{ window.buildProfilPage(); }catch(e){} }
