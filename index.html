@@ -199,6 +199,15 @@ body.dark .dip-dot.break{background:#fbbf24}
 .d8-note-card:hover .d8-note-btn-danger{opacity:0.85}
 .d8-note-add-row{display:flex;justify-content:flex-end;margin-top:8px;gap:8px}
 .d8-note-empty-state{text-align:center;padding:28px 16px;color:var(--muted)}
+#d8-note-actionmenu{position:fixed;z-index:100200;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.2);overflow:hidden;display:none;min-width:150px}
+#d8-note-actionmenu.open{display:block;animation:tpDrop .16s cubic-bezier(0.22,1,0.36,1) both}
+.d8-note-am-item{display:flex;align-items:center;gap:9px;padding:12px 16px;font-family:'Sora',sans-serif;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;transition:background .12s}
+.d8-note-am-item:hover,.d8-note-am-item:active{background:var(--bg)}
+.d8-note-am-item.danger{color:var(--red)}
+.d8-note-am-sep{height:1px;background:var(--border)}
+body.dark #d8-note-actionmenu{background:#111827;border-color:#1E2840}
+body.dark .d8-note-am-item:hover,body.dark .d8-note-am-item:active{background:#1E2840}
+.d8-note-card{-webkit-touch-callout:none}
 .d8-note-guest-banner{font-family:'Sora',sans-serif;font-size:11.5px;line-height:1.6;color:var(--muted);text-align:center;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:14px}
 .d8-note-guest-banner button{background:none;border:none;color:var(--navy);font-weight:700;font-size:11.5px;cursor:pointer;padding:0;text-decoration:underline;font-family:inherit}
 body.dark .d8-note-guest-banner{background:#111827;border-color:#1E2840}
@@ -690,6 +699,12 @@ else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})
 <button id="d8np-send" onclick="d8NPSendNote()" aria-label="Gönder" title="Gönder">➤</button>
 </div>
 </div>
+<div id="d8-note-actionmenu">
+<div class="d8-note-am-item" onclick="d8NoteMenuAction('edit')">✏️ Düzenle</div>
+<div class="d8-note-am-sep"></div>
+<div class="d8-note-am-item danger" onclick="d8NoteMenuAction('delete')">🗑 Sil</div>
+</div>
+</div>
 </div> <script>const izlenceler={'101':{ad:'Program Okuryazarlığı ve Türkiye Yüzyılı Maarif Modeli',ogretmen:'Dr. Reha Karaman',donem:'1. Dönem',saat:20,teori:2,uyg:0,driveLink:'https://drive.google.com/drive/u/0/folders/19U3VZFrfJ_hOKe48RilbOhZqASfBoW0a',amac:'Öğretim programları ile ilgili yaklaşım, model ve süreçleri kavrayan, bu unsurlar arasındaki ilişkileri analiz edebilen, farklı öğretim ortamlarına göre programı uyarlayabilen, program ögelerini analiz edebilen, Türkiye Yüzyılı Maarif Modeli\'ni bu kapsamda inceleyip değerlendirebilen bireyler yetiştirmek.',ciktilar:['Program kavramı, türleri, düzeyleri ve program okuryazarlığı kavramını açıklar.','Öğretim programlarının bileşenlerini kavrar.','Eğitim programı tasarımı ve modellerini açıklar.','Türkiye Yüzyılı Maarif Modeli\'ni değerlendirir.','Türkiye Yüzyılı Maarif Modeli\'nin öğretim programlarında yer alan öğrenme ve öğretme yaşantılarıyla ilgili farkındalık kazanır.'],haftalar:['Program Kavramı, Türleri, Düzeyleri ve Program Okuryazarlığı Kavramı','Öğretim Programlarının Bileşenleri','Eğitim Programı Tasarımı ve Modelleri','Türkiye Yüzyılı Maarif Modeli: Öğrenme ve Öğretme Yaşantıları','Öğrenme Çıktıları Çerçevesi','Programlar Arası Bileşenler','Öğrenme-Öğretme Yaşantıları','Farklılaştırma','Okul Temelli Planlama, Program Dışı Etkinlikler','Öğretmen Yansıtmaları'],yontemler:['Vaka Analizi','Karşılaştırmalı Analiz','Problem Temelli Öğrenme','Doküman Analizi','Eleştirel Metin Çözümlemesi'],kaynaklar:['Eğitimde Program Geliştirme – Özcan Demirel','MEB 2024-2028 Stratejik Planı','On İkinci Kalkınma Planı (2024-2028)','Öğretmenlik Mesleği Genel Yeterlikleri','Türkiye Yüzyılı Maarif Modeli – Öğretim Programları Ortak Metni'],degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'102':{ad:'Akademide Kültür ve Sanat Uygulamaları',ogretmen:'Dr. Tuba Kurt',donem:'1. Dönem',saat:20,teori:2,uyg:0,formLink:'https://drive.google.com/drive/folders/1SOGb0-OBVK5ef3LMlV89ngBzIIfKMb5o?usp=sharing',amac:'Kültür, sanat ve eğitim ilişkisini kuramsal çerçevede ele alarak kültür/sanat etkinliklerine katılım ve yansıtıcı değerlendirme becerisi kazandırmak.',ciktilar:['Kültür, sanat ve eğitim arasındaki ilişkiyi açıklar.','Kültür/sanat etkinliklerine katılım sağlar.','Yansıtıcı değerlendirme yapar.'],haftalar:['Kuramsal Çerçeve (Kültür, Sanat ve Eğitim İlişkisi)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Öğretmen Tecrübe Paylaşımı)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Eğitimde İyi Örnekler)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Türk Müziği)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Yönetici Buluşmaları)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Şehir Kültürü)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Biyografik Anlatı)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Sinema ve Film Gösterimi)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Öğretmen Akademileri)','Kültür/sanat etkinliğine katılım ve yansıtıcı değerlendirme (Akademi Konuşmaları)'],yontemler:['Katılımlı Gözlem','Yansıtıcı Değerlendirme','Tecrübe Paylaşımı'],kaynaklar:[],degerlendirme:[],notlar:'',flashcards:[]},'103':{ad:'Veri Temelli İzleme ve Değerlendirme',ogretmen:'Dr. Yeşim Ay Değirmenci',donem:'1. Dönem',saat:20,teori:2,uyg:0,amac:'Öğretmen adaylarına veri biliminin temelleri, verileri analiz etme ve bilgi çıkarma ile ilgili yöntemleri kavratmak.',ciktilar:['Öğretimin planlanması bağlamında ölçme değerlendirme araçlarını seçer.','Performans kriterlerini belirler.','Ölçme ve değerlendirme araçlarının tasarımını yapar.','Verileri toplar ve onları analiz ederek geri bildirim sağlar.','Öğrenme-öğretme tasarımlarını güncelleyerek sürekli iyileştirme sağlar.'],haftalar:['Veri Kavramı ve Veri Türleri','Öğretimde Kanıt ve İzleme','Eğitimde Kullanılan Ölçme Araçlarının Özellikleri','Eğitimde Değerlendirme ve Değerlendirme Türleri','Geliştirici (Biçimlendirici) Değerlendirme Süreci','Süreç Değerlendirme ve Araçları','Okul Dışı Öğrenme Ortamlarında Ölçme ve Değerlendirme','Geri Bildirim ve Düzeltme','Ölçme ve Değerlendirme Uygulamaları','Türkiye Yüzyılı Maarif Modeli\'nde Öğrenme Kanıtları'],yontemler:['Kavram Haritası','Vaka Analizi','Analoji (Benzetim) Kurma','Ders Planına Biçimlendirici Anlar Yerleştirme','Çıkış Bileti Uygulaması'],kaynaklar:['Eğitimde Ölçme ve Değerlendirme – Halil Tekin','Eğitimde Ölçme ve Değerlendirme – M. Fuat Turgut, Yaşar Baykul','Eğitimde Ölçme ve Değerlendirme – Nuri Doğan','Eğitimde Program Değerlendirme – Salih Uşun','Ölçme ve Değerlendirme – Hakan Atılgan, Adnan Kan, Burak Aydın'],driveLink:'https://drive.google.com/drive/folders/1IhVGEe6O0tskEbL_LivMyLs97Gc1gVim?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'104':{ad:'İnsan ve Öğrenme',ogretmen:'Dr. Mürşide Emiroğlu',donem:'1. Dönem',saat:30,teori:3,uyg:0,amac:'Öğretmen adaylarının insan doğası ve gelişimi ile öğrenme süreçlerini bütüncül bir yaklaşımla anlamalarını, gelişim ve öğrenme psikolojisi alanında edindikleri bilgileri, Türkiye Yüzyılı Maarif Modeli çerçevesinde eğitim uygulamalarına entegre ederek etkili öğretim stratejileri geliştirebilmelerini sağlamak.',ciktilar:['Psikoloji ve eğitim psikolojisinin temel kavramlarını anlar.','Çocuğun gelişim dönemleri, dil, kişilik, ahlak ve bilişsel gelişimi gibi alanlarda bilgi sahibi olur.','Öğrenmeyi etkileyen faktörleri fark eder.','Farklı öğrenme yaklaşımlarını öğrenir.','Öğrendiği bu teorileri sınıf ortamında uygulama becerisi kazanır.'],haftalar:['İnsan ve Öğrenme Kavramları','Öğrenmenin Eğitsel ve Kültürel Temelleri','Dil Gelişimi','Fiziksel ve Bilişsel Gelişim Özellikleri','Bireyin Duygusal ve Sosyal Gelişim Özellikleri','Bireysel Farklılıklar: Öğrenme Yaklaşımları','Öğrenme Kuramları','Öğrenmede Aile ve Çevre Faktörleri','Kültürel Duyarlılık','Türkiye Yüzyılı Maarif Modeli\'nde Öğrenen Profili'],yontemler:['Sokratik Sorgulama','Vaka Analizi','Belgesel/Film Çözümlemesi','Grup Tartışması','Vaka İncelemesi'],kaynaklar:['Çocuğunuzun Beynini Geliştirin – Dana Suskind','Çocuk ve Ergen Gelişimi – Helen Bee, Denise Boyd','Frames of Mind: The Theory of Multiple Intelligences – Howard Gardner','Gelişim, Öğrenme ve Öğretim – Nuray Senemoğlu','Mind in Society – Lev Vygotsky','Var mısın? – Doğan Cüceloğlu','Film: Can Dostum, 3 Idiots'],driveLink:'https://drive.google.com/drive/folders/1c9QL7cw6jYkJ4uzfXqEen2WFV8j2INdo?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'105':{ad:'Eğitimde Hak ve Sorumluluklar',ogretmen:'Uzm. Öğr. Sevgi Özder',donem:'1. Dönem',saat:30,teori:3,uyg:0,amac:'Eğitim sürecinde öğrenci, öğretmen, aile ve toplumun hak ve sorumluluklarını kavratmak, hak bilinci ve sorumluluk duygusunun önemini kavratmak, eğitimde adalet, insan hakları ve demokrasi, eşitlik ve ahlak ilkeleri çerçevesinde davranış ve karar alma becerisi kazandırmak.',ciktilar:['Eğitimde hak ve sorumluluk kavramlarını açıklar.','Öğretmen, öğrenci, aile ve toplumun rollerini ahlaki çerçevede değerlendirir.','Ailenin ve toplumun eğitim sürecindeki katkılarını analiz eder.','Türkiye\'de eğitim hakkını engelleyen politik yaptırımları eleştirel olarak değerlendirir.','Eğitimde adalet, eşitlik ve ahlak ilkelerini uygulama becerisi kazanır.','Hak ve sorumluluk çerçevesinde problem çözme ve karar alma becerilerini geliştirir.','Eğitim hukuku ve yönetmeliklerini hak-sorumluluk bağlamında analiz eder.'],haftalar:['Eğitimde Hak ve Sorumluluk Kavramı','Öğretmen Hakları, Sorumlulukları ve Meslek Ahlakı','Öğrenci Hak ve Sorumlulukları','Ebeveynlerin Hak ve Sorumlulukları','Toplumsal Hak ve Sorumluluklar','Türkiye\'de Eğitim Hakkını Engelleyen Politik Uygulamalar','Demokrasi, İnsan Hakları ve Özgürlükler Bağlamında Eğitimde Engellerin Kaldırılması','Eğitim Mevzuatı 1: 222 ve 657 Sayılı Kanunlar','Eğitim Mevzuatı 2: 1739 ve 7528 Sayılı Kanunlar','Hak ve Sorumluluklarla İlgili Tartışma, Sunum ve Vaka Çalışmaları'],yontemler:['Ders Anlatımı','Tartışma','Örnek Olay Analizi','Vaka Çalışmaları','Problem Çözme','Etik Senaryolar'],kaynaklar:['Bitmeyen Gece – Mithat Enç','Eğitimde Dönüşüm – SETA','Eğitim Hukuku – Murat Bülbül','Eğitim Hukuku – Yasemin Karaman Kepenekci ve Pelin Taşkın','İlk Öğretmen – Cengiz Aytmatov','Türkiye\'nin Maarif Davası – Nurettin Topçu'],driveLink:'https://drive.google.com/drive/folders/1piV571qrIOiqeb0yhLiRWj2GXkJ5-aon?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'106':{ad:'Türk Kültürünün Kurucu Metinleri',ogretmen:'Dr. Hatice Gerekten',donem:'1. Dönem',saat:20,teori:2,uyg:0,amac:'Edebî metinleri bir kültür, değer ve kimlik aktarım aracı olarak analiz etmeyi öğretmek; Türk-İslam medeniyetinin düşünsel ve ahlaki kodlarını taşıyan kurucu edebî metinleri eğitim bağlamında değerlendirmek; öğretmen adaylarında edebî eserleri kültür temelli öğretim materyali olarak kullanma becerisi geliştirmek.',ciktilar:['Edebî metinlerin kültür ve eğitimdeki rolünü açıklar.','Türk-İslam düşüncesinde "kurucu metin" kavramını tanımlar.','Kutadgu Bilig, Risâletü\'n-Nushiyye, Mesnevi gibi eserleri eğitim açısından yorumlar.','Edebî metinlerdeki değer, erdem, insan ve toplum anlayışını çözümler.','Modern öğretimde edebî metinleri pedagojik materyal olarak kullanır.'],haftalar:['Kurucu Metin Kavramı ve Orhun Abideleri','Kutadgu Bilig','Dîvânu Lugâti\'t-Türk','Mesnevi – Mevlana','Risâletü\'n-Nushiyye','Mevlidi Nebi – Süleyman Çelebi','Dede Korkut Hikâyeleri','Seyahatname – Evliya Çelebi','Bâkî Divanı','Safahat'],yontemler:['Ders Anlatımı','Metin Çözümlemesi','Tartışma','Yorumlama Oturumları','Edebî Okuma Atölyeleri','Drama','Karşılaştırmalı Metin İncelemeleri'],kaynaklar:['Orhun Abideleri','Kutadgu Bilig','Dîvânu Lugâti\'t-Türk','Mesnevi','Mevlidi Nebi – Süleyman Çelebi','Dede Korkut Hikâyeleri','Safahat – Mehmet Akif Ersoy','Seyahatname – Evliya Çelebi','Yûnus Emre Divanı'],driveLink:'https://drive.google.com/drive/folders/1qmMQbtFkdI4o92kTJPnD4b99pKfQN78M?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[]},'107':{ad:'Türkçenin Söz Varlığı ve Maarif Sözlüğü',ogretmen:'Dr. Akife Kurt',donem:'1. Dönem',saat:20,teori:2,uyg:0,amac:'Türkçenin söz varlığını tarihî ve kültürel boyutuyla kavramak, kelime ve kavram öğretimi yöntemlerini kullanmak, sözlük kullanma alışkanlığı kazanmak, maarif ile ilgili kavramları öğrenmek, öğrencilerin söz varlığını geliştirecek etkinlikler yürütmek.',ciktilar:['Türkçenin söz varlığının tarihsel gelişimini açıklar.','Türkçenin kültürel derinliğini fark eder.','Kelime öğretim yöntemlerini kavrar.','Sözlük kullanma alışkanlığı kazanır.','Maarif ile ilgili kavramları kullanır.','Söz varlığı gelişimini sağlayacak etkinlikler düzenler.'],haftalar:['Söz Varlığının Temel Kavramları','Tarihî Süreçte Türkçenin Söz Varlığı','Deyim, Atasözü ve Kalıplaşmış İfadeler','Sözlük Bilimi ve Türk Sözlük Geleneği','Sözlük Kullanımı','Maarif Sözlüğü','Kelime Öğretimi ve Önemi','Kelime Öğretim Yöntem ve Teknikleri','Dijital Çağda Türkçenin Kullanımı','Türkiye Yüzyılı Maarif Modeli, Söz Varlığı Gelişimi Okul Etkinlikleri'],yontemler:['Doküman Analizi','Problem Temelli Öğrenme','Karşılaştırmalı Analiz','Kavram Haritası','Eleştirel Metin Çözümlemesi'],kaynaklar:['Anlambilim – Doğan Aksan','Türkçenin Gücü – Doğan Aksan','İki Dirhem Bir Çekirdek – İskender Pala','Kuramdan Uygulamaya Kelime Öğretimi – Cafer Çarkıt, Hasan Kurnaz','Osmanlıca, Türkçe, Uydurmaca – Peyami Safa'],driveLink:'https://drive.google.com/drive/folders/1KcXNYOMWEKcKgvIVoNzzeYwfp3091-0p?usp=drive_link',degerlendirme:[{ad:'1. Sınav',oran:'%50'},{ad:'2. Sınav',oran:'%50'}],notlar:'',flashcards:[
 {q:'Bergenholtz\u2019a göre sözlük nedir?',a:'İki temel biçimde tanımlar. İşlevsel tanım: metin anlama, yazma ve çeviri süreçlerinde başvurulan temel kaynak. İçeriksel tanım: sözcükler, dil ögeleri ve ek metinler hakkında çeşitli bilgiler barındıran kaynak. Bu tanımlardan hareketle sözlüğün çoklu bir yapıya sahip olduğu söylenir.'},
 {q:'Sözlükbilimi nedir ve hangi iki ana kola ayrılır?',a:'Sözlükleri ve başvuru kaynaklarını inceleyen akademik ve mesleki alandır. Uygulamalı sözlükbilim: sözlük hazırlama süreciyle ilgilenir (veri toplama, tanımlama, sunum). Teorik sözlükbilim: sözlüklerin tarihi, tipolojisi, eleştirisi ve kullanımı gibi konuları araştırır.'},
@@ -755,6 +770,35 @@ function d8NoteDateLabel(ts){
 }
 function d8NoteTimeLabel(ts){var d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 function d8AutosizeTA(el,max){if(!el)return;el.style.height='auto';el.style.height=Math.min(el.scrollHeight,max||160)+'px';}
+window._d8BackStack=[];
+window._d8HandlingPopstate=false;
+function d8PushScreen(name){
+  window._d8BackStack.push(name);
+  try{ history.pushState({d8Screen:name}, '', location.href); }catch(e){}
+}
+function d8NotifyScreenClosed(name){
+  var idx=window._d8BackStack.lastIndexOf(name);
+  if(idx===-1)return;
+  window._d8BackStack.splice(idx,1);
+  if(!window._d8HandlingPopstate){
+    try{ history.back(); }catch(e){}
+  }
+}
+function d8CloseScreenByName(name){
+  if(name==='notes'&&typeof window.d8CloseNotesPage==='function')window.d8CloseNotesPage();
+  else if(name==='modal'&&typeof closeModalDirect==='function')closeModalDirect();
+  else if(name==='screensaver'&&typeof window.closeScreensaver==='function')window.closeScreensaver();
+  else if(name==='etkinlik'&&typeof window.d8ActCloseOverlay==='function')window.d8ActCloseOverlay();
+  else if(name==='wolf'&&typeof window.d8WolfCloseOverlay==='function')window.d8WolfCloseOverlay();
+}
+window.addEventListener('popstate',function(){
+  window._d8HandlingPopstate=true;
+  if(window._d8BackStack.length){
+    var top=window._d8BackStack[window._d8BackStack.length-1];
+    d8CloseScreenByName(top);
+  }
+  window._d8HandlingPopstate=false;
+});
 if(document.fonts && document.fonts.ready){
   document.fonts.ready.then(function(){
     var ta=document.getElementById('d8np-input');
@@ -803,10 +847,9 @@ function renderNotlarContent(kod){
       var dk=d8NoteDateKey(n.createdAt);
       if(dk!==lastKey){html+='<div class="d8-note-date-sep"><span>'+d8NoteDateLabel(n.createdAt)+'</span></div>';lastKey=dk;}
       var edited=n.updatedAt && n.updatedAt!==n.createdAt;
-      html+='<div class="d8-note-card" data-note-id="'+n.id+'" onclick="d8NoteEditStart(\''+n.id+'\')">'
+      html+='<div class="d8-note-card" data-note-id="'+n.id+'">'
           +'<div class="d8-note-view-text">'+d8NoteTextToHtml(n.text)+'</div>'
-          +'<div class="d8-note-meta-row"><span class="d8-note-time">'+d8NoteTimeLabel(n.updatedAt||n.createdAt)+(edited?' · düzenlendi':'')+'</span>'
-          +'<button class="d8-note-btn-danger" onclick="event.stopPropagation();d8DeleteNote(\''+n.id+'\')" title="Sil">🗑</button></div>'
+          +'<div class="d8-note-meta-row"><span class="d8-note-time">'+d8NoteTimeLabel(n.updatedAt||n.createdAt)+(edited?' · düzenlendi':'')+'</span></div>'
         +'</div>';
     });
   }
@@ -815,10 +858,75 @@ function renderNotlarContent(kod){
     requestAnimationFrame(function(){var sc=document.getElementById('d8np-scroll');if(sc)sc.scrollTop=sc.scrollHeight;});
   }
 }
+var D8_LONGPRESS_MS=450;
+var _d8LPTimer=null,_d8LPMoved=false,_d8LPId=null,_d8LPX=0,_d8LPY=0;
+function d8NoteLPPoint(ev){return ev.touches&&ev.touches[0]?ev.touches[0]:ev;}
+function d8NoteLPStart(ev){
+  var card=ev.target.closest&&ev.target.closest('.d8-note-card');
+  if(!card)return;
+  var id=card.getAttribute('data-note-id');
+  if(window._d8NoteEditingId===id)return;
+  _d8LPMoved=false;_d8LPId=id;
+  var p=d8NoteLPPoint(ev);_d8LPX=p.clientX;_d8LPY=p.clientY;
+  if(_d8LPTimer)clearTimeout(_d8LPTimer);
+  _d8LPTimer=setTimeout(function(){
+    if(!_d8LPMoved){
+      if(navigator.vibrate)try{navigator.vibrate(12);}catch(e){}
+      d8NoteOpenMenu(_d8LPId,_d8LPX,_d8LPY);
+    }
+  },D8_LONGPRESS_MS);
+}
+function d8NoteLPMove(){_d8LPMoved=true;if(_d8LPTimer){clearTimeout(_d8LPTimer);_d8LPTimer=null;}}
+function d8NoteLPEnd(){if(_d8LPTimer){clearTimeout(_d8LPTimer);_d8LPTimer=null;}}
+function d8NoteAttachLongPress(){
+  var sc=document.getElementById('d8np-scroll');
+  if(!sc||sc._d8LPBound)return;
+  sc._d8LPBound=true;
+  sc.addEventListener('touchstart',d8NoteLPStart,{passive:true});
+  sc.addEventListener('touchmove',d8NoteLPMove,{passive:true});
+  sc.addEventListener('touchend',d8NoteLPEnd);
+  sc.addEventListener('touchcancel',d8NoteLPEnd);
+  sc.addEventListener('mousedown',d8NoteLPStart);
+  sc.addEventListener('mousemove',d8NoteLPMove);
+  sc.addEventListener('mouseup',d8NoteLPEnd);
+  sc.addEventListener('mouseleave',d8NoteLPEnd);
+  sc.addEventListener('contextmenu',function(ev){
+    var card=ev.target.closest&&ev.target.closest('.d8-note-card');
+    if(card){ev.preventDefault();d8NoteOpenMenu(card.getAttribute('data-note-id'),ev.clientX,ev.clientY);}
+  });
+}
+window._d8NoteMenuId=null;
+function d8NoteOpenMenu(id,x,y){
+  var menu=document.getElementById('d8-note-actionmenu');if(!menu)return;
+  window._d8NoteMenuId=id;
+  menu.classList.add('open');
+  var mw=menu.offsetWidth||150,mh=menu.offsetHeight||96;
+  var vx=Math.min(x,window.innerWidth-mw-8);
+  var vy=Math.min(y,window.innerHeight-mh-8);
+  menu.style.left=Math.max(8,vx)+'px';
+  menu.style.top=Math.max(8,vy)+'px';
+}
+function d8NoteCloseMenu(){
+  var menu=document.getElementById('d8-note-actionmenu');if(menu)menu.classList.remove('open');
+  window._d8NoteMenuId=null;
+}
+function d8NoteMenuAction(action){
+  var id=window._d8NoteMenuId;
+  d8NoteCloseMenu();
+  if(!id)return;
+  if(action==='edit')d8NoteEditStart(id);
+  else if(action==='delete')window.d8DeleteNote(id);
+}
+document.addEventListener('click',function(e){
+  var menu=document.getElementById('d8-note-actionmenu');
+  if(menu&&menu.classList.contains('open')&&!menu.contains(e.target))d8NoteCloseMenu();
+});
+d8NoteAttachLongPress();
 function d8NoteEditStart(id){
   if(window._d8NoteEditingId===id)return;
   var card=document.querySelector('.d8-note-card[data-note-id="'+id+'"]');if(!card)return;
-  var note=(window._d8Notes||[]).find(function(n){return n.id===id;});if(!note)return;
+  var kod=window._d8NotesPageKod;
+  var note=(kod?d8GetLessonNotes(kod):[]).find(function(n){return n.id===id;});if(!note)return;
   window._d8NoteEditingId=id;
   card.innerHTML='<textarea class="d8-note-textarea" id="d8-note-edit-ta"></textarea>'
     +'<div class="d8-note-add-row">'
@@ -954,9 +1062,10 @@ window.d8OpenNotesPage=function(kod){
   document.getElementById('d8np-title').textContent=d.ad;
   document.getElementById('d8np-sub').textContent=d.ogretmen||'';
   var modalOv=document.getElementById('modal-overlay');
-  if(modalOv&&modalOv.classList.contains('open')){modalOv.classList.remove('open');}
+  if(modalOv&&modalOv.classList.contains('open')){modalOv.classList.remove('open');var _mi=window._d8BackStack.lastIndexOf('modal');if(_mi>-1)window._d8BackStack.splice(_mi,1);}
   renderNotlarContent(kod);
   document.getElementById('d8-notes-overlay').classList.add('open');
+  d8PushScreen('notes');
   var ta=document.getElementById('d8np-input');if(ta){ta.value='';d8AutosizeTA(ta,100000);}
   document.body.style.overflow='hidden';
   d8NPPinViewport();
@@ -969,6 +1078,7 @@ window.d8CloseNotesPage=function(){
   ov.classList.remove('open');
   ov.style.height='';ov.style.top='';
   document.body.style.overflow='';
+  d8NotifyScreenClosed('notes');
 };
 document.addEventListener('keydown',function(e){
   if(!window._d8NotesPageKod)return;
@@ -1057,12 +1167,12 @@ if(d.yontemler&&d.yontemler.length){html+=`<div class="modal-section"><h3>Yönte
 html+='</div>';document.getElementById('modal-body').innerHTML=html;}
 function openModal(kod){const d=izlenceler[kod];if(!d)return;_currentModalKod=kod;_currentModalTab='izlence';window._d8CurrentModalKod=kod;window._d8CurrentModalTab='izlence';document.getElementById('modal-title').textContent=d.ad;if(kod==='111'){document.getElementById('modal-meta').innerHTML=`<span>📅 ${d.donem}</span><span>🏫 10 hafta · Saha Uygulaması</span><span>📊 Değerlendirme: %100 Uygulama</span>`;}else{document.getElementById('modal-meta').innerHTML=`<span>👤 ${d.ogretmen}</span><span>📅 ${d.donem}</span><span>⏱ ${d.saat} saat</span><span>📖 Teori: ${d.teori}h${d.uyg ? ' · Uygulama: '+d.uyg+'h' : ''}</span>`;}
 document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-izlence').classList.add('active');const tabIzlence=document.getElementById('tab-izlence');if(kod==='111'){tabIzlence.textContent='📋 Haftalık Konular';}else{tabIzlence.textContent='📋 İzlence';}
-renderIzlenceContent(kod);if(typeof d8UpdateNotlarTabBadge==='function')d8UpdateNotlarTabBadge(kod);document.getElementById('modal-overlay').classList.add('open');document.body.style.overflow='hidden';}
+renderIzlenceContent(kod);if(typeof d8UpdateNotlarTabBadge==='function')d8UpdateNotlarTabBadge(kod);document.getElementById('modal-overlay').classList.add('open');d8PushScreen('modal');document.body.style.overflow='hidden';}
 (function(){const el=document.createElement('div');el.id='band-popup';el.className='band-popup';document.body.appendChild(el);})();function showBandPopup(e,text){const popup=document.getElementById('band-popup');popup.textContent=text;popup.classList.add('visible');const x=e.clientX;const y=e.clientY;const pw=popup.offsetWidth||220;const ph=popup.offsetHeight||60;const vw=window.innerWidth;const vh=window.innerHeight;let left=x+10;let top=y-ph-8;if(left+pw>vw-8)left=vw-pw-8;if(top<8)top=y+18;popup.style.left=left+'px';popup.style.top=top+'px';}
-document.addEventListener('click',()=>{const popup=document.getElementById('band-popup');if(popup)popup.classList.remove('visible');});function closeModalDirect(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('click',()=>{const popup=document.getElementById('band-popup');if(popup)popup.classList.remove('visible');});function closeModalDirect(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow='';d8NotifyScreenClosed('modal');}
 function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closeModalDirect();}
 const dayTimes={normal:['09:20–10:10','10:20–11:10','11:20–12:10','13:10–14:00','14:10–15:00','15:10–16:00'],cuma:['09:20–10:10','10:20–11:10','11:20–12:10','13:30–14:20','14:30–15:20','15:30–16:20']};function setDay(mode,btn){dayTimes[mode].forEach((t,i)=>{const el=document.getElementById('t'+(i+1));if(el)el.textContent=t;});buildMobileSchedule();}
-function showMain(id,btn){var overlay=document.getElementById('modal-overlay');if(overlay&&overlay.classList.contains('open')){overlay.classList.remove('open');document.body.style.overflow='';}
+function showMain(id,btn){var overlay=document.getElementById('modal-overlay');if(overlay&&overlay.classList.contains('open')){overlay.classList.remove('open');document.body.style.overflow='';d8NotifyScreenClosed('modal');}
 
 var dsb=document.getElementById('desktop-sidebar');if(dsb)dsb.style.display=(id==='profil')?'none':'';var _dlw=document.querySelector('.desktop-layout');if(_dlw)_dlw.style.display=(id==='profil')?'none':'flex';if(window.innerWidth>900)buildDesktopSidebar();if(id==='profil'){
   var profilContent=document.getElementById('profil-content');
@@ -2195,6 +2305,7 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
     ov.style.display='flex';
     document.body.style.overflow='hidden';
     document.documentElement.style.overflow='hidden';
+    d8PushScreen('screensaver');
     ssTick();
     ssTimer=setInterval(ssTick,1000);
   };
@@ -2206,6 +2317,7 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
     document.body.style.overflow='';
     document.documentElement.style.overflow='';
     if(ssTimer){clearInterval(ssTimer);ssTimer=null;}
+    d8NotifyScreenClosed('screensaver');
   };
 
   document.addEventListener('keydown',function(e){
@@ -2266,6 +2378,7 @@ window.d8ActOpenOverlay = function(){
   var ov = document.getElementById('d8-activity-overlay');
   ov.classList.add('open');
   document.body.style.overflow = 'hidden';
+  d8PushScreen('etkinlik');
   d8ActRenderLanding();
 };
 
@@ -2277,6 +2390,7 @@ window.d8ActCloseOverlay = function(){
     window.d8ActivityStopSession(window._d8ActState.code);
   }
   window._d8ActState = { mode: null, code: null };
+  d8NotifyScreenClosed('etkinlik');
 };
 
 function d8ActRenderLanding(){
@@ -2439,6 +2553,7 @@ function d8WolfEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'
 window.d8WolfOpenOverlay = function(){
   document.getElementById('d8-wolf-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  d8PushScreen('wolf');
   window._d8Wolf = {code:null, uid:null, isMod:false, myRole:null, myName:null, game:null, players:[], roleRevealed:false, nightPicked:false, votePicked:false, faliResult:null};
   d8WolfRenderLanding();
 };
@@ -2451,6 +2566,7 @@ window.d8WolfCloseOverlay = function(){
   }
   if(typeof window.d8WolfStopListening === 'function') window.d8WolfStopListening();
   window._d8Wolf = {code:null, uid:null, isMod:false, myRole:null, myName:null, game:null, players:[], roleRevealed:false, nightPicked:false, votePicked:false, faliResult:null};
+  d8NotifyScreenClosed('wolf');
 };
 
 function d8WolfSetTitle(t){ document.getElementById('d8-wolf-title').textContent = t; }
