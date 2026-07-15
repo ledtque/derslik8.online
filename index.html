@@ -342,7 +342,7 @@ else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})
 <button class="mtab active" onclick="showMain('program',this)"><span class="tab-icon">📋 </span><span class="tab-full">Ders Programı</span><span class="tab-short">Dersler</span></button>
 <button class="mtab" onclick="showMain('takvim',this)"><span class="tab-icon">📅 </span><span class="tab-full">Akademik Takvim</span><span class="tab-short">Takvim</span></button>
 <button class="mtab" onclick="showMain('sinav',this)"><span class="tab-icon">📝 </span><span class="tab-full">Sınav Programı</span><span class="tab-short">Sınavlar</span></button>
-<button class="mtab mtab-akbis" onclick="window.open('https://mebakbis.meb.gov.tr/ogretmen-adayi-paneli/sinav-puan-liste','_blank');return false;" title="MEB AKBİS Sınav Sonuçları"><span class="tab-icon">🏛️ </span><span class="tab-full">MEB AKBİS</span><span class="tab-short">AKBİS</span></button>
+<button class="mtab mtab-akbis" id="akbisTabBtn" onclick="toggleAkbisMenu(event)" title="MEB AKBİS — Ders Notları ve Eğitim Görevleri"><span class="tab-icon">🏛️ </span><span class="tab-full">MEB AKBİS</span><span class="tab-short">AKBİS</span></button>
 </div>
 <div class="main-tabs" style="margin-bottom:0;">
 <button class="mtab mtab-zamanlayici" onclick="openScreensaver();return false;" title="Sınıf Zamanlayıcısı — Tam ekran geri sayım"><span class="tab-icon">⏱️ </span><span class="tab-full">Zamanlayıcı</span><span class="tab-short">⏱️</span></button>
@@ -368,6 +368,24 @@ else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})
 <a class="ip-item" href="https://akademi.meb.gov.tr/meb_iys_dosyalar/2026_06/6a3d3ef96b742706200677_Okul_D%C4%B1%C5%9F%C4%B1_%C3%96%C4%9Frenme_Ortamlar%C4%B1_ve_Teknoloji_Destekli_%C3%96%C4%9Fretim_Uygulamalar%C4%B1.pdf" target="_blank" rel="noopener">
 <span class="ip-icon">📘</span>
 <span class="ip-body"><span class="ip-title">Okul Dışı Öğrenme Ortamları Yönergesi</span><span class="ip-sub">Okul Dışı Öğrenme Ortamları ve Teknoloji Destekli Öğretim Uygulamaları Yönergesi (PDF)</span></span>
+<span class="ip-ext">↗</span>
+</a>
+</div>
+<style>
+#akbis-picker-dropdown{position:fixed;z-index:9999;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(12,36,97,0.18);padding:8px;display:none;min-width:250px;max-width:calc(100vw - 24px);animation:tpDrop .22s cubic-bezier(0.22,1,0.36,1) both;}
+#akbis-picker-dropdown .ip-heading{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);padding:6px 10px 8px;}
+body.dark #akbis-picker-dropdown{background:#111827;border-color:#1E2840;}
+</style>
+<div id="akbis-picker-dropdown">
+<div class="ip-heading">MEB AKBİS</div>
+<a class="ip-item" href="https://mebakbis.meb.gov.tr/ogretmen-adayi-paneli/sinav-puan-liste" target="_blank" rel="noopener">
+<span class="ip-icon">📊</span>
+<span class="ip-body"><span class="ip-title">Ders Notları</span><span class="ip-sub">Sınav puan listesi / ders notları</span></span>
+<span class="ip-ext">↗</span>
+</a>
+<a class="ip-item" href="https://mebakbis.meb.gov.tr/ogretmen-adayi-paneli/egitim-gorevleri" target="_blank" rel="noopener">
+<span class="ip-icon">📋</span>
+<span class="ip-body"><span class="ip-title">Eğitim Görevleri</span><span class="ip-sub">Öğretmen adayı paneli görevleri</span></span>
 <span class="ip-ext">↗</span>
 </a>
 </div>
@@ -1812,7 +1830,7 @@ window.installToHomeScreen=function(){
 window._refreshPwaRow=function(){var pc=document.getElementById('profil-content');if(pc&&pc._built&&typeof buildProfilPage==='function')buildProfilPage();};
 })();</script> <!-- 📱 Mobil Alt Navigasyon -->
 <div id="mob-floating-pill" aria-live="polite" style="display:none"> <div id="session-pill-wrap-mob"></div>
-</div> <nav id="mobile-bottom-nav" aria-label="Ana menü"> <div id="mob-nav-btns"> <button class="mob-nav-btn active" id="mob-btn-program" onclick="showMain('program',this);syncMobNav('program')"> <span class="mob-nav-icon">📋</span> <span class="mob-nav-label">Dersler</span> </button> <button class="mob-nav-btn" id="mob-btn-takvim" onclick="showMain('takvim',this);syncMobNav('takvim')"> <span class="mob-nav-icon">📅</span> <span class="mob-nav-label">Takvim</span> </button> <button class="mob-nav-btn" id="mob-btn-sinav" onclick="showMain('sinav',this);syncMobNav('sinav')"> <span class="mob-nav-icon">📝</span> <span class="mob-nav-label">Sınavlar</span> </button> <button class="mob-nav-btn mob-nav-akbis" onclick="window.open('https://mebakbis.meb.gov.tr/ogretmen-adayi-paneli/sinav-puan-liste','_blank')"> <span class="mob-nav-icon">🏛️</span> <span class="mob-nav-label">AKBİS</span> </button><button class="mob-nav-btn" id="mob-btn-profil" onclick="showMain('profil',this);syncMobNav('profil')"> <span class="mob-nav-icon">👤</span> <span class="mob-nav-label">Profil</span> </button> </div>
+</div> <nav id="mobile-bottom-nav" aria-label="Ana menü"> <div id="mob-nav-btns"> <button class="mob-nav-btn active" id="mob-btn-program" onclick="showMain('program',this);syncMobNav('program')"> <span class="mob-nav-icon">📋</span> <span class="mob-nav-label">Dersler</span> </button> <button class="mob-nav-btn" id="mob-btn-takvim" onclick="showMain('takvim',this);syncMobNav('takvim')"> <span class="mob-nav-icon">📅</span> <span class="mob-nav-label">Takvim</span> </button> <button class="mob-nav-btn" id="mob-btn-sinav" onclick="showMain('sinav',this);syncMobNav('sinav')"> <span class="mob-nav-icon">📝</span> <span class="mob-nav-label">Sınavlar</span> </button> <button class="mob-nav-btn mob-nav-akbis" id="akbisMobBtn" onclick="toggleAkbisMenu(event)"> <span class="mob-nav-icon">🏛️</span> <span class="mob-nav-label">AKBİS</span> </button><button class="mob-nav-btn" id="mob-btn-profil" onclick="showMain('profil',this);syncMobNav('profil')"> <span class="mob-nav-icon">👤</span> <span class="mob-nav-label">Profil</span> </button> </div>
 </nav> <script>(function(){var stickyEl=document.getElementById('mob-sticky-day');if(!stickyEl)return;var ticking=false;var lastHeader=null;function getVisibleHeader(scope){var headers;if(scope==='sinav'){headers=document.querySelectorAll('.mob-day-header[data-sinav-gun]');}else{headers=document.querySelectorAll('#mobile-schedule .mob-day-header, #mobile-schedule-d2 .mob-day-header');}
 var best=null;for(var i=0;i<headers.length;i++){var rect=headers[i].getBoundingClientRect();if(rect.top<=2){best=headers[i];}else{break;}}
 return best;}
@@ -2364,6 +2382,63 @@ document.addEventListener('click',function(e){
 window.addEventListener('resize',function(){
   var dd=document.getElementById('ingilizce-picker-dropdown');
   if(dd)dd.style.display='none';
+});
+})();</script>
+<script>(function(){
+window.toggleAkbisMenu=function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  var dd=document.getElementById('akbis-picker-dropdown');
+  if(!dd)return;
+  var ing=document.getElementById('ingilizce-picker-dropdown');
+  if(ing)ing.style.display='none';
+  var open=dd.style.display!=='none'&&dd.style.display!=='';
+  if(open){dd.style.display='none';return;}
+  var btn=e.currentTarget||e.target;
+  var rect=btn.getBoundingClientRect();
+  dd.style.display='block';
+  var ddWidth=dd.offsetWidth||250;
+  var ddHeight=dd.offsetHeight||150;
+  var spaceBelow=window.innerHeight-rect.bottom;
+  if(spaceBelow<ddHeight+16){
+    var top=rect.top-ddHeight-8;
+    if(top<12)top=12;
+    dd.style.top=top+'px';
+  }else{
+    dd.style.top=(rect.bottom+8)+'px';
+  }
+  var left=rect.left+(rect.width/2)-(ddWidth/2);
+  if(left+ddWidth>window.innerWidth-12)left=window.innerWidth-ddWidth-12;
+  if(left<12)left=12;
+  dd.style.left=left+'px';
+  dd.style.right='auto';
+  return false;
+};
+document.addEventListener('click',function(e){
+  var dd=document.getElementById('akbis-picker-dropdown');
+  if(!dd)return;
+  var b1=document.getElementById('akbisTabBtn');
+  var b2=document.getElementById('akbisMobBtn');
+  if(!dd.contains(e.target)&&(!b1||!b1.contains(e.target))&&(!b2||!b2.contains(e.target))){
+    dd.style.display='none';
+  }
+});
+document.addEventListener('click',function(e){
+  var link=e.target.closest?e.target.closest('#akbis-picker-dropdown .ip-item'):null;
+  if(link){
+    var dd=document.getElementById('akbis-picker-dropdown');
+    if(dd)setTimeout(function(){dd.style.display='none';},60);
+  }
+},true);
+window.addEventListener('resize',function(){
+  var dd=document.getElementById('akbis-picker-dropdown');
+  if(dd)dd.style.display='none';
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    var dd=document.getElementById('akbis-picker-dropdown');
+    if(dd)dd.style.display='none';
+  }
 });
 })();</script>
 
