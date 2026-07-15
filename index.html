@@ -901,9 +901,9 @@ window.d8OpenNotesPage=function(kod){
   document.getElementById('d8np-sub').textContent=d.ogretmen||'';
   var modalOv=document.getElementById('modal-overlay');
   if(modalOv&&modalOv.classList.contains('open')){modalOv.classList.remove('open');}
-  var ta=document.getElementById('d8np-input');if(ta){ta.value='';d8AutosizeTA(ta,100000);}
   renderNotlarContent(kod);
   document.getElementById('d8-notes-overlay').classList.add('open');
+  var ta=document.getElementById('d8np-input');if(ta){ta.value='';d8AutosizeTA(ta,100000);}
   document.body.style.overflow='hidden';
   d8NPPinViewport();
   setTimeout(function(){var ta2=document.getElementById('d8np-input');if(ta2)ta2.focus();},260);
