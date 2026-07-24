@@ -757,7 +757,7 @@ body.dark #akbis-picker-dropdown{background:#111827;border-color:#1E2840;}
 <div id="d8np-compose">
 <div id="d8np-compose-inner">
 <textarea id="d8np-input" rows="1" placeholder="Not ekle…" oninput="d8NPComposeInput(this)" onkeydown="d8NPComposeKeydown(event)" onfocus="d8NPOnInputFocus()"></textarea>
-<button id="d8np-send" onclick="d8NPSendNote()" aria-label="Gönder" title="Gönder">➤</button>
+<button id="d8np-send" onmousedown="event.preventDefault()" onclick="d8NPSendNote()" aria-label="Gönder" title="Gönder">➤</button>
 </div>
 </div>
 <div id="d8-note-actionmenu">
@@ -1080,7 +1080,7 @@ window.d8NPSendNote=async function(){
   var ta=document.getElementById('d8np-input');if(!ta)return;
   var text=ta.value.trim();if(!text)return;
   var kod=window._d8NotesPageKod;if(!kod)return;
-  ta.value='';d8AutosizeTA(ta,100000);ta.focus();
+  ta.value='';d8AutosizeTA(ta,100000);ta.focus();d8NPOnInputFocus();
   var now=Date.now();
   if(window._d8Uid){
     var fs=window.__d8fs;
