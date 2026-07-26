@@ -263,6 +263,25 @@ body.dark #d8np-header{border-color:#1E2840}
 body.dark #d8np-compose{border-color:#1E2840;background:#0B0F1C}
 body.dark #d8np-input{background:#111827;border-color:#1E2840;color:#E2E8F0}
 body.dark .d8-note-date-sep span{background:#111827;border-color:#1E2840}
+#d8np-body.select-mode .d8-note-card{cursor:pointer;transition:transform .12s,box-shadow .15s}
+#d8np-body.select-mode .d8-note-card.selected{box-shadow:0 0 0 2px var(--navy)}
+.d8-note-check{display:none;position:absolute;left:-32px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;border:2px solid var(--border);background:var(--white);align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0}
+#d8np-body.select-mode .d8-note-check{display:flex}
+.d8-note-card.selected .d8-note-check{background:var(--navy);border-color:var(--navy)}
+body.dark .d8-note-check{background:#111827;border-color:#1E2840}
+#d8np-select-bar{display:none;align-items:center;justify-content:space-between;width:100%;max-width:640px;gap:10px}
+#d8np-select-bar.active{display:flex}
+#d8np-select-count{font-family:'Sora',sans-serif;font-size:13px;font-weight:600;color:var(--text);flex-shrink:0}
+.d8np-select-actions{display:flex;gap:8px}
+.d8np-select-actions button{border:none;border-radius:9px;padding:9px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;transition:filter .15s,opacity .15s}
+.d8np-select-actions button:active{transform:scale(0.96)}
+.d8np-select-actions button:disabled{opacity:0.4;cursor:default}
+.d8np-select-copy{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff}
+.d8np-select-delete{background:none;color:var(--red);border:1px solid var(--red)}
+.d8np-select-delete.confirm-armed{background:var(--red);color:#fff}
+.d8np-select-cancel{background:var(--bg);color:var(--muted)}
+body.dark .d8np-select-cancel{background:#111827;color:#94A3B8}
+@media(max-width:480px){#d8np-select-bar{flex-wrap:wrap}.d8np-select-actions{width:100%}.d8np-select-actions button{flex:1}}
 body.dark .d8np-back{background:#111827;color:#94A3B8}
 body.dark .d8np-back:hover{background:#1E2840}
 #d8-activity-overlay{display:none;position:fixed;inset:0;z-index:100000;background:var(--bg);flex-direction:column;overflow-y:auto}
@@ -774,9 +793,19 @@ body.dark #akbis-picker-dropdown{background:#111827;border-color:#1E2840;}
 <textarea id="d8np-input" rows="1" placeholder="Not ekle…" oninput="d8NPComposeInput(this)" onkeydown="d8NPComposeKeydown(event)" onfocus="d8NPOnInputFocus()"></textarea>
 <button id="d8np-send" onmousedown="event.preventDefault()" onclick="d8NPSendNote()" aria-label="Gönder" title="Gönder">➤</button>
 </div>
+<div id="d8np-select-bar">
+<span id="d8np-select-count">0 seçili</span>
+<div class="d8np-select-actions">
+<button class="d8np-select-copy" onclick="d8NoteCopySelected()">📋 Kopyala</button>
+<button class="d8np-select-delete" onclick="d8NoteDeleteSelected()">🗑 Sil</button>
+<button class="d8np-select-cancel" onclick="d8NoteExitSelectMode()">İptal</button>
+</div>
+</div>
 </div>
 <div id="d8-note-actionmenu">
 <div class="d8-note-am-item" onclick="d8NoteMenuAction('copy')">📋 Kopyala</div>
+<div class="d8-note-am-sep"></div>
+<div class="d8-note-am-item" onclick="d8NoteMenuAction('select')">☑️ Seç</div>
 <div class="d8-note-am-sep"></div>
 <div class="d8-note-am-item" onclick="d8NoteMenuAction('edit')">✏️ Düzenle</div>
 <div class="d8-note-am-sep"></div>
@@ -926,31 +955,46 @@ function renderNotlarContent(kod){
       if(dk!==lastKey){html+='<div class="d8-note-date-sep"><span>'+d8NoteDateLabel(n.createdAt)+'</span></div>';lastKey=dk;}
       var edited=n.updatedAt && n.updatedAt!==n.createdAt;
       html+='<div class="d8-note-card" data-note-id="'+n.id+'">'
+          +'<div class="d8-note-check">✓</div>'
           +'<div class="d8-note-view-text">'+d8NoteTextToHtml(n.text)+'</div>'
           +'<div class="d8-note-meta-row"><span class="d8-note-time">'+d8NoteTimeLabel(n.updatedAt||n.createdAt)+(edited?' · düzenlendi':'')+'</span></div>'
         +'</div>';
     });
   }
   body.innerHTML=html;
+  body.classList.toggle('select-mode', !!window._d8NoteSelectMode);
+  if(window._d8NoteSelectMode){
+    Object.keys(window._d8SelectedNoteIds||{}).forEach(function(id){
+      var card=body.querySelector('.d8-note-card[data-note-id="'+id+'"]');
+      if(card)card.classList.add('selected');
+    });
+  }
   if(window._d8NoteEditingId===null){
     requestAnimationFrame(function(){var sc=document.getElementById('d8np-scroll');if(sc)sc.scrollTop=sc.scrollHeight;});
   }
 }
 var D8_LONGPRESS_MS=450;
-var _d8LPTimer=null,_d8LPMoved=false,_d8LPId=null,_d8LPX=0,_d8LPY=0;
+var _d8LPTimer=null,_d8LPMoved=false,_d8LPId=null,_d8LPX=0,_d8LPY=0,_d8LPCard=null,_d8LPIsTouch=false;
 function d8NoteLPPoint(ev){return ev.touches&&ev.touches[0]?ev.touches[0]:ev;}
 function d8NoteLPStart(ev){
   var card=ev.target.closest&&ev.target.closest('.d8-note-card');
   if(!card)return;
+  if(window._d8NoteSelectMode)return;
   var id=card.getAttribute('data-note-id');
   if(window._d8NoteEditingId===id)return;
-  _d8LPMoved=false;_d8LPId=id;
+  _d8LPMoved=false;_d8LPId=id;_d8LPCard=card;_d8LPIsTouch=(ev.type==='touchstart');
   var p=d8NoteLPPoint(ev);_d8LPX=p.clientX;_d8LPY=p.clientY;
   if(_d8LPTimer)clearTimeout(_d8LPTimer);
   _d8LPTimer=setTimeout(function(){
     if(!_d8LPMoved){
       if(navigator.vibrate)try{navigator.vibrate(12);}catch(e){}
-      d8NoteOpenMenu(_d8LPId,_d8LPX,_d8LPY);
+      if(_d8LPIsTouch){
+        window._d8LPSuppressNextClick=true;
+        setTimeout(function(){window._d8LPSuppressNextClick=false;},600);
+        d8NoteEnterSelectMode(_d8LPId,_d8LPCard);
+      }else{
+        d8NoteOpenMenu(_d8LPId,_d8LPX,_d8LPY);
+      }
     }
   },D8_LONGPRESS_MS);
 }
@@ -968,11 +1012,102 @@ function d8NoteAttachLongPress(){
   sc.addEventListener('mousemove',d8NoteLPMove);
   sc.addEventListener('mouseup',d8NoteLPEnd);
   sc.addEventListener('mouseleave',d8NoteLPEnd);
+  sc.addEventListener('click',function(ev){
+    if(window._d8LPSuppressNextClick){window._d8LPSuppressNextClick=false;return;}
+    if(!window._d8NoteSelectMode)return;
+    var card=ev.target.closest&&ev.target.closest('.d8-note-card');
+    if(card)d8NoteToggleSelect(card.getAttribute('data-note-id'),card);
+  });
   sc.addEventListener('contextmenu',function(ev){
     var card=ev.target.closest&&ev.target.closest('.d8-note-card');
-    if(card){ev.preventDefault();d8NoteOpenMenu(card.getAttribute('data-note-id'),ev.clientX,ev.clientY);}
+    if(!card)return;
+    ev.preventDefault();
+    if(window._d8NoteSelectMode){d8NoteToggleSelect(card.getAttribute('data-note-id'),card);return;}
+    d8NoteOpenMenu(card.getAttribute('data-note-id'),ev.clientX,ev.clientY);
   });
   
+}
+window._d8NoteSelectMode=false;
+window._d8SelectedNoteIds={};
+function d8NoteEnterSelectMode(initialId,cardEl){
+  window._d8NoteSelectMode=true;
+  window._d8SelectedNoteIds={};
+  var body=document.getElementById('d8np-body');
+  var bar=document.getElementById('d8np-select-bar');
+  var composeInner=document.getElementById('d8np-compose-inner');
+  if(body)body.classList.add('select-mode');
+  if(bar)bar.classList.add('active');
+  if(composeInner)composeInner.style.display='none';
+  if(initialId){
+    if(!cardEl)cardEl=document.querySelector('.d8-note-card[data-note-id="'+initialId+'"]');
+    d8NoteToggleSelect(initialId,cardEl);
+  }else{
+    d8NoteUpdateSelectBar();
+  }
+}
+function d8NoteExitSelectMode(){
+  d8NoteResetDeleteArm();
+  window._d8NoteSelectMode=false;
+  window._d8SelectedNoteIds={};
+  var body=document.getElementById('d8np-body');
+  var bar=document.getElementById('d8np-select-bar');
+  var composeInner=document.getElementById('d8np-compose-inner');
+  if(body){body.classList.remove('select-mode');body.querySelectorAll('.d8-note-card.selected').forEach(function(c){c.classList.remove('selected');});}
+  if(bar)bar.classList.remove('active');
+  if(composeInner)composeInner.style.display='flex';
+}
+function d8NoteToggleSelect(id,cardEl){
+  if(!id)return;
+  if(window._d8SelectedNoteIds[id]){
+    delete window._d8SelectedNoteIds[id];
+    if(cardEl)cardEl.classList.remove('selected');
+  }else{
+    window._d8SelectedNoteIds[id]=true;
+    if(cardEl)cardEl.classList.add('selected');
+  }
+  d8NoteUpdateSelectBar();
+}
+function d8NoteUpdateSelectBar(){
+  d8NoteResetDeleteArm();
+  var count=Object.keys(window._d8SelectedNoteIds||{}).length;
+  var countEl=document.getElementById('d8np-select-count');
+  if(countEl)countEl.textContent=count+' seçili';
+  var copyBtn=document.querySelector('.d8np-select-copy');
+  var delBtn=document.querySelector('.d8np-select-delete');
+  if(copyBtn)copyBtn.disabled=count===0;
+  if(delBtn)delBtn.disabled=count===0;
+}
+function d8NoteCopySelected(){
+  var ids=Object.keys(window._d8SelectedNoteIds||{});
+  if(!ids.length)return;
+  var kod=window._d8NotesPageKod;
+  var notes=(kod?d8GetLessonNotes(kod):[]);
+  var selected=notes.filter(function(n){return window._d8SelectedNoteIds[n.id];});
+  selected.sort(function(a,b){return (a.createdAt||0)-(b.createdAt||0);});
+  var text=selected.map(function(n){return n.text||'';}).join('\n\n');
+  d8CopyPlainText(text,selected.length+' not kopyalandı');
+  d8NoteExitSelectMode();
+}
+function d8NoteResetDeleteArm(){
+  var delBtn=document.querySelector('.d8np-select-delete');
+  if(!delBtn)return;
+  if(delBtn._armTimeout){clearTimeout(delBtn._armTimeout);delBtn._armTimeout=null;}
+  delBtn.classList.remove('confirm-armed');
+  delBtn.textContent='🗑 Sil';
+}
+function d8NoteDeleteSelected(){
+  var ids=Object.keys(window._d8SelectedNoteIds||{});
+  if(!ids.length)return;
+  var delBtn=document.querySelector('.d8np-select-delete');
+  if(delBtn&&!delBtn.classList.contains('confirm-armed')){
+    delBtn.classList.add('confirm-armed');
+    delBtn.textContent='Emin misin? Tekrar bas';
+    delBtn._armTimeout=setTimeout(function(){d8NoteResetDeleteArm();},2500);
+    return;
+  }
+  d8NoteResetDeleteArm();
+  ids.forEach(function(id){if(typeof window.d8DeleteNote==='function')window.d8DeleteNote(id);});
+  d8NoteExitSelectMode();
 }
 window._d8NoteMenuId=null;
 function d8NoteOpenMenu(id,x,y){
@@ -989,11 +1124,7 @@ function d8NoteCloseMenu(){
   var menu=document.getElementById('d8-note-actionmenu');if(menu)menu.classList.remove('open');
   window._d8NoteMenuId=null;
 }
-function d8NoteCopyText(id){
-  var kod=window._d8NotesPageKod;
-  var note=(kod?d8GetLessonNotes(kod):[]).find(function(n){return n.id===id;});
-  if(!note)return;
-  var text=note.text||'';
+function d8CopyPlainText(text,msg){
   function fallbackCopy(t){
     var ta=document.createElement('textarea');
     ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
@@ -1008,11 +1139,17 @@ function d8NoteCopyText(id){
   }
   if(navigator.vibrate)try{navigator.vibrate(10);}catch(e){}
   var t=document.createElement('div');
-  t.textContent='Kopyalandı';
+  t.textContent=msg||'Kopyalandı';
   t.style.cssText='position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:rgba(15,23,42,0.92);color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:20px;z-index:200000;box-shadow:0 4px 16px rgba(0,0,0,0.25);pointer-events:none;transition:opacity .3s';
   document.body.appendChild(t);
   setTimeout(function(){t.style.opacity='0';},1100);
   setTimeout(function(){t.remove();},1450);
+}
+function d8NoteCopyText(id){
+  var kod=window._d8NotesPageKod;
+  var note=(kod?d8GetLessonNotes(kod):[]).find(function(n){return n.id===id;});
+  if(!note)return;
+  d8CopyPlainText(note.text||'');
 }
 function d8NoteMenuAction(action){
   var id=window._d8NoteMenuId;
@@ -1021,6 +1158,7 @@ function d8NoteMenuAction(action){
   if(action==='edit')d8NoteEditStart(id);
   else if(action==='delete')window.d8DeleteNote(id);
   else if(action==='copy')d8NoteCopyText(id);
+  else if(action==='select')d8NoteEnterSelectMode(id);
 }
 document.addEventListener('click',function(e){
   var menu=document.getElementById('d8-note-actionmenu');
@@ -1168,6 +1306,10 @@ window.d8OpenNotesPage=function(kod){
   var d=izlenceler[kod];if(!d)return;
   window._d8NotesPageKod=kod;
   window._d8NoteEditingId=null;
+  window._d8NoteSelectMode=false;
+  window._d8SelectedNoteIds={};
+  var selBar=document.getElementById('d8np-select-bar');if(selBar)selBar.classList.remove('active');
+  var composeInner=document.getElementById('d8np-compose-inner');if(composeInner)composeInner.style.display='flex';
   document.getElementById('d8np-title').textContent=d.ad;
   document.getElementById('d8np-sub').textContent=d.ogretmen||'';
   var modalOv=document.getElementById('modal-overlay');
