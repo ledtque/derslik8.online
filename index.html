@@ -4780,6 +4780,25 @@ td.td-full[data-fam="uygulama"] {
       dersHesabiBagla();
       D8.dekore();
 
+      /* 3-7 Ağustos 2026 arasında (II. Dönem Ara Sınav Haftası) sayfa açılışında
+         ilk gelen sekme Sınav Programı olsun; 8 Ağustos'tan itibaren otomatik
+         olarak normal davranışa (Ders Programı) döner. */
+      try {
+        var _bugun = new Date();
+        var _bugunIso = _bugun.getFullYear() + '-' +
+          String(_bugun.getMonth() + 1).padStart(2, '0') + '-' +
+          String(_bugun.getDate()).padStart(2, '0');
+        if (_bugunIso >= '2026-08-03' && _bugunIso <= '2026-08-07') {
+          var _sinavBtn = document.querySelector('.mtab[onclick*="\'sinav\'"]');
+          if (typeof window.showMain === 'function') {
+            window.showMain('sinav', _sinavBtn);
+          }
+          if (typeof window.syncMobNav === 'function') window.syncMobNav('sinav');
+        }
+      } catch (e) {
+        D8.say('warn', '[D8] sinav varsayılan sekme: ' + (e && e.message ? e.message : e));
+      }
+
       /* Tanılama: yalnızca localStorage.d8Debug='1' ya da ?d8debug ile */
       if (D8.hataAyiklama && D8.hataAyiklama()) {
         setTimeout(D8.guvenli(function () { D8.denetle(); }, 'denetim'), 1200);
