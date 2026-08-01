@@ -2925,7 +2925,12 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
       var sl=slots[i];
       if(nm>=toMin(sl.start)&&nm<toMin(sl.end))return sl;
     }
-    return slots[slots.length-1];
+    // Hiçbir slota denk gelmedi: ilk slottan önce mi, son slottan sonra mı?
+    var first=slots[0], last=slots[slots.length-1];
+    if(nm<toMin(first.start)){
+      return {id:'pre-auto',type:'pre',label:'BAŞLAMADI',start:'00:00',end:first.start};
+    }
+    return {id:'post-auto',type:'post',label:'BİTTİ',start:last.end,end:'23:59'};
   }
 
   var ssTimer=null;
@@ -3077,9 +3082,12 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
       bar.style.background='rgba(255,185,55,0.28)';
 
     } else if(sl.type==='pre'){
-      /* ── BAŞLAMADI — son 10dk kırmızı ── */
-      var remToStart=toMin('10:00')*60-ns;
-      var warnPre=remToStart<=600&&remToStart>0;
+      /* ── BAŞLAMADI — hedefe göre son X dk kırmızı (sınav: 10dk, ders: 20dk) ── */
+      var hedefM=toMin(sl.end);
+      var isExamPre=isSinavGunu(now);
+      var warnSecPre=isExamPre?600:1200; // sınav: son 10dk, ders: son 20dk
+      var remToStart=hedefM*60-ns;
+      var warnPre=remToStart<=warnSecPre&&remToStart>0;
       bg.style.background=warnPre?'linear-gradient(160deg,#1a0000 0%,#2d0505 50%,#1a0000 100%)':'#000';
       bg.style.transition='background 1.5s ease';
       badge.style.background=warnPre?'rgba(220,50,50,0.08)':'rgba(255,255,255,0.02)';
@@ -3087,17 +3095,23 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
       badge.style.color=warnPre?'rgba(255,120,120,0.75)':'rgba(255,255,255,0.2)';
       dot.style.background=warnPre?'rgba(220,80,80,0.7)':'rgba(255,255,255,0.15)';
       dot.style.animation=warnPre?'ss-pulse 1s ease-in-out infinite':'none';
-      timer.textContent=fmtSec(remToStart);
+      if(warnPre){
+        timer.textContent=fmtSec(remToStart);
+      } else {
+        /* Hedefe 20dk (veya sınavda 10dk) üzerinde süre varken saat:dakika olarak sakin göster */
+        var remMinPre=Math.max(0,Math.floor(remToStart/60));
+        timer.textContent=remMinPre>=60?(Math.floor(remMinPre/60)+'s '+p2(remMinPre%60)+'d'):(remMinPre+'d');
+      }
       timer.style.color=warnPre?'rgba(220,100,100,0.92)':'rgba(255,255,255,0.35)';
       timer.style.animation=warnPre?'ss-warn 1s ease-in-out infinite':'none';
       timer.style.textShadow='none';
       sub.style.color=warnPre?'rgba(220,100,100,0.35)':'rgba(255,255,255,0.15)';
-      sub.textContent='1. SINAVA KALAN';
+      sub.textContent=isExamPre?'1. SINAVA KALAN':'1. DERS BAŞLAMASINA KALAN';
       if(warnPre){
         bwrap.style.opacity='1';
-        bar.style.width=(Math.min(100,(600-remToStart)/600*100))+'%';
+        bar.style.width=(Math.min(100,(warnSecPre-remToStart)/warnSecPre*100))+'%';
         bar.style.background='rgba(200,60,60,0.45)';
-        bs.textContent='09:50'; be.textContent='10:00';
+        bs.textContent=fmtMin(hedefM-Math.floor(warnSecPre/60)); be.textContent=fmtMin(hedefM);
       } else {
         bwrap.style.opacity='0';
       }
