@@ -928,7 +928,7 @@ else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})
 <button class="mtab" onclick="showMain('takvim',this)"><span class="tab-icon">📅 </span><span class="tab-full">Akademik Takvim</span><span class="tab-short">Takvim</span></button>
 <button class="mtab" onclick="showMain('sinav',this)"><span class="tab-icon">📝 </span><span class="tab-full">Sınav Programı</span><span class="tab-short">Sınavlar</span></button>
 <button class="mtab mtab-akbis" id="akbisTabBtn" onclick="toggleAkbisMenu(event)" title="MEB AKBİS — Ders Notları ve Eğitim Görevleri"><span class="tab-icon">🏛️ </span><span class="tab-full">MEB AKBİS</span><span class="tab-short">AKBİS</span></button>
-<button class="mtab mtab-sunu" onclick="return d8OpenSunular()" title="Ders Sunuları — ortak Drive klasörü"><span class="tab-icon">📊 </span><span class="tab-full">Ders Sunuları</span><span class="tab-short">Sunular</span></button>
+<button class="mtab mtab-sunu" id="kaynaklarTabBtn" onclick="toggleKaynaklarMenu(event)" title="Kaynaklar — Ders Sunuları ve Öğretmen Notları"><span class="tab-icon">📚 </span><span class="tab-full">Kaynaklar</span><span class="tab-short">Kaynaklar</span></button>
 <button class="mtab" id="mtab-admin" style="display:none" onclick="showMain('admin',this)" title="Sadece admin hesabına özel"><span class="tab-icon">🛠️ </span><span class="tab-full">Admin</span><span class="tab-short">Admin</span></button>
 </div>
 <div class="main-tabs" style="margin-bottom:0;">
@@ -973,6 +973,24 @@ body.dark #akbis-picker-dropdown{background:#111827;border-color:#1E2840;}
 <a class="ip-item" href="https://mebakbis.meb.gov.tr/ogretmen-adayi-paneli/egitim-gorevleri" target="_blank" rel="noopener">
 <span class="ip-icon">📋</span>
 <span class="ip-body"><span class="ip-title">Eğitim Görevleri</span><span class="ip-sub">Öğretmen adayı paneli görevleri</span></span>
+<span class="ip-ext">↗</span>
+</a>
+</div>
+<style>
+#kaynaklar-picker-dropdown{position:fixed;z-index:9999;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(12,36,97,0.18);padding:8px;display:none;min-width:250px;max-width:calc(100vw - 24px);animation:tpDrop .22s cubic-bezier(0.22,1,0.36,1) both;}
+#kaynaklar-picker-dropdown .ip-heading{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);padding:6px 10px 8px;}
+body.dark #kaynaklar-picker-dropdown{background:#111827;border-color:#1E2840;}
+</style>
+<div id="kaynaklar-picker-dropdown">
+<div class="ip-heading">Kaynaklar</div>
+<a class="ip-item" href="https://drive.google.com/drive/u/0/folders/1Cvc_Jc-TYGhUEZaNXhl5F-NrxSK4Ac1Q?sort=13&amp;direction=a" target="_blank" rel="noopener">
+<span class="ip-icon">📊</span>
+<span class="ip-body"><span class="ip-title">Ders Sunuları</span><span class="ip-sub">Ortak Drive klasörü — tüm ders sunumları</span></span>
+<span class="ip-ext">↗</span>
+</a>
+<a class="ip-item" href="https://drive.google.com/drive/folders/1pCuPHQfnvEF9PdsPuIaPxKgz2bfd6WSz" target="_blank" rel="noopener">
+<span class="ip-icon">📝</span>
+<span class="ip-body"><span class="ip-title">M. Nazlıoğlu Notlar</span><span class="ip-sub">Öğretmen ders notları</span></span>
 <span class="ip-ext">↗</span>
 </a>
 </div>
@@ -2662,7 +2680,7 @@ window.installToHomeScreen=function(){
 window._refreshPwaRow=function(){var pc=document.getElementById('profil-content');if(pc&&pc._built&&typeof buildProfilPage==='function')buildProfilPage();};
 })();</script> <!-- 📱 Mobil Alt Navigasyon -->
 <div id="mob-floating-pill" aria-live="polite" style="display:none"> <div id="session-pill-wrap-mob"></div>
-</div> <nav id="mobile-bottom-nav" aria-label="Ana menü"> <div id="mob-nav-btns"> <button class="mob-nav-btn active" id="mob-btn-program" onclick="showMain('program',this);syncMobNav('program')"> <span class="mob-nav-icon">📋</span> <span class="mob-nav-label">Dersler</span> </button> <button class="mob-nav-btn" id="mob-btn-takvim" onclick="showMain('takvim',this);syncMobNav('takvim')"> <span class="mob-nav-icon">📅</span> <span class="mob-nav-label">Takvim</span> </button> <button class="mob-nav-btn" id="mob-btn-sinav" onclick="showMain('sinav',this);syncMobNav('sinav')"> <span class="mob-nav-icon">📝</span> <span class="mob-nav-label">Sınavlar</span> </button> <button class="mob-nav-btn mob-nav-akbis" id="akbisMobBtn" onclick="toggleAkbisMenu(event)"> <span class="mob-nav-icon">🏛️</span> <span class="mob-nav-label">AKBİS</span> </button><button class="mob-nav-btn" id="mob-btn-sunu" onclick="return d8OpenSunular()"> <span class="mob-nav-icon">📊</span> <span class="mob-nav-label">Sunular</span> </button><button class="mob-nav-btn" id="mob-btn-profil" onclick="showMain('profil',this);syncMobNav('profil')"> <span class="mob-nav-icon">👤</span> <span class="mob-nav-label">Profil</span> </button> </div>
+</div> <nav id="mobile-bottom-nav" aria-label="Ana menü"> <div id="mob-nav-btns"> <button class="mob-nav-btn active" id="mob-btn-program" onclick="showMain('program',this);syncMobNav('program')"> <span class="mob-nav-icon">📋</span> <span class="mob-nav-label">Dersler</span> </button> <button class="mob-nav-btn" id="mob-btn-takvim" onclick="showMain('takvim',this);syncMobNav('takvim')"> <span class="mob-nav-icon">📅</span> <span class="mob-nav-label">Takvim</span> </button> <button class="mob-nav-btn" id="mob-btn-sinav" onclick="showMain('sinav',this);syncMobNav('sinav')"> <span class="mob-nav-icon">📝</span> <span class="mob-nav-label">Sınavlar</span> </button> <button class="mob-nav-btn mob-nav-akbis" id="akbisMobBtn" onclick="toggleAkbisMenu(event)"> <span class="mob-nav-icon">🏛️</span> <span class="mob-nav-label">AKBİS</span> </button><button class="mob-nav-btn" id="kaynaklarMobBtn" onclick="toggleKaynaklarMenu(event)"> <span class="mob-nav-icon">📚</span> <span class="mob-nav-label">Kaynaklar</span> </button><button class="mob-nav-btn" id="mob-btn-profil" onclick="showMain('profil',this);syncMobNav('profil')"> <span class="mob-nav-icon">👤</span> <span class="mob-nav-label">Profil</span> </button> </div>
 </nav> <script>(function(){var stickyEl=document.getElementById('mob-sticky-day');if(!stickyEl)return;var ticking=false;var lastHeader=null;function getVisibleHeader(scope){var headers;if(scope==='sinav'){headers=document.querySelectorAll('.mob-day-header[data-sinav-gun]');}else{headers=document.querySelectorAll('#mobile-schedule .mob-day-header, #mobile-schedule-d2 .mob-day-header');}
 var best=null;for(var i=0;i<headers.length;i++){var rect=headers[i].getBoundingClientRect();if(rect.top<=2){best=headers[i];}else{break;}}
 return best;}
@@ -2673,36 +2691,7 @@ var h=getVisibleHeader(scope);if(h){if(h!==lastHeader){stickyEl.innerHTML=h.inne
 stickyEl.classList.add('visible');}else{stickyEl.classList.remove('visible');lastHeader=null;}
 ticking=false;}
 window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(update);ticking=true;}},{passive:true});var _resizeTimer=null;window.addEventListener('resize',function(){if(_resizeTimer)clearTimeout(_resizeTimer);_resizeTimer=setTimeout(function(){if(window.innerWidth>660)stickyEl.classList.remove('visible');},100);},{passive:true});})();var _mobNavBtns=null;function syncMobNav(key){if(!_mobNavBtns)_mobNavBtns=document.querySelectorAll('.mob-nav-btn');_mobNavBtns.forEach(function(b){b.classList.remove('active');});var a=document.getElementById('mob-btn-'+key);if(a)a.classList.add('active');}
-document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('click',function(){var panels=['program','takvim','sinav','profil'];panels.forEach(function(k){if(btn.getAttribute('onclick')&&btn.getAttribute('onclick').indexOf("'"+k+"'")>-1){syncMobNav(k);}});});});
-(function(){
-  var tabs=['program','takvim','sinav','profil'];
-  var swipeStartX=0,swipeStartY=0;
-  document.addEventListener('touchstart',function(e){
-    swipeStartX=e.touches[0].clientX;
-    swipeStartY=e.touches[0].clientY;
-  },{passive:true});
-  document.addEventListener('touchend',function(e){
-    if(window.innerWidth>660)return;
-    var dx=e.changedTouches[0].clientX-swipeStartX;
-    var dy=e.changedTouches[0].clientY-swipeStartY;
-    if(Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.5)return;
-    // Takvim aktifken swipe ile tab geçişini engelle
-    var takvimEl=document.getElementById('panel-takvim');
-    if(takvimEl&&takvimEl.style.display!=='none')return;
-    var panels=['program','takvim','sinav','profil'];
-    var cur=null;
-    panels.forEach(function(k){var p=document.getElementById('panel-'+k);if(p&&p.style.display!=='none')cur=k;});
-    if(!cur)cur='program';
-    var idx=tabs.indexOf(cur);
-    if(idx===-1)return;
-    var next=dx<0?Math.min(idx+1,tabs.length-1):Math.max(idx-1,0);
-    if(next===idx)return;
-    var key=tabs[next];
-    var btn=document.getElementById('mob-btn-'+key);
-    showMain(key,btn);
-    syncMobNav(key);
-  },{passive:true});
-})();</script>
+document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('click',function(){var panels=['program','takvim','sinav','profil'];panels.forEach(function(k){if(btn.getAttribute('onclick')&&btn.getAttribute('onclick').indexOf("'"+k+"'")>-1){syncMobNav(k);}});});});</script>
 <!-- ═══ NOW BAR — body'nin doğrudan çocuğu, fixed bozulmasın ═══ -->
 <div id="di-pill" style="display:none"></div>
 <script>
@@ -3197,6 +3186,8 @@ window.toggleIngilizceMenu=function(e){
   e.stopPropagation();
   var dd=document.getElementById('ingilizce-picker-dropdown');
   if(!dd)return;
+  var kyn=document.getElementById('kaynaklar-picker-dropdown');
+  if(kyn)kyn.style.display='none';
   var open=dd.style.display!=='none'&&dd.style.display!=='';
   if(open){dd.style.display='none';return;}
   var btn=e.currentTarget||e.target;
@@ -3238,6 +3229,8 @@ window.toggleAkbisMenu=function(e){
   if(!dd)return;
   var ing=document.getElementById('ingilizce-picker-dropdown');
   if(ing)ing.style.display='none';
+  var kyn=document.getElementById('kaynaklar-picker-dropdown');
+  if(kyn)kyn.style.display='none';
   var open=dd.style.display!=='none'&&dd.style.display!=='';
   if(open){dd.style.display='none';return;}
   var btn=e.currentTarget||e.target;
@@ -3283,6 +3276,65 @@ window.addEventListener('resize',function(){
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
     var dd=document.getElementById('akbis-picker-dropdown');
+    if(dd)dd.style.display='none';
+  }
+});
+})();</script>
+<script>(function(){
+window.toggleKaynaklarMenu=function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  var dd=document.getElementById('kaynaklar-picker-dropdown');
+  if(!dd)return;
+  var ing=document.getElementById('ingilizce-picker-dropdown');
+  if(ing)ing.style.display='none';
+  var akb=document.getElementById('akbis-picker-dropdown');
+  if(akb)akb.style.display='none';
+  var open=dd.style.display!=='none'&&dd.style.display!=='';
+  if(open){dd.style.display='none';return;}
+  var btn=e.currentTarget||e.target;
+  var rect=btn.getBoundingClientRect();
+  dd.style.display='block';
+  var ddWidth=dd.offsetWidth||250;
+  var ddHeight=dd.offsetHeight||150;
+  var spaceBelow=window.innerHeight-rect.bottom;
+  if(spaceBelow<ddHeight+16){
+    var top=rect.top-ddHeight-8;
+    if(top<12)top=12;
+    dd.style.top=top+'px';
+  }else{
+    dd.style.top=(rect.bottom+8)+'px';
+  }
+  var left=rect.left+(rect.width/2)-(ddWidth/2);
+  if(left+ddWidth>window.innerWidth-12)left=window.innerWidth-ddWidth-12;
+  if(left<12)left=12;
+  dd.style.left=left+'px';
+  dd.style.right='auto';
+  return false;
+};
+document.addEventListener('click',function(e){
+  var dd=document.getElementById('kaynaklar-picker-dropdown');
+  if(!dd)return;
+  var b1=document.getElementById('kaynaklarTabBtn');
+  var b2=document.getElementById('kaynaklarMobBtn');
+  if(!dd.contains(e.target)&&(!b1||!b1.contains(e.target))&&(!b2||!b2.contains(e.target))){
+    dd.style.display='none';
+  }
+});
+document.addEventListener('click',function(e){
+  var link=e.target.closest?e.target.closest('#kaynaklar-picker-dropdown .ip-item'):null;
+  if(link){
+    var dd=document.getElementById('kaynaklar-picker-dropdown');
+    if(dd)setTimeout(function(){dd.style.display='none';},60);
+  }
+},true);
+window.addEventListener('resize',function(){
+  var dd=document.getElementById('kaynaklar-picker-dropdown');
+  if(dd)dd.style.display='none';
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    var dd=document.getElementById('kaynaklar-picker-dropdown');
     if(dd)dd.style.display='none';
   }
 });
