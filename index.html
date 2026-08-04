@@ -2200,76 +2200,101 @@ function diInit(){
 }
 function _diHideDesktop(){_diGizle();}
 
-function _diTickSinav(pill,now){
-  var gun=_diSinavGun(now);
-  if(!gun){_diGizle();return;}
-  var ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+function _diSinavSlots(gun){
   function toS(t){var p=String(t||'0:0').split(':');return ((+p[0])*60+(+p[1]))*60;}
-  function p2(n){return String(n).padStart(2,'0');}
-  function fmt(sec){
-    if(sec<0)sec=0;
-    var h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),v=sec%60;
-    return h>0?(p2(h)+':'+p2(m)+':'+p2(v)):(p2(m)+':'+p2(v));
-  }
-  var slots=gun.dersler.filter(function(d){return d.sinav;}).map(function(d,i){
+  return gun.dersler.filter(function(d){return d.sinav;}).map(function(d,i){
     var bas=d.bas||String(d.saat||'').split('\u2013')[0];
     return {no:i+1,ad:d.ad,kod:d.kod,bas:bas,bit:d.bitis,basS:toS(bas),bitS:toS(d.bitis),etiket:bas+'\u2013'+d.bitis};
   });
-  if(!slots.length){_diGizle();return;}
-
-  var durum='bitti',ix=-1;
-  for(var i=0;i<slots.length;i++){
-    if(ns<slots[i].basS){durum=(i===0?'once':'ara');ix=i;break;}
-    if(ns<slots[i].bitS){durum='sinav';ix=i;break;}
-  }
-  // Gunun sinavlari bittiyse pill'i kaldir
-  if(durum==='bitti'){_diGizle();return;}
-  // Ilk sinava 3 saatten fazla varsa gosterme
-  if(durum==='once'&&(slots[0].basS-ns)>3*3600){_diGizle();return;}
-
-  _diKonumla(pill);
-
-  function kisaAd(ad){
-    if(!ad)return '';
-    return ad.length>34?ad.slice(0,32).trim()+'\u2026':ad;
-  }
-  function ciz(sinif,ikon,etiketUst,baslik,sure,sureEtiket,rozet,pct){
-    pill.className=sinif;
-    pill.innerHTML=
-      '<div class="dip-row">'+
-        '<div class="dip-icon-wrap">'+ikon+'</div>'+
-        '<div class="dip-body">'+
-          '<div class="dip-label">'+etiketUst+'</div>'+
-          '<div class="dip-name">'+baslik+'</div>'+
-        '</div>'+
-        '<div class="dip-timer-wrap">'+
-          '<div class="dip-timer">'+sure+'</div>'+
-          '<div class="dip-timer-label">'+sureEtiket+'</div>'+
-        '</div>'+
-        '<span class="dip-badge">'+rozet+'</span>'+
+}
+function _diSinavFmt(sec){
+  if(sec<0)sec=0;
+  function p2(n){return String(n).padStart(2,'0');}
+  var h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),v=sec%60;
+  return h>0?(p2(h)+':'+p2(m)+':'+p2(v)):(p2(m)+':'+p2(v));
+}
+function _diSinavKisaAd(ad){
+  if(!ad)return '';
+  return ad.length>34?ad.slice(0,32).trim()+'\u2026':ad;
+}
+function _diSinavCiz(pill,sinif,ikon,etiketUst,baslik,sure,sureEtiket,rozet,pct){
+  pill.className=sinif;
+  pill.innerHTML=
+    '<div class="dip-row">'+
+      '<div class="dip-icon-wrap">'+ikon+'</div>'+
+      '<div class="dip-body">'+
+        '<div class="dip-label">'+etiketUst+'</div>'+
+        '<div class="dip-name">'+baslik+'</div>'+
       '</div>'+
-      (pct===null?'':
-      '<div class="dip-progress-wrap">'+
-        '<div class="dip-progress-track">'+
-          '<div class="dip-progress-fill" style="width:'+pct+'%"></div>'+
-        '</div>'+
-      '</div>');
+      '<div class="dip-timer-wrap">'+
+        '<div class="dip-timer">'+sure+'</div>'+
+        '<div class="dip-timer-label">'+sureEtiket+'</div>'+
+      '</div>'+
+      '<span class="dip-badge">'+rozet+'</span>'+
+    '</div>'+
+    (pct===null?'':
+    '<div class="dip-progress-wrap">'+
+      '<div class="dip-progress-track">'+
+        '<div class="dip-progress-fill" style="width:'+pct+'%"></div>'+
+      '</div>'+
+    '</div>');
+}
+/* Su an, gercek bir sinavin penceresinde miyiz (sinavdan en fazla 3 saat once <-> sinav bitisi)?
+   Oyleyse pill'i sinav bilgisiyle cizer ve true doner. Degilse hicbir seye dokunmadan false doner
+   ki cagiran taraf normal ders/mola akisini (getCurrentLesson/getNextLesson) deneyebilsin --
+   sinav haftasinda da devam eden normal dersler (or. iki sinav arasindaki ders, ogleden sonraki
+   dersler) boylece pill'den kaybolmaz. */
+function _diTickSinavAktif(pill,now){
+  var gun=_diSinavGun(now);
+  if(!gun)return false;
+  var slots=_diSinavSlots(gun);
+  if(!slots.length)return false;
+  var ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+
+  // Ilk sinava 3 saatten fazla varsa henuz sinav modunu devreye sokma
+  if(ns<slots[0].basS-3*3600)return false;
+
+  // Ilk sinav henuz baslamadiysa (<=3 saat kala): "sinav gunu" on-bilgisi
+  if(ns<slots[0].basS){
+    _diKonumla(pill);
+    var ilk=slots[0];
+    _diSinavCiz(pill,'di-pill-break','\u231a','S\u0131nav g\u00fcn\u00fc','1. S\u0131nav \u00b7 '+_diSinavKisaAd(ilk.ad),_diSinavFmt(ilk.basS-ns),'Ba\u015flamaya',ilk.etiket,null);
+    return true;
   }
 
-  if(durum==='sinav'){
-    var sl=slots[ix];
-    var kalan=sl.bitS-ns, toplam=sl.bitS-sl.basS;
-    var pct=toplam>0?Math.min(100,Math.max(0,((toplam-kalan)/toplam*100))).toFixed(1):'0';
-    ciz('di-pill-live','\ud83d\udcdd','S\u0131nav s\u00fcr\u00fcyor',sl.no+'. S\u0131nav \u00b7 '+kisaAd(sl.ad),fmt(kalan),'Kalan',sl.etiket,pct);
-  } else if(durum==='ara'){
-    var nx=slots[ix], onc=slots[ix-1];
-    var kalan2=nx.basS-ns, toplam2=nx.basS-onc.bitS;
-    var pct2=toplam2>0?Math.min(100,Math.max(0,((toplam2-kalan2)/toplam2*100))).toFixed(1):'50';
-    ciz('di-pill-break','\u2615','S\u0131nav aras\u0131',nx.no+'. S\u0131nav \u00b7 '+kisaAd(nx.ad),fmt(kalan2),'Ba\u015flamaya',nx.etiket,pct2);
-  } else {
-    var ilk=slots[0];
-    ciz('di-pill-break','\u231a','S\u0131nav g\u00fcn\u00fc','1. S\u0131nav \u00b7 '+kisaAd(ilk.ad),fmt(ilk.basS-ns),'Ba\u015flamaya',ilk.etiket,null);
+  // Aktif bir sinavin tam icindeyse
+  for(var i=0;i<slots.length;i++){
+    if(ns>=slots[i].basS&&ns<slots[i].bitS){
+      var sl=slots[i];
+      var kalan=sl.bitS-ns,toplam=sl.bitS-sl.basS;
+      var pct=toplam>0?Math.min(100,Math.max(0,((toplam-kalan)/toplam*100))).toFixed(1):'0';
+      _diKonumla(pill);
+      _diSinavCiz(pill,'di-pill-live','\ud83d\udcdd','S\u0131nav s\u00fcr\u00fcyor',sl.no+'. S\u0131nav \u00b7 '+_diSinavKisaAd(sl.ad),_diSinavFmt(kalan),'Kalan',sl.etiket,pct);
+      return true;
+    }
   }
+  return false; // iki sinav arasindayiz ya da gunun sinavlari bitti -- sinav modu aktif degil
+}
+/* Sinavlar arasinda ya da gunun sinavlari bittikten sonra, gosterecek gercek bir ders yoksa
+   (getCurrentLesson/getNextLesson bos donduyse) kullanilan yedek gorunum: "sinav arasi" bandi.
+   Gunun son sinavi da bittiyse false doner (pill tamamen gizlenir). */
+function _diTickSinavYedek(pill,now){
+  var gun=_diSinavGun(now);
+  if(!gun)return false;
+  var slots=_diSinavSlots(gun);
+  if(!slots.length)return false;
+  var ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  for(var i=1;i<slots.length;i++){
+    if(ns>=slots[i-1].bitS&&ns<slots[i].basS){
+      var nx=slots[i],onc=slots[i-1];
+      var kalan2=nx.basS-ns,toplam2=nx.basS-onc.bitS;
+      var pct2=toplam2>0?Math.min(100,Math.max(0,((toplam2-kalan2)/toplam2*100))).toFixed(1):'50';
+      _diKonumla(pill);
+      _diSinavCiz(pill,'di-pill-break','\u2615','S\u0131nav aras\u0131',nx.no+'. S\u0131nav \u00b7 '+_diSinavKisaAd(nx.ad),_diSinavFmt(kalan2),'Ba\u015flamaya',nx.etiket,pct2);
+      return true;
+    }
+  }
+  return false;
 }
 const pillShortNames={'209':'TYMM İngilizce Öğr. Programı Okuryazarlığı','210':'Okul Dışı Öğrenme ve Teknoloji','207':'Türk Eğitim Düşüncesinde Liderler','205':'İnsanın Varlık Tasavvuru','204':'Dijital İçerik ve Materyal','211':'Kültür ve Sanat Uygulamaları II'};
 /* Uzun ders adlarini kelime ortasindan kesmeden kisaltir */
@@ -2287,13 +2312,10 @@ function diTick(){
   if(!pill)return;
   var now=new Date();
   var dow=now.getDay();
-  // Sınav günü mü?
-  if(_diSinavDate(now)){
-    _diTickSinav(pill,now);
-    return;
-  }
   if(_diDersSonrasi(now)){_diGizle();return;}
   if(dow<1||dow>5){_diGizle();return;}
+  // Gercek bir sinav penceresindeysek (sinavdan <=3 saat once <-> sinav bitisi) her zaman oncelikli
+  if(_diTickSinavAktif(pill,now))return;
   var cur=getCurrentLesson();
   var nxt=getNextLesson();
   var nowM=toMins(now.getHours(),now.getMinutes())*60+now.getSeconds();
@@ -2381,6 +2403,8 @@ function diTick(){
     pill.className='di-pill-break';
     _diKonumla(pill);
   } else {
+    // Normal ders yok -- sinav haftasindaysak "sinav arasi" yedek gorunumunu dene
+    if(_diTickSinavYedek(pill,now))return;
     // Gunun dersleri bitti
     _diGizle();
     return;
@@ -2635,14 +2659,8 @@ function sinavTickerInit(){
   function _sinavTick(){
     updateSinavTableCells();
     buildSinavMobile();
-    // Sınav gününde pill'i de güncelle
-    if(typeof _diSinavDate==='function'){
-      var now=new Date();
-      if(_diSinavDate(now)){
-        var pill=document.getElementById('di-pill');
-        if(pill)_diTickSinav(pill,now);
-      }
-    }
+    // Sınav gününde pill'i de güncelle (normal ders/mola akışı dahil)
+    if(typeof diTick==='function')diTick();
     // Aralığı yeniden ayarla (değişmiş olabilir)
     _stopTick();
     _startTick();
