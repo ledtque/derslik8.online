@@ -2516,8 +2516,9 @@ const uniqueLabels=[...new Set(holidays.map(h=>h.label))];const dayList=holidays
 </div>
 </div>`;}
 if('serviceWorker'in navigator){
-const D8_SW_VERSION='d8-v4'; // her yeni yayında bu değeri değiştirin (v4, v5, v6...) — eski cache otomatik silinir
+const D8_SW_VERSION='d8-v5'; // her yeni yayında bu değeri değiştirin (v5, v6, v7...) — eski SW/cache tamamen silinip sıfırdan kurulur
 const D8_PAGE_KEY='/__d8_page__';
+const D8_LAST_VERSION_KEY='d8_sw_last_version';
 const swCode=`
 const CACHE='${D8_SW_VERSION}';
 const PAGE_KEY='${D8_PAGE_KEY}';
@@ -2553,17 +2554,39 @@ function d8SnapshotCurrentPage(){
     fetch(location.href,{cache:'no-store'}).then(r=>{if(r&&r.ok)c.put(D8_PAGE_KEY,r.clone());}).catch(()=>{});
   }).catch(()=>{});
 }
-const blob=new Blob([swCode],{type:'application/javascript'});
-const swUrl=URL.createObjectURL(blob);
-navigator.serviceWorker.register(swUrl).then(reg=>{
-  reg.update().catch(()=>{});
-  // Sayfa ilk yüklendiği an, SW henüz gezinmeyi yakalamamış olsa bile
-  // taze kopyayı doğrudan cache'e yazıyoruz — bir sonraki gezinmeyi beklemiyoruz.
-  d8SnapshotCurrentPage();
+function d8RegisterFreshSW(){
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  const swUrl=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).then(reg=>{
+    reg.update().catch(()=>{});
+    d8SnapshotCurrentPage();
+  }).catch(()=>{});
+}
+(async function d8EnsureFreshVersion(){
+  let lastVersion=null;
+  try{lastVersion=localStorage.getItem(D8_LAST_VERSION_KEY);}catch(e){}
+  if(lastVersion!==D8_SW_VERSION){
+    // Sürüm numarası değişmiş: tarayıcının kendi byte-karşılaştırmalı güncelleme
+    // algılamasına güvenmek yerine, eski kayıtlı TÜM service worker'ları ve
+    // TÜM cache'leri elle temizleyip sıfırdan kuruyoruz. Bu, arka plan
+    // kısıtlamaları (Doze modu, WebAPK'nin kendi güncelleme döngüsü vb.)
+    // yüzünden otomatik algılamanın gecikmesi/hiç tetiklenmemesi durumunda
+    // bile güncellemenin garanti şekilde uygulanmasını sağlar.
+    try{
+      const regs=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister()));
+    }catch(e){}
+    try{
+      const keys=await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k)));
+    }catch(e){}
+    try{localStorage.setItem(D8_LAST_VERSION_KEY,D8_SW_VERSION);}catch(e){}
+  }
+  d8RegisterFreshSW();
   document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState==='visible'){reg.update().catch(()=>{});d8SnapshotCurrentPage();}
+    if(document.visibilityState==='visible')d8RegisterFreshSW();
   });
-}).catch(()=>{});
+})();
 }
 window._d8DonemMode=(function(){try{return localStorage.getItem('d8DonemMode')||'d2';}catch(e){return 'd2';}})();
 function setDonemMode(mode){
