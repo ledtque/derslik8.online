@@ -2516,10 +2516,11 @@ const uniqueLabels=[...new Set(holidays.map(h=>h.label))];const dayList=holidays
 </div>
 </div>`;}
 if('serviceWorker'in navigator){
-const D8_SW_VERSION='d8-v3'; // her yeni yayında bu değeri değiştirin (v3, v4, v5...) — eski cache otomatik silinir
+const D8_SW_VERSION='d8-v4'; // her yeni yayında bu değeri değiştirin (v4, v5, v6...) — eski cache otomatik silinir
+const D8_PAGE_KEY='/__d8_page__';
 const swCode=`
 const CACHE='${D8_SW_VERSION}';
-const PAGE_KEY='/__d8_page__';
+const PAGE_KEY='${D8_PAGE_KEY}';
 self.addEventListener('install',e=>{self.skipWaiting();});
 self.addEventListener('activate',e=>{
   e.waitUntil((async()=>{
@@ -2536,7 +2537,7 @@ self.addEventListener('fetch',e=>{
   if(req.mode!=='navigate'&&req.destination!=='document')return;
   e.respondWith((async()=>{
     try{
-      const fresh=await fetch(req);
+      const fresh=await fetch(req.url,{cache:'no-store',credentials:'same-origin'});
       if(fresh&&fresh.ok){const c=await caches.open(CACHE);c.put(PAGE_KEY,fresh.clone());}
       return fresh;
     }catch(err){
@@ -2547,12 +2548,20 @@ self.addEventListener('fetch',e=>{
   })());
 });
 `;
+function d8SnapshotCurrentPage(){
+  caches.open(D8_SW_VERSION).then(c=>{
+    fetch(location.href,{cache:'no-store'}).then(r=>{if(r&&r.ok)c.put(D8_PAGE_KEY,r.clone());}).catch(()=>{});
+  }).catch(()=>{});
+}
 const blob=new Blob([swCode],{type:'application/javascript'});
 const swUrl=URL.createObjectURL(blob);
 navigator.serviceWorker.register(swUrl).then(reg=>{
   reg.update().catch(()=>{});
+  // Sayfa ilk yüklendiği an, SW henüz gezinmeyi yakalamamış olsa bile
+  // taze kopyayı doğrudan cache'e yazıyoruz — bir sonraki gezinmeyi beklemiyoruz.
+  d8SnapshotCurrentPage();
   document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState==='visible')reg.update().catch(()=>{});
+    if(document.visibilityState==='visible'){reg.update().catch(()=>{});d8SnapshotCurrentPage();}
   });
 }).catch(()=>{});
 }
