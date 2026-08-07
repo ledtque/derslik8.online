@@ -2676,7 +2676,7 @@ const uniqueLabels=[...new Set(holidays.map(h=>h.label))];const dayList=holidays
 <div class="hwb-days">Tatil günleri: ${dayList}</div>
 </div>
 </div>`;}
-const D8_SW_VERSION='d8-v16'; // her yeni yayında bu değeri değiştirin (v5, v6, v7...) — eski SW/cache tamamen silinip sıfırdan kurulur
+const D8_SW_VERSION='d8-v18'; // her yeni yayında bu değeri değiştirin (v5, v6, v7...) — eski SW/cache tamamen silinip sıfırdan kurulur
 if('serviceWorker'in navigator){
 const D8_PAGE_KEY='/__d8_page__';
 const D8_LAST_VERSION_KEY='d8_sw_last_version';
@@ -3053,7 +3053,7 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
   font-family:'Space Mono',monospace;
   font-size:clamp(14px,1.9vmin,20px);font-weight:600;
   color:rgba(255,255,255,0.42);letter-spacing:1.2px;text-align:right;line-height:1;}
-#ss-brand{position:fixed;bottom:clamp(18px,3vh,40px);left:50%;transform:translateX(-50%);z-index:10;
+#ss-brand{position:fixed;top:clamp(16px,2.6vh,32px);left:50%;transform:translateX(-50%);z-index:10;
   font-family:'Space Mono',monospace;font-size:clamp(14px,1.9vmin,20px);font-weight:600;
   color:rgba(255,255,255,0.42);letter-spacing:1.2px;line-height:1;}
 
