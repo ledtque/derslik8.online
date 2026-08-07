@@ -2410,6 +2410,167 @@ function diTick(){
     return;
   }
 }
+var D8_ISIM_LISTESI_VARSAYILAN=['Emirhan','Dilara','Zeliha','Göksunur','Hakan','Zehra Ören','Ahmet','Meryem','Aslı','Miraç Cemre','Ebru','Yiğit','Kübra','Ramazan Şamil','Enes','Yıldırım Beyazıt','Muhammed Ali','Rumeysa Sena','Zehra Kara','Özkan','Ayçanur','Elif','Ayşegül','Hacer','Gürkan','Esma Nur','Ümmühan','İlker','Mustafa','Murtaza']; // Derslik 8 sınıf listesi — sadece Zehra'lar çakıştığı için onlara soyisim eklendi
+var d8WheelRotation=0;
+var d8WheelSpinning=false;
+var d8IsimKullanilan={};
+function d8IsimListesiAl(){
+  try{
+    var raw=localStorage.getItem('d8_isim_listesi');
+    if(raw){var arr=JSON.parse(raw);if(Array.isArray(arr)&&arr.length)return arr;}
+  }catch(e){}
+  return D8_ISIM_LISTESI_VARSAYILAN;
+}
+function d8IsimAdaylar(){
+  var list=d8IsimListesiAl();
+  var kalan=list.filter(function(n){return !d8IsimKullanilan[n];});
+  if(!kalan.length){d8IsimKullanilan={};kalan=list.slice();}
+  return kalan;
+}
+function d8IsimCek(){
+  if(d8WheelSpinning)return;
+  var list=d8IsimListesiAl();
+  var nameEl=document.getElementById('d8-isimcek-name');
+  var wheelEl=document.getElementById('d8-wheel');
+  var kalanEl=document.getElementById('d8-isimcek-kalan');
+  var spinBtn=document.getElementById('d8-isim-cek-btn');
+  var dogruBtn=document.getElementById('d8-isim-dogru'),yanlisBtn=document.getElementById('d8-isim-yanlis');
+  if(!nameEl||!wheelEl)return;
+  if(!list.length){nameEl.textContent='Liste boş — ✎ ile isim ekleyin';return;}
+  var adaylar=d8IsimAdaylar();
+  var winner=adaylar[Math.floor(Math.random()*adaylar.length)];
+  var idx=list.indexOf(winner);
+  var n=list.length;
+  var seg=360/n;
+  var segCenter=idx*seg+seg/2;
+  var rMod=(360-segCenter)%360;
+  var base=Math.ceil(d8WheelRotation/360)*360;
+  var extraSpins=5+Math.floor(Math.random()*3);
+  var newRotation=base+extraSpins*360+rMod;
+  if(newRotation<=d8WheelRotation)newRotation+=360;
+  d8WheelRotation=newRotation;
+  d8WheelSpinning=true;
+  if(spinBtn)spinBtn.disabled=true;
+  if(dogruBtn){dogruBtn.disabled=true;dogruBtn.style.opacity='.4';}
+  if(yanlisBtn){yanlisBtn.disabled=true;yanlisBtn.style.opacity='.4';}
+  var card=document.getElementById('d8-isimcek-card');
+  if(card)card.classList.remove('d8-isim-pulse-bad','d8-card-tint-ok','d8-card-tint-bad');
+  var banner=document.getElementById('d8-isim-sonuc-banner');
+  if(banner){banner.className='';banner.style.display='none';banner.textContent='';}
+  nameEl.textContent='Çark dönüyor...';
+  nameEl.style.color='var(--muted)';
+  wheelEl.style.transform='rotate('+d8WheelRotation+'deg)';
+  setTimeout(function(){
+    d8WheelSpinning=false;
+    nameEl.textContent=winner;
+    nameEl.style.color='var(--navy)';
+    d8IsimKullanilan[winner]=true;
+    if(spinBtn)spinBtn.disabled=false;
+    if(dogruBtn){dogruBtn.disabled=false;dogruBtn.style.opacity='1';}
+    if(yanlisBtn){yanlisBtn.disabled=false;yanlisBtn.style.opacity='1';}
+    var kalanSayi=list.length-Object.keys(d8IsimKullanilan).length;
+    if(kalanEl)kalanEl.textContent=kalanSayi+' isim torbada kaldı ('+list.length+' toplam)';
+  },3500);
+}
+function d8IsimSonuc(dogruMu){
+  var nameEl=document.getElementById('d8-isimcek-name');
+  var card=document.getElementById('d8-isimcek-card');
+  var banner=document.getElementById('d8-isim-sonuc-banner');
+  if(!nameEl||!card)return;
+  var dogruBtn=document.getElementById('d8-isim-dogru'),yanlisBtn=document.getElementById('d8-isim-yanlis');
+  if(dogruBtn){dogruBtn.disabled=true;dogruBtn.style.opacity='.4';}
+  if(yanlisBtn){yanlisBtn.disabled=true;yanlisBtn.style.opacity='.4';}
+  card.classList.remove('d8-isim-pulse-bad','d8-card-tint-ok','d8-card-tint-bad');
+  void card.offsetWidth;
+  if(dogruMu){
+    nameEl.style.color='var(--green)';
+    card.classList.add('d8-card-tint-ok');
+    if(banner){banner.className='d8-isim-sonuc-ok';banner.style.display='block';banner.textContent='✅ DOĞRU!';}
+  }else{
+    nameEl.style.color='var(--red)';
+    card.classList.add('d8-isim-pulse-bad','d8-card-tint-bad');
+    if(banner){banner.className='d8-isim-sonuc-bad';banner.style.display='block';banner.textContent='❌ YANLIŞ!';}
+  }
+}
+function d8IsimListesiDuzenle(){
+  var mevcut=d8IsimListesiAl();
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:999997;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:20px;';
+  var box=document.createElement('div');
+  box.style.cssText='background:var(--white);border-radius:14px;padding:18px;max-width:360px;width:100%;box-shadow:var(--shadow-lg);';
+  box.innerHTML='<div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--text);">İsim Listesi (her satıra bir isim)</div>'
+    +'<textarea id="d8-isim-textarea" style="width:100%;height:220px;border:1px solid var(--border);border-radius:8px;padding:8px;font-family:\'JetBrains Mono\',monospace;font-size:12px;resize:vertical;background:var(--bg);color:var(--text);"></textarea>'
+    +'<div style="display:flex;gap:8px;margin-top:10px;">'
+    +'<button id="d8-isim-kaydet" style="flex:1;padding:9px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-weight:700;cursor:pointer;font-family:\'Sora\',sans-serif;">Kaydet</button>'
+    +'<button id="d8-isim-iptal" style="flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-family:\'Sora\',sans-serif;">İptal</button>'
+    +'</div>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  document.getElementById('d8-isim-textarea').value=mevcut.join('\n');
+  document.getElementById('d8-isim-iptal').onclick=function(){overlay.remove();};
+  overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.remove();});
+  document.getElementById('d8-isim-kaydet').onclick=function(){
+    var lines=document.getElementById('d8-isim-textarea').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+    try{localStorage.setItem('d8_isim_listesi',JSON.stringify(lines));}catch(e){}
+    d8IsimKullanilan={};
+    overlay.remove();
+    if(typeof buildDesktopSidebar==='function')buildDesktopSidebar();
+  };
+}
+function d8EnsureIsimCekStyles(){
+  if(document.getElementById('d8-isimcek-style'))return;
+  var s=document.createElement('style');
+  s.id='d8-isimcek-style';
+  s.textContent='@keyframes d8PulseBad{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}'
+    +'@keyframes d8PopIn{0%{transform:scale(.5);opacity:0;}60%{transform:scale(1.08);opacity:1;}100%{transform:scale(1);opacity:1;}}'
+    +'.d8-isim-pulse-bad{animation:d8PulseBad .5s ease-in-out;}'
+    +'#d8-wheel{transition:transform 3.5s cubic-bezier(.17,.67,.12,.99);}'
+    +'#d8-isimcek-card{transition:background-color .25s,border-color .25s;}'
+    +'.d8-card-tint-ok{background:rgba(5,150,105,0.10)!important;border:2px solid var(--green)!important;}'
+    +'.d8-card-tint-bad{background:rgba(220,38,38,0.10)!important;border:2px solid var(--red)!important;}'
+    +'#d8-isim-sonuc-banner{display:none;margin-top:7px;padding:9px;border-radius:10px;font-weight:800;font-size:15px;letter-spacing:.3px;}'
+    +'.d8-isim-sonuc-ok{display:block!important;background:var(--green);color:#fff;animation:d8PopIn .45s cubic-bezier(.34,1.56,.64,1);}'
+    +'.d8-isim-sonuc-bad{display:block!important;background:var(--red);color:#fff;animation:d8PopIn .45s cubic-bezier(.34,1.56,.64,1);}';
+  document.head.appendChild(s);
+}
+function d8WheelGradient(list){
+  var palette=['var(--navy)','var(--navy2)','var(--accent)','var(--accent2)','var(--red)','var(--green)','var(--amber)','var(--purple)','var(--brown)'];
+  var n=list.length||1;
+  var seg=360/n;
+  var stops=[];
+  for(var i=0;i<n;i++){
+    var c=palette[i%palette.length];
+    stops.push(c+' '+(i*seg).toFixed(2)+'deg '+((i+1)*seg).toFixed(2)+'deg');
+  }
+  return 'conic-gradient('+stops.join(',')+')';
+}
+function d8IsimCekCardHTML(){
+  d8EnsureIsimCekStyles();
+  var list=d8IsimListesiAl();
+  var kalanSayi=list.length-Object.keys(d8IsimKullanilan).length;
+  var kalanTxt=list.length?kalanSayi+' isim torbada kaldı ('+list.length+' toplam)':'';
+  var gradient=list.length?d8WheelGradient(list):'var(--bg)';
+  var initialRotStyle=d8WheelRotation?('transform:rotate('+d8WheelRotation+'deg);'):'';
+  return '<div class="dsb-card" id="d8-isimcek-card" style="text-align:center;">'
+    +'<div class="dsb-title" style="justify-content:space-between;">'
+      +'<span>🎡 Rastgele İsim Çark</span>'
+      +'<span onclick="d8IsimListesiDuzenle()" style="cursor:pointer;font-size:12px;opacity:.6;text-transform:none;letter-spacing:0;" title="Listeyi düzenle">✎</span>'
+    +'</div>'
+    +'<div style="position:relative;width:132px;height:132px;margin:4px auto 6px;">'
+      +'<div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:13px solid var(--red);z-index:2;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25));"></div>'
+      +'<div id="d8-wheel" style="width:132px;height:132px;border-radius:50%;border:3px solid var(--white);box-shadow:var(--shadow-md);background-image:'+gradient+';'+initialRotStyle+'"></div>'
+      +'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:var(--white);border:2px solid var(--border);z-index:2;"></div>'
+    +'</div>'
+    +'<div id="d8-isimcek-name" style="min-height:30px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--navy);line-height:1.2;padding:2px 2px;word-break:break-word;">İsim çekmek için başla</div>'
+    +'<div id="d8-isim-sonuc-banner"></div>'
+    +'<button id="d8-isim-cek-btn" onclick="d8IsimCek()" style="width:100%;margin-top:6px;padding:8px;border:none;border-radius:10px;background:linear-gradient(90deg,var(--navy),var(--navy2));color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:\'Sora\',sans-serif;">🎡 Çarkı Çevir</button>'
+    +'<div style="display:flex;gap:8px;margin-top:7px;">'
+      +'<button id="d8-isim-dogru" onclick="d8IsimSonuc(true)" disabled style="flex:1;padding:7px;border:none;border-radius:10px;background:var(--green);color:#fff;font-weight:700;font-size:11.5px;cursor:pointer;opacity:.4;font-family:\'Sora\',sans-serif;">✅ Doğru</button>'
+      +'<button id="d8-isim-yanlis" onclick="d8IsimSonuc(false)" disabled style="flex:1;padding:7px;border:none;border-radius:10px;background:var(--red);color:#fff;font-weight:700;font-size:11.5px;cursor:pointer;opacity:.4;font-family:\'Sora\',sans-serif;">❌ Yanlış</button>'
+    +'</div>'
+    +'<div id="d8-isimcek-kalan" style="font-size:9.5px;color:var(--muted);margin-top:6px;">'+kalanTxt+'</div>'
+  +'</div>';
+}
 function d8QRImg(){if(window._d8QRCache)return window._d8QRCache;var b='/mS/wQvQbqQrt1vF26xK7BYZB/qq/gGhAL5mPngOKL7QTXk4YhRqbr/MYqoIHpdRkKmqrvoAUMc/nqvwUlGLrx/912Ne6x5LBBu5/so/gA==';var bin=atob(b),bits=[],n=25,cell=24,pad=48,vp=pad*2+n*cell;for(var i=0;i<bin.length;i++){var v=bin.charCodeAt(i);for(var k=7;k>=0;k--)bits.push((v>>k)&1);}var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+vp+'" height="'+vp+'"><g fill="#000">';for(var r=0;r<n;r++)for(var c=0;c<n;c++)if(bits[r*n+c])svg+='<rect x="'+(pad+c*cell)+'" y="'+(pad+r*cell)+'" width="'+cell+'" height="'+cell+'"/>';svg+='</g></svg>';window._d8QRCache='data:image/svg+xml,'+encodeURIComponent(svg);return window._d8QRCache;}
 function buildDesktopSidebar(){var el=document.getElementById('desktop-sidebar');if(!el)return;if(window.innerWidth<=900){el.innerHTML='';return;}
 // === BUGÜNÜN DERSLERİ WIDGET ===
@@ -2458,7 +2619,7 @@ function buildDesktopSidebar(){var el=document.getElementById('desktop-sidebar')
   if(examWrap&&examWrap.nextSibling){dsb.insertBefore(weekWrap,examWrap.nextSibling);}else{dsb.appendChild(weekWrap);}
 })();
 var today=new Date();today.setHours(0,0,0,0);var TR_M=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];var TR_MS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];var fmtD=function(d){return d.getDate()+' '+TR_M[d.getMonth()];};var html='';var RAMtarih=new Date(2026,4,18,23,59,59);if(new Date()<=RAMtarih){var ramDiff=Math.ceil((new Date(2026,4,18)-today)/86400000);var ramStr=ramDiff===0?'Bugün!':ramDiff===1?'Yarın':ramDiff+' gün sonra';html+='<div class="dsb-card dsb-ram">';html+='<div class="dsb-title">🏥 Önemli Bildirim</div>';html+='<div class="dsb-ram-row">';html+='<div class="dsb-ram-icon">🏥</div>';html+='<div><div class="dsb-ram-name">Kocasinan RAM Ziyareti <span class="dsb-ram-badge">'+ramStr+'</span></div>';html+='<div class="dsb-ram-meta">18 Mayıs 2026, Pzt · 10:00<br>D8\'in Tamamı · Prof. Dr. M. K. Özgen</div></div>';html+='</div></div>';}
-var start=new Date(2026,6,6),end=new Date(2026,8,11);var total=Math.round((end-start)/86400000);var elapsed=Math.min(Math.max(Math.round((today-start)/86400000),0),total);var pct=Math.round(elapsed/total*100);var kalan=Math.max(Math.ceil((end-today)/86400000),0);var statusEmoji=pct<30?'🌱':pct<60?'📈':pct<85?'🔥':'🏁';html+='<div class="dsb-card">';html+='<div class="dsb-title">'+statusEmoji+' Dönem İlerlemesi</div>';html+='<div class="dsb-donem-pct">%'+pct+'</div>';html+='<div class="dsb-track"><div class="dsb-fill" id="dsb-fill" style="width:0%"></div></div>';html+='<div class="dsb-meta"><span>'+fmtD(start)+' – '+fmtD(end)+'</span>';html+='<span class="dsb-kalan">'+(kalan>0?kalan+' gün':'✅ Bitti')+'</span></div>';html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">📅 İzlence Haftası</span><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:var(--navy);">'+ (function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})() +' / 10</span></div><div style="width:100%;height:6px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--border);"><div style="height:100%;width:'+((function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()*10)+'%;border-radius:99px;background:linear-gradient(90deg,#F59E0B,#FBBF24);"></div></div><div style="font-size:9.5px;color:var(--muted);margin-top:4px;">Şu an <strong style=\"color:var(--text);\">'+(function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()+'. Hafta</strong></div></div>';html+='</div>';var cdItems=[{label:'Demokrasi Bayramı',date:'2026-07-15',icon:'🇹🇷'},{label:'II. Dönem Ara Sınavı',date:'2026-08-03',icon:'📝'}];var cdValid=cdItems.filter(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);return Math.ceil((t-today)/86400000)>=0;});if(cdValid.length){html+='<div class="dsb-card">';html+='<div class="dsb-title">⏳ Geri Sayım</div>';cdValid.forEach(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);var diff=Math.ceil((t-today)/86400000);var diffStr=diff===0?'Bugün':''+diff+'g';var dtFmt=t.getDate()+' '+TR_MS[t.getMonth()];html+='<div class="dsb-cd-row">';html+='<div class="dsb-cd-icon">'+it.icon+'</div>';html+='<div class="dsb-cd-body"><div class="dsb-cd-label">'+it.label+'</div><div class="dsb-cd-date">'+dtFmt+'</div></div>';html+='<div class="dsb-cd-badge'+(diff===0?' today':'')+'">'+diffStr+'</div>';html+='</div>';});html+='</div>';}
+var start=new Date(2026,6,6),end=new Date(2026,8,11);var total=Math.round((end-start)/86400000);var elapsed=Math.min(Math.max(Math.round((today-start)/86400000),0),total);var pct=Math.round(elapsed/total*100);var kalan=Math.max(Math.ceil((end-today)/86400000),0);var statusEmoji=pct<30?'🌱':pct<60?'📈':pct<85?'🔥':'🏁';html+='<div class="dsb-card">';html+='<div class="dsb-title">'+statusEmoji+' Dönem İlerlemesi</div>';html+='<div class="dsb-donem-pct">%'+pct+'</div>';html+='<div class="dsb-track"><div class="dsb-fill" id="dsb-fill" style="width:0%"></div></div>';html+='<div class="dsb-meta"><span>'+fmtD(start)+' – '+fmtD(end)+'</span>';html+='<span class="dsb-kalan">'+(kalan>0?kalan+' gün':'✅ Bitti')+'</span></div>';html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">📅 İzlence Haftası</span><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:var(--navy);">'+ (function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})() +' / 10</span></div><div style="width:100%;height:6px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--border);"><div style="height:100%;width:'+((function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()*10)+'%;border-radius:99px;background:linear-gradient(90deg,#F59E0B,#FBBF24);"></div></div><div style="font-size:9.5px;color:var(--muted);margin-top:4px;">Şu an <strong style=\"color:var(--text);\">'+(function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()+'. Hafta</strong></div></div>';html+='</div>';html+=d8IsimCekCardHTML();var cdItems=[{label:'Demokrasi Bayramı',date:'2026-07-15',icon:'🇹🇷'},{label:'II. Dönem Ara Sınavı',date:'2026-08-03',icon:'📝'}];var cdValid=cdItems.filter(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);return Math.ceil((t-today)/86400000)>=0;});if(cdValid.length){html+='<div class="dsb-card">';html+='<div class="dsb-title">⏳ Geri Sayım</div>';cdValid.forEach(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);var diff=Math.ceil((t-today)/86400000);var diffStr=diff===0?'Bugün':''+diff+'g';var dtFmt=t.getDate()+' '+TR_MS[t.getMonth()];html+='<div class="dsb-cd-row">';html+='<div class="dsb-cd-icon">'+it.icon+'</div>';html+='<div class="dsb-cd-body"><div class="dsb-cd-label">'+it.label+'</div><div class="dsb-cd-date">'+dtFmt+'</div></div>';html+='<div class="dsb-cd-badge'+(diff===0?' today':'')+'">'+diffStr+'</div>';html+='</div>';});html+='</div>';}
 html+='<div class="dsb-card" style="text-align:center;">';html+='<div class="dsb-title">📱 QR Kod</div>';html+='<div style="display:flex;justify-content:center;padding:4px 0;">';html+='<img src="'+d8QRImg()+'" alt="QR Kod" style="width:170px;height:170px;border-radius:8px;background:#fff;padding:4px;border:1px solid var(--border);" />';html+='</div>';html+='<div style="font-size:10px;color:var(--muted);margin-top:6px;line-height:1.4;">Sayfayı telefona paylaşmak için okutun</div>';html+='</div>';el.innerHTML=html;requestAnimationFrame(function(){setTimeout(function(){var f=document.getElementById('dsb-fill');if(f)f.style.width=pct+'%';},80);});}
 function buildProfilPage(){var el=document.getElementById('profil-content');if(!el)return;var today=new Date();today.setHours(0,0,0,0);var TR_M=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];var TR_MS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];var fmtD=function(d){return d.getDate()+' '+TR_M[d.getMonth()];};var html='';var authUser=window._d8AuthUser||null;html+='<div class="profil-section">';html+='<div class="profil-section-title">👤 Hesap</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="handleAuthClick()" style="cursor:pointer;">';html+='<div class="profil-setting-icon" style="position:relative;">'+(authUser?(authUser.photoURL?'<img src=\''+authUser.photoURL+'\' referrerpolicy="no-referrer" onerror="this.replaceWith(document.createTextNode(\'\\u2705\'))" style=\'width:26px;height:26px;border-radius:50%;display:block;\'>':'✅'):'👤')+(authUser?'<span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:#4ADE80;border:2px solid var(--white);box-sizing:content-box;"></span>':'')+'</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">'+(authUser?'✓ '+(authUser.displayName||authUser.email||'Hesabım'):'Google ile Giriş Yap')+'</div><div class="profil-setting-sub">'+(authUser?'Giriş yapıldı · Ayarların bulutta senkron · Çıkış için dokun':'Ayarların (tema, mod, dönem) tüm cihazlarında senkronize olsun')+'</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div></div></div>';html+='<div id="profil-admin-anchor"></div>';var RAMtarih=new Date(2026,4,18,23,59,59);if(new Date()<=RAMtarih){var ramDiff=Math.ceil((new Date(2026,4,18)-today)/86400000);var ramStr=ramDiff===0?'Bugün!':ramDiff===1?'Yarın':ramDiff+' gün sonra';html+='<div class="profil-section">';html+='<div class="profil-section-title">🏥 Önemli Bildirim</div>';html+='<div class="profil-ram-card">';html+='<div class="profil-ram-icon">🏥</div>';html+='<div>';html+='<div class="profil-ram-title">Kocasinan RAM Ziyareti <span class="profil-ram-badge">'+ramStr+'</span></div>';html+='<div class="profil-ram-meta">18 Mayıs 2026, Pazartesi · Saat 10:00<br>Kapsam: D8\'in Tamamı · Prof. Dr. M. K. Özgen</div>';html+='</div></div></div>';}
 try{var weekStart=new Date(today);weekStart.setDate(today.getDate()-(today.getDay()===0?6:today.getDay()-1));var weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);if(typeof ranges!=='undefined'){var weekTatils=ranges.filter(function(r){if(r.type!=='tatil')return false;var rs=new Date(r.start);rs.setHours(0,0,0,0);var re=new Date(r.end);re.setHours(23,59,59,999);return rs<=weekEnd&&re>=weekStart&&re>=today;});if(weekTatils.length){html+='<div class="profil-section">';html+='<div class="profil-section-title">🎉 Tatil</div>';weekTatils.forEach(function(r){var icon=getTatilIcon(r.label);var rs=new Date(r.start);rs.setHours(0,0,0,0);var tDiff=Math.ceil((rs-today)/86400000);var tStr=tDiff<=0?'Bu hafta · ders yok':tDiff===1?'Yarın':''+tDiff+' gün sonra';var badge=tDiff<=0?'Aktif':tDiff+' gün';html+='<div class="profil-tatil-card">';html+='<div class="profil-tatil-icon">'+icon+'</div>';html+='<div><div class="profil-tatil-title">'+r.label+'</div><div class="profil-tatil-sub">'+tStr+'</div></div>';html+='<div class="profil-tatil-badge">'+badge+'</div>';html+='</div>';});html+='</div>';}}}catch(e){}
@@ -2515,7 +2676,7 @@ const uniqueLabels=[...new Set(holidays.map(h=>h.label))];const dayList=holidays
 <div class="hwb-days">Tatil günleri: ${dayList}</div>
 </div>
 </div>`;}
-const D8_SW_VERSION='d8-v5'; // her yeni yayında bu değeri değiştirin (v5, v6, v7...) — eski SW/cache tamamen silinip sıfırdan kurulur
+const D8_SW_VERSION='d8-v11'; // her yeni yayında bu değeri değiştirin (v5, v6, v7...) — eski SW/cache tamamen silinip sıfırdan kurulur
 if('serviceWorker'in navigator){
 const D8_PAGE_KEY='/__d8_page__';
 const D8_LAST_VERSION_KEY='d8_sw_last_version';
@@ -2551,7 +2712,12 @@ self.addEventListener('fetch',e=>{
 `;
 function d8SnapshotCurrentPage(){
   caches.open(D8_SW_VERSION).then(c=>{
-    fetch(location.href,{cache:'no-store'}).then(r=>{if(r&&r.ok)c.put(D8_PAGE_KEY,r.clone());}).catch(()=>{});
+    fetch(location.href,{cache:'no-store'}).then(r=>{
+      if(r&&r.ok){
+        c.put(D8_PAGE_KEY,r.clone());
+        try{localStorage.setItem('d8_last_snapshot_ok',new Date().toISOString());}catch(e){}
+      }
+    }).catch(e=>{try{localStorage.setItem('d8_last_snapshot_fail',new Date().toISOString()+' '+e);}catch(e2){}});
   }).catch(()=>{});
 }
 function d8RegisterFreshSW(){
@@ -2572,13 +2738,21 @@ function d8RegisterFreshSW(){
     // kısıtlamaları (Doze modu, WebAPK'nin kendi güncelleme döngüsü vb.)
     // yüzünden otomatik algılamanın gecikmesi/hiç tetiklenmemesi durumunda
     // bile güncellemenin garanti şekilde uygulanmasını sağlar.
+    // ÖNEMLİ SIRALAMA: önce YENİ sürümü cache'e yazıyoruz, ancak ondan SONRA
+    // eskileri siliyoruz — bu ikisi arasında offline'a düşülse bile cache
+    // hiçbir an tamamen boş kalmasın diye.
     try{
-      const regs=await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map(r=>r.unregister()));
+      const c=await caches.open(D8_SW_VERSION);
+      const fresh=await fetch(location.href,{cache:'no-store'});
+      if(fresh&&fresh.ok)await c.put(D8_PAGE_KEY,fresh.clone());
     }catch(e){}
     try{
       const keys=await caches.keys();
-      await Promise.all(keys.map(k=>caches.delete(k)));
+      await Promise.all(keys.filter(k=>k!==D8_SW_VERSION).map(k=>caches.delete(k)));
+    }catch(e){}
+    try{
+      const regs=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister()));
     }catch(e){}
     try{localStorage.setItem(D8_LAST_VERSION_KEY,D8_SW_VERSION);}catch(e){}
   }
@@ -2619,6 +2793,52 @@ function d8RegisterFreshSW(){
   });
   setInterval(d8CheckForUpdate,10*60*1000); // her 10 dakikada bir kontrol
   d8CheckForUpdate();
+})();
+// --- Teşhis paneli: sağ altta küçük bir "i" butonu, dokununca SW/cache
+// durumunu gösterir. Sorun giderme için — kalıcı bir kullanıcı özelliği değil.
+(function(){
+  function d8fmt(s){try{return s?new Date(s).toLocaleString('tr-TR'):'—';}catch(e){return s||'—';}}
+  async function d8BuildReport(){
+    var lines=[];
+    lines.push('Sürüm (D8_SW_VERSION): '+(typeof D8_SW_VERSION!=='undefined'?D8_SW_VERSION:'—'));
+    lines.push('Çevrimiçi mi (navigator.onLine): '+(navigator.onLine?'Evet':'Hayır'));
+    lines.push('localStorage kayıtlı sürüm: '+(function(){try{return localStorage.getItem('d8_sw_last_version')||'—';}catch(e){return '—';}})());
+    lines.push('Son başarılı snapshot: '+d8fmt((function(){try{return localStorage.getItem('d8_last_snapshot_ok');}catch(e){return null;}})()));
+    lines.push('Son başarısız snapshot: '+d8fmt((function(){try{return localStorage.getItem('d8_last_snapshot_fail');}catch(e){return null;}})()));
+    try{
+      var regs=await navigator.serviceWorker.getRegistrations();
+      lines.push('Kayıtlı SW sayısı: '+regs.length);
+      regs.forEach(function(r,i){
+        var w=r.active||r.waiting||r.installing;
+        lines.push('  SW#'+i+': scope='+r.scope+' durum='+(w?w.state:'yok'));
+      });
+    }catch(e){lines.push('SW kaydı okunamadı: '+e);}
+    try{
+      var keys=await caches.keys();
+      lines.push('Cache adları: '+(keys.length?keys.join(', '):'(hiç yok)'));
+      for(var k of keys){
+        var c=await caches.open(k);
+        var has=await c.match('/__d8_page__');
+        lines.push('  '+k+' içinde /__d8_page__ var mı: '+(has?'Evet':'Hayır'));
+      }
+    }catch(e){lines.push('Cache okunamadı: '+e);}
+    return lines.join('\n');
+  }
+  function d8ShowDiagPanel(){
+    var old=document.getElementById('d8DiagPanel');
+    if(old)old.remove();
+    var p=document.createElement('div');
+    p.id='d8DiagPanel';
+    p.style.cssText='position:fixed;left:8px;right:8px;bottom:70px;z-index:999999;background:#111;color:#0f0;font-family:monospace;font-size:11px;padding:10px;border-radius:8px;max-height:60vh;overflow:auto;white-space:pre-wrap;box-shadow:0 0 20px rgba(0,0,0,.5);';
+    p.textContent='Yükleniyor...';
+    document.body.appendChild(p);
+    d8BuildReport().then(function(txt){p.textContent=txt;});
+  }
+  var btn=document.createElement('button');
+  btn.textContent='ⓘ';
+  btn.style.cssText='position:fixed;right:10px;bottom:10px;z-index:999998;width:36px;height:36px;border-radius:50%;background:#333;color:#fff;border:none;font-size:16px;opacity:.55;';
+  btn.addEventListener('click',d8ShowDiagPanel);
+  if(document.body){document.body.appendChild(btn);}else{document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(btn);});}
 })();
 window._d8DonemMode=(function(){try{return localStorage.getItem('d8DonemMode')||'d2';}catch(e){return 'd2';}})();
 function setDonemMode(mode){
