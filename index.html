@@ -2676,7 +2676,7 @@ const uniqueLabels=[...new Set(holidays.map(h=>h.label))];const dayList=holidays
 <div class="hwb-days">Tatil günleri: ${dayList}</div>
 </div>
 </div>`;}
-const D8_SW_VERSION='d8-v11'; // her yeni yayında bu değeri değiştirin (v5, v6, v7...) — eski SW/cache tamamen silinip sıfırdan kurulur
+const D8_SW_VERSION='d8-v12'; // her yeni yayında bu değeri değiştirin (v5, v6, v7...) — eski SW/cache tamamen silinip sıfırdan kurulur
 if('serviceWorker'in navigator){
 const D8_PAGE_KEY='/__d8_page__';
 const D8_LAST_VERSION_KEY='d8_sw_last_version';
@@ -2793,52 +2793,6 @@ function d8RegisterFreshSW(){
   });
   setInterval(d8CheckForUpdate,10*60*1000); // her 10 dakikada bir kontrol
   d8CheckForUpdate();
-})();
-// --- Teşhis paneli: sağ altta küçük bir "i" butonu, dokununca SW/cache
-// durumunu gösterir. Sorun giderme için — kalıcı bir kullanıcı özelliği değil.
-(function(){
-  function d8fmt(s){try{return s?new Date(s).toLocaleString('tr-TR'):'—';}catch(e){return s||'—';}}
-  async function d8BuildReport(){
-    var lines=[];
-    lines.push('Sürüm (D8_SW_VERSION): '+(typeof D8_SW_VERSION!=='undefined'?D8_SW_VERSION:'—'));
-    lines.push('Çevrimiçi mi (navigator.onLine): '+(navigator.onLine?'Evet':'Hayır'));
-    lines.push('localStorage kayıtlı sürüm: '+(function(){try{return localStorage.getItem('d8_sw_last_version')||'—';}catch(e){return '—';}})());
-    lines.push('Son başarılı snapshot: '+d8fmt((function(){try{return localStorage.getItem('d8_last_snapshot_ok');}catch(e){return null;}})()));
-    lines.push('Son başarısız snapshot: '+d8fmt((function(){try{return localStorage.getItem('d8_last_snapshot_fail');}catch(e){return null;}})()));
-    try{
-      var regs=await navigator.serviceWorker.getRegistrations();
-      lines.push('Kayıtlı SW sayısı: '+regs.length);
-      regs.forEach(function(r,i){
-        var w=r.active||r.waiting||r.installing;
-        lines.push('  SW#'+i+': scope='+r.scope+' durum='+(w?w.state:'yok'));
-      });
-    }catch(e){lines.push('SW kaydı okunamadı: '+e);}
-    try{
-      var keys=await caches.keys();
-      lines.push('Cache adları: '+(keys.length?keys.join(', '):'(hiç yok)'));
-      for(var k of keys){
-        var c=await caches.open(k);
-        var has=await c.match('/__d8_page__');
-        lines.push('  '+k+' içinde /__d8_page__ var mı: '+(has?'Evet':'Hayır'));
-      }
-    }catch(e){lines.push('Cache okunamadı: '+e);}
-    return lines.join('\n');
-  }
-  function d8ShowDiagPanel(){
-    var old=document.getElementById('d8DiagPanel');
-    if(old)old.remove();
-    var p=document.createElement('div');
-    p.id='d8DiagPanel';
-    p.style.cssText='position:fixed;left:8px;right:8px;bottom:70px;z-index:999999;background:#111;color:#0f0;font-family:monospace;font-size:11px;padding:10px;border-radius:8px;max-height:60vh;overflow:auto;white-space:pre-wrap;box-shadow:0 0 20px rgba(0,0,0,.5);';
-    p.textContent='Yükleniyor...';
-    document.body.appendChild(p);
-    d8BuildReport().then(function(txt){p.textContent=txt;});
-  }
-  var btn=document.createElement('button');
-  btn.textContent='ⓘ';
-  btn.style.cssText='position:fixed;right:10px;bottom:10px;z-index:999998;width:36px;height:36px;border-radius:50%;background:#333;color:#fff;border:none;font-size:16px;opacity:.55;';
-  btn.addEventListener('click',d8ShowDiagPanel);
-  if(document.body){document.body.appendChild(btn);}else{document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(btn);});}
 })();
 window._d8DonemMode=(function(){try{return localStorage.getItem('d8DonemMode')||'d2';}catch(e){return 'd2';}})();
 function setDonemMode(mode){
