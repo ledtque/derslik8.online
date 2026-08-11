@@ -1970,6 +1970,13 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
     var mo=document.getElementById('modal-overlay');
     if(mo&&mo.classList.contains('open')){e.preventDefault();closeModalDirect();}
+  } else if((e.key==='1'||e.key==='2')&&!e.ctrlKey&&!e.altKey&&!e.metaKey){
+    var mo2=document.getElementById('modal-overlay');
+    if(!mo2||!mo2.classList.contains('open'))return;
+    var t=e.target;
+    if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+    var btn=document.getElementById(e.key==='1'?'tab-izlence':'tab-notlar');
+    if(btn){e.preventDefault();btn.click();}
   }
 });
 function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closeModalDirect();}
@@ -4373,6 +4380,28 @@ td.td-full[data-fam="uygulama"] {
   .mob-nav-icon.d8-ikon svg { width: 20px; height: 20px; }
 }
 
+/* ---------- 5. Notlara ve Drive'a hızlı erişim (kaydırma) ---------- */
+/* Karta yapışık kalıcı bir öğe yok. Sola kaydırınca "Notlar", sağa
+   kaydırınca ilgili dersin Drive klasörü ortaya çıkar; eşiği geçip
+   parmağı kaldırınca ekstra dokunmaya gerek kalmadan direkt açılır. */
+.d8-swipe-row { position: relative; overflow: hidden; }
+.d8-swipe-track {
+  display: flex; transition: transform .22s cubic-bezier(.22,1,.36,1);
+  will-change: transform;
+}
+.d8-swipe-track.dragging { transition: none; }
+.d8-swipe-track > .mob-lesson-card { flex: 0 0 100%; min-width: 0; }
+.d8-swipe-action {
+  flex: 0 0 76px; width: 76px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px; color: #fff;
+  cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.d8-swipe-action.d8-swipe-notlar { background: linear-gradient(135deg, var(--navy), var(--navy2)); }
+.d8-swipe-action.d8-swipe-drive { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.d8-swipe-action-icon { font-size: 19px; line-height: 1; }
+.d8-swipe-action-label { font-size: 9.5px; font-weight: 700; letter-spacing: .2px; }
+.d8-swipe-action:focus-visible { outline: 2.5px solid #fff; outline-offset: -4px; }
+
 </style>
 <script id="d8-enhance">
 /* ==========================================================================
@@ -4497,6 +4526,183 @@ td.td-full[data-fam="uygulama"] {
     });
   }
 
+  /* ======================================================================
+     2b. NOTLARA VE DRIVE'A HIZLI ERİŞİM — kaydırma (swipe)
+     Karta yapışık kalıcı bir görsel öğe eklemeden: mobil ders kartı sola
+     kaydırılınca "📝 Notlar", sağa kaydırılınca "📁 Drive" ortaya çıkar.
+     Eşiği geçip parmak kaldırıldığında ekstra dokunmaya gerek kalmadan
+     doğrudan tetiklenir (izlence modalı atlanır). Kısmi kaydırmada panel
+     görünür kalırsa dokunarak da tetiklenebilir. Klavye ile de
+     erişilebilir: odak alınca ilgili panel ortaya çıkar.
+     ====================================================================== */
+  var D8_SWIPE_DRIVE_W = 76;
+  var D8_SWIPE_NOTLAR_W = 76;
+  var D8_SWIPE_REST = -D8_SWIPE_DRIVE_W;
+  var D8_SWIPE_MIN = -(D8_SWIPE_DRIVE_W + D8_SWIPE_NOTLAR_W);
+  var D8_SWIPE_MAX = 0;
+
+  function d8SwipeReset(card) {
+    var track = card && card.parentNode;
+    if (!track || !track.classList || !track.classList.contains('d8-swipe-track')) return;
+    track.classList.remove('dragging');
+    track.style.transform = 'translateX(' + D8_SWIPE_REST + 'px)';
+    card._d8SwipeX = D8_SWIPE_REST;
+    if (window._d8SwipeOpenCard === card) window._d8SwipeOpenCard = null;
+  }
+
+  function d8SwipeOpenNotlar(card, track) {
+    if (window._d8SwipeOpenCard && window._d8SwipeOpenCard !== card) d8SwipeReset(window._d8SwipeOpenCard);
+    track.classList.remove('dragging');
+    track.style.transform = 'translateX(' + D8_SWIPE_MIN + 'px)';
+    card._d8SwipeX = D8_SWIPE_MIN;
+    window._d8SwipeOpenCard = card;
+  }
+
+  function d8SwipeOpenDrive(card, track) {
+    if (window._d8SwipeOpenCard && window._d8SwipeOpenCard !== card) d8SwipeReset(window._d8SwipeOpenCard);
+    track.classList.remove('dragging');
+    track.style.transform = 'translateX(' + D8_SWIPE_MAX + 'px)';
+    card._d8SwipeX = D8_SWIPE_MAX;
+    window._d8SwipeOpenCard = card;
+  }
+
+  function d8SwipeGoDrive(kod) {
+    var d = izlenceler[kod];
+    var link = d && (d.driveLink || d.sunuLink);
+    if (link) {
+      window.open(link, '_blank', 'noopener');
+    } else if (typeof window.d8ShowToast === 'function') {
+      window.d8ShowToast('📁 Bu ders için Drive klasörü tanımlı değil');
+    }
+  }
+
+  function dekoreSwipe() {
+    document.querySelectorAll(
+      '#mobile-schedule .mob-lesson-card[data-kod], #mobile-schedule-d2 .mob-lesson-card[data-kod]'
+    ).forEach(function (card) {
+      if (card._d8SwipeBound) return;
+      var kod = card.getAttribute('data-kod');
+      if (!kod || !card.parentNode) return;
+      card._d8SwipeBound = true;
+
+      var row = document.createElement('div'); row.className = 'd8-swipe-row';
+      var track = document.createElement('div'); track.className = 'd8-swipe-track';
+
+      var driveAction = document.createElement('div'); driveAction.className = 'd8-swipe-action d8-swipe-drive';
+      driveAction.setAttribute('role', 'button');
+      driveAction.setAttribute('tabindex', '0');
+      driveAction.setAttribute('aria-label', D8.ad(kod) + ' Drive klasörünü aç');
+      driveAction.innerHTML = '<span class="d8-swipe-action-icon" aria-hidden="true">📁</span><span class="d8-swipe-action-label">Drive</span>';
+
+      var notlarAction = document.createElement('div'); notlarAction.className = 'd8-swipe-action d8-swipe-notlar';
+      notlarAction.setAttribute('role', 'button');
+      notlarAction.setAttribute('tabindex', '0');
+      notlarAction.setAttribute('aria-label', D8.ad(kod) + ' notlarını aç');
+      notlarAction.innerHTML = '<span class="d8-swipe-action-icon" aria-hidden="true">📝</span><span class="d8-swipe-action-label">Notlar</span>';
+
+      card.parentNode.insertBefore(row, card);
+      track.appendChild(driveAction);
+      track.appendChild(card);
+      track.appendChild(notlarAction);
+      row.appendChild(track);
+
+      /* İlk konumlanma animasızsız olsun (sayfa yüklenirken görünür kaymasın) */
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(' + D8_SWIPE_REST + 'px)';
+      void track.offsetWidth;
+      track.style.transition = '';
+      card._d8SwipeX = D8_SWIPE_REST;
+
+      notlarAction.addEventListener('click', D8.guvenli(function (e) {
+        e.stopPropagation();
+        d8SwipeReset(card);
+        if (typeof window.d8OpenNotesPage === 'function') window.d8OpenNotesPage(kod);
+      }, 'not-kaydir-ac'));
+      notlarAction.addEventListener('focus', D8.guvenli(function () { d8SwipeOpenNotlar(card, track); }, 'not-kaydir-odak'));
+      notlarAction.addEventListener('blur', D8.guvenli(function () { d8SwipeReset(card); }, 'not-kaydir-odak-cik'));
+
+      driveAction.addEventListener('click', D8.guvenli(function (e) {
+        e.stopPropagation();
+        d8SwipeReset(card);
+        d8SwipeGoDrive(kod);
+      }, 'drive-kaydir-ac'));
+      driveAction.addEventListener('focus', D8.guvenli(function () { d8SwipeOpenDrive(card, track); }, 'drive-kaydir-odak'));
+      driveAction.addEventListener('blur', D8.guvenli(function () { d8SwipeReset(card); }, 'drive-kaydir-odak-cik'));
+
+      var origOnclick = card.onclick;
+      card.onclick = function (e) {
+        if (card._d8SwipeX !== D8_SWIPE_REST) {
+          e.preventDefault(); e.stopPropagation();
+          d8SwipeReset(card);
+          return;
+        }
+        if (card._d8SwipeWasDrag) { card._d8SwipeWasDrag = false; return; }
+        if (typeof origOnclick === 'function') origOnclick.call(card, e);
+      };
+
+      var startX = null, startY = null, startTX = D8_SWIPE_REST, dirDecided = false, isH = false, dragging = false;
+
+      card.addEventListener('touchstart', D8.guvenli(function (e) {
+        if (window._d8SwipeOpenCard && window._d8SwipeOpenCard !== card) d8SwipeReset(window._d8SwipeOpenCard);
+        var t = e.touches[0];
+        startX = t.clientX; startY = t.clientY;
+        startTX = card._d8SwipeX != null ? card._d8SwipeX : D8_SWIPE_REST;
+        dirDecided = false; isH = false; dragging = false;
+      }, 'kaydir-basla'), { passive: true });
+
+      card.addEventListener('touchmove', D8.guvenli(function (e) {
+        if (startX === null) return;
+        var t = e.touches[0];
+        var dx = t.clientX - startX, dy = t.clientY - startY;
+        if (!dirDecided) {
+          if (Math.abs(dx) < 7 && Math.abs(dy) < 7) return;
+          dirDecided = true; isH = Math.abs(dx) > Math.abs(dy);
+        }
+        if (!isH) return;
+        e.preventDefault();
+        dragging = true;
+        track.classList.add('dragging');
+        var raw = startTX + dx;
+        var clamped = Math.max(D8_SWIPE_MIN, Math.min(D8_SWIPE_MAX, raw));
+        card._d8SwipeX = clamped;
+        track.style.transform = 'translateX(' + clamped + 'px)';
+      }, 'kaydir-devam'), { passive: false });
+
+      var bitir = D8.guvenli(function () {
+        if (startX === null) return;
+        startX = null;
+        track.classList.remove('dragging');
+        if (!dragging) return;
+        card._d8SwipeWasDrag = true;
+        dragging = false;
+        var pastLeft = D8_SWIPE_REST - card._d8SwipeX;   /* notlar yönü (sola) */
+        var pastRight = card._d8SwipeX - D8_SWIPE_REST;  /* drive yönü (sağa) */
+        if (pastLeft >= D8_SWIPE_NOTLAR_W / 2) {
+          d8SwipeReset(card);
+          if (typeof window.d8OpenNotesPage === 'function') window.d8OpenNotesPage(kod);
+        } else if (pastRight >= D8_SWIPE_DRIVE_W / 2) {
+          d8SwipeReset(card);
+          d8SwipeGoDrive(kod);
+        } else {
+          d8SwipeReset(card);
+        }
+      }, 'kaydir-bitir');
+      card.addEventListener('touchend', bitir, { passive: true });
+      card.addEventListener('touchcancel', bitir, { passive: true });
+    });
+
+    if (!window._d8SwipeDisariTikBound) {
+      window._d8SwipeDisariTikBound = true;
+      document.addEventListener('touchstart', D8.guvenli(function (e) {
+        var open = window._d8SwipeOpenCard;
+        if (!open) return;
+        var row = open.closest ? open.closest('.d8-swipe-row') : null;
+        if (row && row.contains(e.target)) return;
+        d8SwipeReset(open);
+      }, 'kaydir-disari-tik'), { passive: true });
+    }
+  }
+
   function dekoreLegend() {
     document.querySelectorAll('#panel-program .leg').forEach(function (leg) {
       var m = (leg.getAttribute('onclick') || '').match(/'(\d+)'/);
@@ -4521,7 +4727,7 @@ td.td-full[data-fam="uygulama"] {
   D8.dekore = function () {
     clearTimeout(dekoreZamanlayici);
     dekoreZamanlayici = setTimeout(D8.guvenli(function () {
-      dekoreTablo(); dekoreMobil(); dekoreLegend(); dekoreSinav();
+      dekoreTablo(); dekoreMobil(); dekoreSwipe(); dekoreLegend(); dekoreSinav();
     }, 'dekore'), 30);
   };
 
