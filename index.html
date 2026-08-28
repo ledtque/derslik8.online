@@ -310,16 +310,9 @@ body.dark .d8np-back:hover{background:#1E2840}
 .d8-cark-chip:hover{border-color:var(--navy)}
 .d8-cark-chip.active{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(12,36,97,0.22)}
 .d8-cark-chip-yeni{background:rgba(14,116,144,0.08);border-style:dashed;color:var(--navy)}
-.d8-cark-share{margin-top:8px;padding-top:12px;border-top:1px solid var(--border);width:100%;max-width:340px;text-align:center}
-.d8-cark-share-label{font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:6px}
-.d8-cark-share-label strong{color:var(--navy);font-family:'JetBrains Mono',monospace;letter-spacing:1px}
-.d8-cark-share-row{display:flex;gap:6px}
-.d8-cark-share-input{flex:1;min-width:0;font-family:'JetBrains Mono',monospace;font-size:11px}
-.d8-cark-share-hint{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.4}
 .d8-cark-input{width:100%;border:1px solid var(--border);border-radius:9px;padding:9px 11px;font-family:'Sora',sans-serif;font-size:13px;background:var(--white);color:var(--text);box-sizing:border-box}
 .d8-cark-form-wrap{width:100%;max-width:420px;margin:8px auto 0}
-.d8-cark-form-title{font-family:'Sora',sans-serif;font-weight:800;font-size:18px;color:var(--navy);margin-bottom:6px;text-align:center}
-.d8-cark-form-sub{font-size:12px;color:var(--muted);line-height:1.6;text-align:center;margin-bottom:18px}
+.d8-cark-form-title{font-family:'Sora',sans-serif;font-weight:800;font-size:18px;color:var(--navy);margin-bottom:16px;text-align:center}
 .d8-cark-form-label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin:14px 0 6px}
 .d8-cark-textarea{width:100%;height:220px;border:1px solid var(--border);border-radius:9px;padding:10px 11px;font-family:'JetBrains Mono',monospace;font-size:12.5px;resize:vertical;background:var(--white);color:var(--text);box-sizing:border-box}
 .d8-cark-form-hata{margin-top:10px;font-size:12px;color:var(--red);font-weight:600}
@@ -2616,6 +2609,7 @@ function d8IsimListesiDuzenle(){
   box.style.cssText='background:var(--white);border-radius:14px;padding:18px;max-width:360px;width:100%;box-shadow:var(--shadow-lg);';
   box.innerHTML='<div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--text);">İsim Listesi (her satıra bir isim)</div>'
     +'<textarea id="d8-isim-textarea" style="width:100%;height:220px;border:1px solid var(--border);border-radius:8px;padding:8px;font-family:\'JetBrains Mono\',monospace;font-size:12px;resize:vertical;background:var(--bg);color:var(--text);"></textarea>'
+    +d8CarkFotoButonuHTML('d8-isim-foto-input','d8-isim-textarea','d8-isim-foto-durum')
     +'<div style="display:flex;gap:8px;margin-top:10px;">'
     +'<button id="d8-isim-kaydet" style="flex:1;padding:9px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-weight:700;cursor:pointer;font-family:\'Sora\',sans-serif;">Kaydet</button>'
     +'<button id="d8-isim-iptal" style="flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-family:\'Sora\',sans-serif;">İptal</button>'
@@ -2733,19 +2727,6 @@ function d8CarkOverlayIcerikHTML(){
         :(isAdmin?'<button class="d8-cark-mini-btn d8-cark-admin-btn" onclick="d8IsimListesiDuzenle()">✎ Listeyi Düzenle</button>':''))
     +'</div>';
 
-  var paylasimHtml='';
-  if(ozelKod){
-    var link=d8CarkPaylasimLinki(ozelKod);
-    paylasimHtml='<div class="d8-cark-share">'
-      +'<div class="d8-cark-share-label">Bu çarkın kodu: <strong>'+d8CarkEsc(ozelKod)+'</strong></div>'
-      +'<div class="d8-cark-share-row">'
-        +'<input class="d8-cark-input d8-cark-share-input" id="d8-cark-share-link" type="text" readonly value="'+d8CarkEsc(link)+'" onclick="this.select()">'
-        +'<button class="d8-cark-mini-btn" onclick="d8CarkLinkiKopyala()">🔗 Kopyala</button>'
-      +'</div>'
-      +'<div class="d8-cark-share-hint">Bu bağlantıyla direkt açılır; ama artık yukarıdaki listeden de seçilebilir.</div>'
-    +'</div>';
-  }
-
   return '<div class="d8-cark-wrap">'
     +secici
     +baslikHtml
@@ -2758,18 +2739,17 @@ function d8CarkOverlayIcerikHTML(){
     +'<div class="d8-cark-toolbar">'
       +'<div id="d8-isimcek-kalan" class="d8-cark-kalan">'+kalanTxt+'</div>'
       +altButonlar
-      +paylasimHtml
     +'</div>'
   +'</div>';
 }
 function d8CarkOlusturFormuHTML(){
   return '<div class="d8-cark-form-wrap">'
     +'<div class="d8-cark-form-title">🎡 Yeni Çark Oluştur</div>'
-    +'<div class="d8-cark-form-sub">Giriş yapmana ya da kayıt olmana gerek yok. Oluşturduğun çark bu listede kalıcı olarak görünür; başka bir cihazdan girdiğinde de direkt seçebilirsin.</div>'
     +'<label class="d8-cark-form-label">Çark Adı</label>'
     +'<input id="d8-cark-form-ad" class="d8-cark-input" type="text" maxlength="60" placeholder="Örn: D4">'
     +'<label class="d8-cark-form-label">İsimler (her satıra bir isim)</label>'
     +'<textarea id="d8-cark-form-isimler" class="d8-cark-textarea" placeholder="Ahmet&#10;Ayşe&#10;Mehmet&#10;..."></textarea>'
+    +d8CarkFotoButonuHTML('d8-cark-form-foto-input','d8-cark-form-isimler','d8-cark-form-foto-durum')
     +'<div id="d8-cark-form-hata" class="d8-cark-form-hata" style="display:none;"></div>'
     +'<div style="display:flex;gap:8px;margin-top:12px;">'
       +'<button id="d8-cark-form-olustur-btn" class="d8-cark-spin-btn" style="max-width:none;flex:1;" onclick="d8CarkFormGonder()">🎡 Çarkı Oluştur</button>'
@@ -2814,25 +2794,68 @@ function d8CarkFormGonder(){
     if(btn){btn.disabled=false;btn.textContent='🎡 Çarkı Oluştur';}
   });
 }
-function d8CarkPaylasimLinki(kod){
-  return location.origin+location.pathname+'?cark='+encodeURIComponent(kod);
+/* ==== Fotoğraftan isim listesi çıkarma (OCR) ====
+   Tesseract.js'i sadece kullanıcı gerçekten bir fotoğraf seçtiğinde,
+   CDN'den yükler (sayfa ilk açılışını yavaşlatmasın diye). Okunan metin
+   satırlara bölünüp textarea'ya eklenir; OCR hata yapabileceğinden
+   sonuç asla otomatik kaydedilmez — kullanıcı gözden geçirip düzeltir. */
+var _d8OcrYukleniyorPromise=null;
+function d8CarkOcrHazirla(){
+  if(window.Tesseract)return Promise.resolve();
+  if(_d8OcrYukleniyorPromise)return _d8OcrYukleniyorPromise;
+  _d8OcrYukleniyorPromise=new Promise(function(resolve,reject){
+    var s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    s.onload=function(){resolve();};
+    s.onerror=function(){_d8OcrYukleniyorPromise=null;reject(new Error('Tesseract.js yüklenemedi'));};
+    document.head.appendChild(s);
+  });
+  return _d8OcrYukleniyorPromise;
 }
-function d8CarkLinkiKopyala(){
-  var inp=document.getElementById('d8-cark-share-link');
-  if(!inp)return;
-  inp.select();
-  try{inp.setSelectionRange(0,99999);}catch(e){}
-  function basarili(){
-    var btns=document.querySelectorAll('.d8-cark-share .d8-cark-mini-btn');
-    btns.forEach(function(b){var t=b.textContent;b.textContent='✓ Kopyalandı';setTimeout(function(){b.textContent=t;},1500);});
-  }
-  try{
-    if(navigator.clipboard&&navigator.clipboard.writeText){
-      navigator.clipboard.writeText(inp.value).then(basarili).catch(function(){try{document.execCommand('copy');basarili();}catch(e2){}});
-    }else{
-      document.execCommand('copy');basarili();
+function d8CarkFotoDosyaSecildi(inputEl,textareaId,statusId){
+  var file=inputEl.files&&inputEl.files[0];
+  inputEl.value=''; // aynı dosya tekrar seçilebilsin diye sıfırla
+  if(!file)return;
+  d8CarkFotoIsimCikar(file,textareaId,statusId);
+}
+function d8CarkFotoIsimCikar(file,textareaId,statusId){
+  var statusEl=document.getElementById(statusId);
+  var taEl=document.getElementById(textareaId);
+  if(statusEl){statusEl.textContent='⏳ Fotoğraf yükleniyor…';statusEl.style.color='var(--muted)';}
+  d8CarkOcrHazirla().then(function(){
+    if(statusEl){statusEl.textContent='⏳ Fotoğraf okunuyor… (biraz sürebilir)';}
+    return window.Tesseract.recognize(file,'tur',{
+      logger:function(m){
+        if(statusEl&&m&&m.status==='recognizing text'&&typeof m.progress==='number'){
+          statusEl.textContent='⏳ Okunuyor… %'+Math.round(m.progress*100);
+        }
+      }
+    });
+  }).then(function(result){
+    var metin=(result&&result.data&&result.data.text)||'';
+    var satirlar=metin.split('\n').map(function(s){return s.trim();}).filter(function(s){
+      return !!s && /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(s); // sadece rakam/noktalama olan gürültü satırlarını ele
+    });
+    if(!satirlar.length){
+      if(statusEl){statusEl.textContent='⚠️ Fotoğrafta okunabilir isim bulunamadı, elle yazmayı dene.';statusEl.style.color='var(--red)';}
+      return;
     }
-  }catch(e){}
+    if(taEl){
+      var mevcut=taEl.value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+      taEl.value=mevcut.concat(satirlar).join('\n');
+    }
+    if(statusEl){statusEl.textContent='✓ '+satirlar.length+' satır okundu — lütfen gözden geçirip hataları düzelt.';statusEl.style.color='var(--green)';}
+  }).catch(function(e){
+    console.warn('[D8 Çark OCR] Hata:',e);
+    if(statusEl){statusEl.textContent='⚠️ Fotoğraf okunamadı. İnternet bağlantını kontrol et ya da elle yaz.';statusEl.style.color='var(--red)';}
+  });
+}
+function d8CarkFotoButonuHTML(inputId,textareaId,statusId){
+  return '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;">'
+    +'<button type="button" class="d8-cark-mini-btn" onclick="document.getElementById(\''+inputId+'\').click()">📷 Fotoğraftan İsim Ekle</button>'
+    +'<span id="'+statusId+'" style="font-size:11px;color:var(--muted);"></span>'
+    +'</div>'
+    +'<input type="file" id="'+inputId+'" accept="image/*" capture="environment" style="display:none" onchange="d8CarkFotoDosyaSecildi(this,\''+textareaId+'\',\''+statusId+'\')">';
 }
 function d8CarkOzelIsimleriDuzenle(){
   var kod=window._d8CarkAktifKod;
@@ -2844,6 +2867,7 @@ function d8CarkOzelIsimleriDuzenle(){
   box.style.cssText='background:var(--white);border-radius:14px;padding:18px;max-width:360px;width:100%;box-shadow:var(--shadow-lg);';
   box.innerHTML='<div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--text);">İsim Listesi (her satıra bir isim)</div>'
     +'<textarea id="d8-cark-ozel-textarea" style="width:100%;height:220px;border:1px solid var(--border);border-radius:8px;padding:8px;font-family:\'JetBrains Mono\',monospace;font-size:12px;resize:vertical;background:var(--bg);color:var(--text);"></textarea>'
+    +d8CarkFotoButonuHTML('d8-cark-ozel-foto-input','d8-cark-ozel-textarea','d8-cark-ozel-foto-durum')
     +'<div style="display:flex;gap:8px;margin-top:10px;">'
     +'<button id="d8-cark-ozel-kaydet" style="flex:1;padding:9px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-weight:700;cursor:pointer;font-family:\'Sora\',sans-serif;">Kaydet</button>'
     +'<button id="d8-cark-ozel-iptal" style="flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-family:\'Sora\',sans-serif;">İptal</button>'
