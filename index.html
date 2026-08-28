@@ -2796,6 +2796,7 @@ function d8CarkFormGonder(){
    satırlara bölünüp textarea'ya eklenir; OCR hata yapabileceğinden
    sonuç asla otomatik kaydedilmez — kullanıcı gözden geçirip düzeltir. */
 var _d8OcrYukleniyorPromise=null;
+var _d8OcrWorkerPromise=null;
 function d8CarkOcrHazirla(){
   if(window.Tesseract)return Promise.resolve();
   if(_d8OcrYukleniyorPromise)return _d8OcrYukleniyorPromise;
@@ -2808,6 +2809,110 @@ function d8CarkOcrHazirla(){
   });
   return _d8OcrYukleniyorPromise;
 }
+/* Basılı metni okurken defalarca worker kurmamak için tek worker'ı saklayıp
+   yeniden kullanıyoruz (setParameters ile PSM/OEM ayarlarını her seferinde
+   değiştirmeye gerek kalmıyor). */
+function d8CarkOcrWorkerAl(logger){
+  if(_d8OcrWorkerPromise)return _d8OcrWorkerPromise;
+  _d8OcrWorkerPromise=d8CarkOcrHazirla().then(function(){
+    // oem=1 -> yalnızca LSTM sinir ağı motoru (eski "legacy" motordan belirgin
+    // biçimde daha isabetli); psm 6 -> "tek, düzgün metin bloğu" varsayımı,
+    // fotoğraflanan bir isim listesi/sütunu için legacy varsayılan moddan
+    // (otomatik sayfa düzeni analizi) daha kararlı sonuç verir.
+    return window.Tesseract.createWorker('tur',1,{logger:logger}).then(function(worker){
+      return worker.setParameters({tessedit_pageseg_mode:'6'}).then(function(){return worker;});
+    });
+  }).catch(function(e){
+    _d8OcrWorkerPromise=null;
+    throw e;
+  });
+  return _d8OcrWorkerPromise;
+}
+/* ---- Görüntü ön-işleme ----
+   Telefonla çekilen fotoğraflar genelde düşük kontrastlı, gölgeli ve/veya
+   çok küçük/çok büyük çözünürlükte oluyor; bunlar OCR'ın en çok hata yaptığı
+   durumlar. Tesseract'a ham dosya yerine önce şunları uygulanmış bir görüntü
+   veriyoruz: gri tonlama, gerekiyorsa büyütme/küçültme (OCR için ideal
+   genişlik ~2000px), Otsu yöntemiyle otomatik eşik hesaplayıp siyah-beyaza
+   indirgeme (binarization). Bu adım özellikle eğri/donuk ışıkta çekilmiş
+   fotoğraflarda okunurluğu belirgin biçimde artırır. İşleme herhangi bir
+   sebeple başarısız olursa orijinal dosyayla devam edilir, hiçbir zaman
+   işlem tamamen durmaz. */
+function d8CarkGoruntuIsle(file){
+  return new Promise(function(resolve){
+    var url=URL.createObjectURL(file);
+    var img=new Image();
+    img.onload=function(){
+      URL.revokeObjectURL(url);
+      try{
+        var hedefGenislik=2000;
+        var olcek=hedefGenislik/img.naturalWidth;
+        if(!isFinite(olcek)||olcek<=0)olcek=1;
+        if(olcek<0.4)olcek=0.4; // devasa fotoğrafları aşırı küçültüp detay kaybetmeyelim
+        if(olcek>3)olcek=3; // çok küçük görselleri aşırı büyütüp bulanıklaştırmayalım
+        var w=Math.max(1,Math.round(img.naturalWidth*olcek));
+        var h=Math.max(1,Math.round(img.naturalHeight*olcek));
+        var canvas=document.createElement('canvas');
+        canvas.width=w;canvas.height=h;
+        var ctx=canvas.getContext('2d');
+        ctx.imageSmoothingEnabled=true;
+        ctx.imageSmoothingQuality='high';
+        ctx.drawImage(img,0,0,w,h);
+        var imgData=ctx.getImageData(0,0,w,h);
+        var d=imgData.data;
+        var n=w*h;
+        var gri=new Uint8ClampedArray(n);
+        var enKucuk=255,enBuyuk=0;
+        for(var i=0,p=0;i<d.length;i+=4,p++){
+          var g=(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2])|0;
+          gri[p]=g;
+          if(g<enKucuk)enKucuk=g;
+          if(g>enBuyuk)enBuyuk=g;
+        }
+        var aralik=(enBuyuk-enKucuk)||1;
+        var hist=new Array(256).fill(0);
+        var gerilmis=new Uint8ClampedArray(n);
+        for(var p2=0;p2<n;p2++){
+          var v=Math.round(((gri[p2]-enKucuk)/aralik)*255);
+          gerilmis[p2]=v;
+          hist[v]++;
+        }
+        var esik=d8OtsuEsigi(hist,n);
+        for(var i2=0,p3=0;i2<d.length;i2+=4,p3++){
+          var son=gerilmis[p3]>=esik?255:0;
+          d[i2]=d[i2+1]=d[i2+2]=son;
+        }
+        ctx.putImageData(imgData,0,0);
+        canvas.toBlob(function(blob){resolve(blob||file);},'image/png');
+      }catch(e){
+        console.warn('[D8 Çark OCR] Ön işleme atlandı:',e);
+        resolve(file);
+      }
+    };
+    img.onerror=function(){URL.revokeObjectURL(url);resolve(file);};
+    img.src=url;
+  });
+}
+/* Basit histogram tabanlı Otsu eşiği: görüntüyü metin/arka plan olarak
+   ikiye ayıran eşik değerini otomatik bulur (sabit bir eşik yerine her
+   fotoğrafa göre kendini ayarlar). */
+function d8OtsuEsigi(hist,toplamPiksel){
+  var toplam=0;
+  for(var i=0;i<256;i++)toplam+=i*hist[i];
+  var toplamB=0,agirlikB=0,enIyiEsik=127,enIyiVaryans=0;
+  for(var t=0;t<256;t++){
+    agirlikB+=hist[t];
+    if(agirlikB===0)continue;
+    var agirlikF=toplamPiksel-agirlikB;
+    if(agirlikF===0)break;
+    toplamB+=t*hist[t];
+    var ortB=toplamB/agirlikB;
+    var ortF=(toplam-toplamB)/agirlikF;
+    var varyansAra=agirlikB*agirlikF*(ortB-ortF)*(ortB-ortF);
+    if(varyansAra>enIyiVaryans){enIyiVaryans=varyansAra;enIyiEsik=t;}
+  }
+  return enIyiEsik;
+}
 function d8CarkFotoDosyaSecildi(inputEl,textareaId,statusId){
   var file=inputEl.files&&inputEl.files[0];
   inputEl.value=''; // aynı dosya tekrar seçilebilsin diye sıfırla
@@ -2817,16 +2922,17 @@ function d8CarkFotoDosyaSecildi(inputEl,textareaId,statusId){
 function d8CarkFotoIsimCikar(file,textareaId,statusId){
   var statusEl=document.getElementById(statusId);
   var taEl=document.getElementById(textareaId);
-  if(statusEl){statusEl.textContent='⏳ Fotoğraf yükleniyor…';statusEl.style.color='var(--muted)';}
-  d8CarkOcrHazirla().then(function(){
+  if(statusEl){statusEl.textContent='⏳ Fotoğraf hazırlanıyor…';statusEl.style.color='var(--muted)';}
+  var logger=function(m){
+    if(statusEl&&m&&m.status==='recognizing text'&&typeof m.progress==='number'){
+      statusEl.textContent='⏳ Okunuyor… %'+Math.round(m.progress*100);
+    }
+  };
+  Promise.all([d8CarkGoruntuIsle(file),d8CarkOcrWorkerAl(logger)]).then(function(sonuclar){
+    var islenmisGorsel=sonuclar[0];
+    var worker=sonuclar[1];
     if(statusEl){statusEl.textContent='⏳ Fotoğraf okunuyor… (biraz sürebilir)';}
-    return window.Tesseract.recognize(file,'tur',{
-      logger:function(m){
-        if(statusEl&&m&&m.status==='recognizing text'&&typeof m.progress==='number'){
-          statusEl.textContent='⏳ Okunuyor… %'+Math.round(m.progress*100);
-        }
-      }
-    });
+    return worker.recognize(islenmisGorsel);
   }).then(function(result){
     var metin=(result&&result.data&&result.data.text)||'';
     var satirlar=metin.split('\n').map(function(s){return s.trim();}).filter(function(s){
