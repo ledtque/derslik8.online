@@ -79,7 +79,7 @@ body.dark .dip-dot.break{background:#fbbf24}
   .mtab:not(.active):hover{background:var(--bg);color:var(--navy);transform:translateY(-1px)}
   .mtab-akbis:hover{background:rgba(5,150,105,0.08)!important;color:#059669!important;}.mob-nav-akbis .mob-nav-icon{filter:none!important;}.mob-nav-akbis .mob-nav-label{color:#059669!important;}.mob-nav-akbis:active{background:rgba(5,150,105,0.08)!important;}.mtab-akbis .tab-short::after,.mtab-akbis .tab-full::after{content:' ↗';font-size:10px;opacity:0.6;}
 .mtab-sunu:hover{background:rgba(217,119,6,0.09)!important;color:#D97706!important;}
-.mtab-sunu .tab-short::after,.mtab-sunu .tab-full::after{content:' ↗';font-size:10px;opacity:0.6;}.mtab-zamanlayici:hover{background:rgba(99,102,241,0.09)!important;color:#6366F1!important;}@media(max-width:768px){.mtab-zamanlayici{display:none!important;}}.mtab-etkinlik:hover{background:rgba(219,39,119,0.09)!important;color:#DB2777!important;}
+.mtab-sunu .tab-short::after,.mtab-sunu .tab-full::after{content:' ↗';font-size:10px;opacity:0.6;}.mtab-zamanlayici:hover{background:rgba(99,102,241,0.09)!important;color:#6366F1!important;}@media(max-width:768px){.mtab-zamanlayici{display:none!important;}}.mtab-etkinlik:hover{background:rgba(219,39,119,0.09)!important;color:#DB2777!important;}.mtab-cark:hover{background:rgba(249,115,22,0.09)!important;color:#F97316!important;}
   
   /* Ders kartları hover daha belirgin */
   .ci:hover{filter:brightness(0.92);transform:scale(1.03);box-shadow:0 4px 14px rgba(12,36,97,0.12)}
@@ -281,10 +281,48 @@ body.dark .d8np-back{background:#111827;color:#94A3B8}
 body.dark .d8np-back:hover{background:#1E2840}
 #d8-activity-overlay{display:none;position:fixed;inset:0;z-index:100000;background:var(--bg);flex-direction:column;overflow-y:auto}
 #d8-activity-overlay.open{display:flex}
+#d8-cark-overlay{display:none;position:fixed;inset:0;z-index:100000;background:var(--bg);flex-direction:column;overflow-y:auto}
+#d8-cark-overlay.open{display:flex}
 .d8-act-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;flex-shrink:0}
 .d8-act-topbar-title{font-family:'Sora',sans-serif;font-weight:700;font-size:14px;}
 .d8-act-close{background:rgba(255,255,255,0.15);border:none;color:#fff;width:32px;height:32px;border-radius:9px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .d8-act-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:28px 18px 40px;max-width:720px;margin:0 auto;width:100%;box-sizing:border-box}
+.d8-cark-wrap{display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:640px;margin:12px auto 0}
+.d8-cark-wheel-outer{position:relative;width:min(92vw,560px);height:min(92vw,560px);margin:6px auto 2px}
+.d8-cark-pointer{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-top:29px solid var(--red);z-index:3;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+.d8-cark-wheel{position:relative;width:100%;height:100%;border-radius:50%;border:4px solid var(--white);box-shadow:var(--shadow-lg);will-change:transform;transition:transform 3.5s cubic-bezier(.17,.67,.12,.99);overflow:hidden}
+.d8-cark-hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:15%;height:15%;border-radius:50%;background:var(--white);border:3px solid var(--border);z-index:2;box-shadow:var(--shadow-sm)}
+.d8-wheel-label{position:absolute;top:50%;left:50%;width:calc(50% - 14px);height:0;transform-origin:0 0;display:flex;align-items:center;justify-content:flex-end;padding-right:16px;pointer-events:none;box-sizing:border-box}
+.d8-wheel-label span{display:inline-block;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.45);white-space:nowrap;font-family:'Sora',sans-serif;line-height:1;max-width:100%}
+.d8-cark-spin-btn{width:100%;max-width:260px;padding:14px;border:none;border-radius:14px;background:linear-gradient(90deg,var(--navy),var(--navy2));color:#fff;font-weight:700;font-size:15px;cursor:pointer;font-family:'Sora',sans-serif;box-shadow:var(--shadow-md)}
+.d8-cark-spin-btn:disabled{opacity:.6;cursor:default}
+.d8-cark-toolbar{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:2px}
+.d8-cark-kalan{font-size:12px;color:var(--muted);font-weight:600}
+.d8-cark-mini-btn{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;font-family:'Sora',sans-serif}
+.d8-cark-mini-btn:hover{background:var(--bg)}
+.d8-cark-admin-btn{background:rgba(14,116,144,0.08);border-color:rgba(14,116,144,0.25);color:var(--navy);font-weight:700}
+.d8-cark-baslik{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--navy);text-align:center;margin-bottom:2px}
+.d8-cark-durum{font-family:'Sora',sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 16px;max-width:360px}
+.d8-cark-link-btn{background:none;border:none;color:var(--navy);font-weight:700;font-size:12.5px;cursor:pointer;font-family:'Sora',sans-serif;text-decoration:underline;padding:6px 4px}
+.d8-cark-yeni-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+.d8-cark-secici{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:6px;max-width:520px}
+.d8-cark-chip{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:7px 15px;font-size:12.5px;font-weight:700;color:var(--text);cursor:pointer;font-family:'Sora',sans-serif;transition:all .15s;white-space:nowrap}
+.d8-cark-chip:hover{border-color:var(--navy)}
+.d8-cark-chip.active{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(12,36,97,0.22)}
+.d8-cark-chip-yeni{background:rgba(14,116,144,0.08);border-style:dashed;color:var(--navy)}
+.d8-cark-share{margin-top:8px;padding-top:12px;border-top:1px solid var(--border);width:100%;max-width:340px;text-align:center}
+.d8-cark-share-label{font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:6px}
+.d8-cark-share-label strong{color:var(--navy);font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+.d8-cark-share-row{display:flex;gap:6px}
+.d8-cark-share-input{flex:1;min-width:0;font-family:'JetBrains Mono',monospace;font-size:11px}
+.d8-cark-share-hint{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.4}
+.d8-cark-input{width:100%;border:1px solid var(--border);border-radius:9px;padding:9px 11px;font-family:'Sora',sans-serif;font-size:13px;background:var(--white);color:var(--text);box-sizing:border-box}
+.d8-cark-form-wrap{width:100%;max-width:420px;margin:8px auto 0}
+.d8-cark-form-title{font-family:'Sora',sans-serif;font-weight:800;font-size:18px;color:var(--navy);margin-bottom:6px;text-align:center}
+.d8-cark-form-sub{font-size:12px;color:var(--muted);line-height:1.6;text-align:center;margin-bottom:18px}
+.d8-cark-form-label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin:14px 0 6px}
+.d8-cark-textarea{width:100%;height:220px;border:1px solid var(--border);border-radius:9px;padding:10px 11px;font-family:'JetBrains Mono',monospace;font-size:12.5px;resize:vertical;background:var(--white);color:var(--text);box-sizing:border-box}
+.d8-cark-form-hata{margin-top:10px;font-size:12px;color:var(--red);font-weight:600}
 .d8-act-choice-row{display:flex;flex-direction:column;gap:14px;width:100%;max-width:380px;margin-top:20px}
 .d8-act-choice-btn{background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:22px 20px;text-align:left;cursor:pointer;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow-sm);transition:transform .15s,box-shadow .15s}
 .d8-act-choice-btn:active{transform:scale(0.98)}
@@ -309,7 +347,7 @@ body.dark .d8-act-code-big{background:#111827}
 body.dark .d8-act-choice-btn{background:#111827;border-color:#1E2840}
 body.dark .d8-act-sentence{background:#111827;border-color:#1E2840}
 body.dark .d8-act-code-input,body.dark .d8-act-text-input{background:#0b1120}
-@media(max-width:768px){.mtab-etkinlik{display:none!important;}}
+@media(max-width:768px){.mtab-etkinlik{display:none!important;}}@media(max-width:768px){.mtab-cark{display:none!important;}}
 @media(max-width:660px){#mob-nav-btns{padding:0 2px}#mob-nav-btns .mob-nav-btn{padding:8px 1px 12px}#mob-nav-btns .mob-nav-icon{font-size:19px}#mob-nav-btns .mob-nav-label{font-size:8px}}
 </style>
 <body> <div id="splash"> <svg id="splash-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"> <defs> <linearGradient id="sbg" x1="0%" y1="0%" x2="100%" y2="100%"> <stop offset="0%" style="stop-color:#0E7490"/> <stop offset="100%" style="stop-color:#06B6D4"/> </linearGradient> <linearGradient id="sdg" x1="0%" y1="0%" x2="100%" y2="100%"> <stop offset="0%" style="stop-color:#fff7e6"/> <stop offset="100%" style="stop-color:#ffd280"/> </linearGradient> <radialGradient id="sgl" cx="50%" cy="60%" r="50%"> <stop offset="0%" style="stop-color:#ff6b00;stop-opacity:0.35"/> <stop offset="100%" style="stop-color:transparent"/> </radialGradient> </defs> <rect width="512" height="512" rx="115" fill="url(#sbg)"/> <ellipse cx="256" cy="340" rx="200" ry="160" fill="url(#sgl)"/> <path d="M256,80 C256,80 320,160 340,240 C360,310 310,370 256,390 C202,370 152,310 172,240 C192,160 256,80 256,80Z"
@@ -893,6 +931,7 @@ else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})
 <button class="mtab mtab-ingilizce" id="ingilizceTabBtn" onclick="d8TogglePicker(event,'ingilizce-picker-dropdown')" title="Türkiye Yüzyılı Maarif Modeli İngilizce Dersi Öğretim Programları (MEB)"><span class="tab-icon">📘 </span><span class="tab-full">İngilizce Programı</span><span class="tab-short">İng.Prog</span></button>
 <button class="mtab mtab-zamanlayici" onclick="openScreensaver();return false;" title="Sınıf Zamanlayıcısı — Tam ekran geri sayım"><span class="tab-icon">⏱️ </span><span class="tab-full">Zamanlayıcı</span><span class="tab-short">⏱️</span></button>
 <button class="mtab mtab-etkinlik" onclick="d8ActOpenOverlay();return false;" title="Sınıf Etkinliği — Canlı cümle duvarı"><span class="tab-icon">🎤 </span><span class="tab-full">Etkinlik</span><span class="tab-short">🎤</span></button>
+<button class="mtab mtab-cark" onclick="d8CarkOpenOverlay();return false;" title="İsim Çarkı — Rastgele öğrenci seçimi"><span class="tab-icon">🎡 </span><span class="tab-full">İsim Çarkı</span><span class="tab-short">🎡</span></button>
 <button class="mtab" id="mtab-admin" style="display:none" onclick="showMain('admin',this)" title="Sadece admin hesabına özel"><span class="tab-icon">🛠️ </span><span class="tab-full">Admin</span><span class="tab-short">Admin</span></button>
 </div>
 </div>
@@ -1310,6 +1349,13 @@ body.dark #kaynaklar-picker-dropdown{background:#111827;border-color:#1E2840;}
   </div>
   <div class="d8-act-body" id="d8-act-body"></div>
 </div>
+<div id="d8-cark-overlay">
+  <div class="d8-act-topbar">
+    <div class="d8-act-topbar-title">🎡 İsim Çarkı</div>
+    <button class="d8-act-close" onclick="d8CarkCloseOverlay()">✕</button>
+  </div>
+  <div class="d8-act-body" id="d8-cark-body"></div>
+</div>
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
 <div class="modal" id="modal">
 <div class="modal-head">
@@ -1461,6 +1507,7 @@ function d8CloseScreenByName(name){
   else if(name==='modal'&&typeof closeModalDirect==='function')closeModalDirect();
   else if(name==='screensaver'&&typeof window.closeScreensaver==='function')window.closeScreensaver();
   else if(name==='etkinlik'&&typeof window.d8ActCloseOverlay==='function')window.d8ActCloseOverlay();
+  else if(name==='cark'&&typeof window.d8CarkCloseOverlay==='function')window.d8CarkCloseOverlay();
 }
 window.addEventListener('popstate',function(){
   window._d8HandlingPopstate=true;
@@ -2349,12 +2396,79 @@ function diTick(){
 var D8_ISIM_LISTESI_VARSAYILAN=['Emirhan','Dilara','Zeliha','Göksunur','Hakan','Zehra Ören','Ahmet','Meryem','Aslı','Miraç Cemre','Ebru','Yiğit','Kübra','Ramazan Şamil','Enes','Yıldırım Beyazıt','Muhammed Ali','Rumeysa Sena','Zehra Kara','Özkan','Ayçanur','Elif','Ayşegül','Hacer','Gürkan','Esma Nur','Ümmühan','İlker','Mustafa','Murtaza']; // Derslik 8 sınıf listesi — sadece Zehra'lar çakıştığı için onlara soyisim eklendi
 var d8WheelRotation=0;
 var d8WheelSpinning=false;
+/* window._d8CarkAktifKod: undefined = sayfa henüz hiç kontrol etmedi,
+   null = varsayılan D8 çarkı gösteriliyor, "ABC123" gibi bir kod =
+   o kodla açılmış, giriş gerektirmeyen paylaşılabilir bir çark
+   gösteriliyor demektir. */
 function d8IsimListesiAl(){
+  if(window._d8CarkAktifKod){
+    return Array.isArray(window._d8CarkAktifIsimler)?window._d8CarkAktifIsimler:[];
+  }
   try{
     var raw=localStorage.getItem('d8_isim_listesi');
     if(raw){var arr=JSON.parse(raw);if(Array.isArray(arr)&&arr.length)return arr;}
   }catch(e){}
   return D8_ISIM_LISTESI_VARSAYILAN;
+}
+/* ==== Tur bazlı çekiliş havuzu ====
+   Bir isim çarktan çıktığında, o turun geri kalanında (liste baştan
+   sona tekrar çekilene kadar) bir daha çıkmaz. Havuz boşalınca
+   (tur tamamlanınca) otomatik olarak yeni bir tur başlar. İsim listesi
+   değiştirildiğinde (admin düzenlemesi ya da paylaşılan bir çarkın
+   sahibinin listeyi güncellemesi) imza uyuşmayacağı için havuz
+   kendiliğinden sıfırlanır. Her çarkın (varsayılan ya da paylaşılan)
+   kendi havuzu ayrı tutulur. */
+function d8CarkHavuzAnahtari(){
+  return window._d8CarkAktifKod?('d8_cark_havuz_'+window._d8CarkAktifKod):'d8_cark_havuz';
+}
+function d8CarkHavuzAl(list){
+  list=list||d8IsimListesiAl();
+  var sig=JSON.stringify(list);
+  var anahtar=d8CarkHavuzAnahtari();
+  try{
+    var raw=localStorage.getItem(anahtar);
+    if(raw){
+      var obj=JSON.parse(raw);
+      if(obj&&obj.sig===sig&&Array.isArray(obj.kalan)){
+        return obj.kalan.filter(function(n){return list.indexOf(n)!==-1;});
+      }
+    }
+  }catch(e){}
+  d8CarkHavuzKaydet(list.slice(),sig);
+  return list.slice();
+}
+function d8CarkHavuzKaydet(kalan,sig){
+  try{localStorage.setItem(d8CarkHavuzAnahtari(),JSON.stringify({sig:sig,kalan:kalan}));}catch(e){}
+}
+function d8CarkTurSifirla(){
+  if(d8WheelSpinning)return;
+  var list=d8IsimListesiAl();
+  d8CarkHavuzKaydet(list.slice(),JSON.stringify(list));
+  d8CarkKalanGostergesiGuncelle();
+  d8CarkWheelGorseliGuncelle(list.slice());
+}
+function d8CarkKalanGostergesiGuncelle(){
+  var el=document.getElementById('d8-isimcek-kalan');
+  if(!el)return;
+  var list=d8IsimListesiAl();
+  if(!list.length){el.textContent='Liste boş';return;}
+  var kalan=d8CarkHavuzAl(list);
+  el.textContent='Bu turda kalan: '+kalan.length+' / '+list.length;
+}
+/* Çarkın üzerinde HER ZAMAN yalnızca o turda henüz çıkmamış isimler
+   gösterilir: bir isim seçildiğinde dilimi çarktan kaldırılır ve
+   tur sıfırlanana (ya da tur kendiliğinden tamamlanana) kadar bir
+   daha görünmez. */
+function d8CarkWheelGorseliGuncelle(list){
+  var wheelEl=document.getElementById('d8-wheel');
+  if(!wheelEl)return;
+  d8WheelRotation=0;
+  wheelEl.style.transition='none';
+  wheelEl.style.transform='rotate(0deg)';
+  wheelEl.style.backgroundImage=list.length?d8WheelGradient(list):'var(--bg)';
+  wheelEl.innerHTML=d8CarkEtiketleriOlustur(list);
+  void wheelEl.offsetWidth;
+  wheelEl.style.transition='transform 3.5s cubic-bezier(.17,.67,.12,.99)';
 }
 function d8IsimCek(){
   if(d8WheelSpinning)return;
@@ -2363,11 +2477,16 @@ function d8IsimCek(){
   var spinBtn=document.getElementById('d8-isim-cek-btn');
   if(!wheelEl)return;
   if(!list.length){if(spinBtn)spinBtn.textContent='Liste boş';return;}
-  var winner=list[Math.floor(Math.random()*list.length)];
-  var idx=list.indexOf(winner);
-  var n=list.length;
+  var sig=JSON.stringify(list);
+  var kalan=d8CarkHavuzAl(list);
+  if(!kalan.length)kalan=list.slice();
+  // Çarkın üzerinde sadece "kalan" isimler var; kazanan da bunların
+  // arasından, çarktaki gerçek dilim sırasına göre seçilir.
+  var n=kalan.length;
+  var winnerIdx=Math.floor(Math.random()*n);
+  var winner=kalan[winnerIdx];
   var seg=360/n;
-  var segCenter=idx*seg+seg/2;
+  var segCenter=winnerIdx*seg+seg/2;
   var rMod=(360-segCenter)%360;
   var base=Math.ceil(d8WheelRotation/360)*360;
   var extraSpins=5+Math.floor(Math.random()*3);
@@ -2402,10 +2521,16 @@ function d8IsimCek(){
   setTimeout(function(){
     d8WheelSpinning=false;
     if(spinBtn){spinBtn.disabled=false;spinBtn.textContent='🎡 Çarkı Çevir';}
-    d8IsimSonucOverlayAc(winner);
+    var yeniKalan=kalan.filter(function(nm){return nm!==winner;});
+    var turBitti=false;
+    if(!yeniKalan.length){yeniKalan=list.slice();turBitti=true;}
+    d8CarkHavuzKaydet(yeniKalan,sig);
+    d8CarkKalanGostergesiGuncelle();
+    d8CarkWheelGorseliGuncelle(yeniKalan);
+    d8IsimSonucOverlayAc(winner,turBitti);
   },3500);
 }
-function d8IsimSonucOverlayAc(winner){
+function d8IsimSonucOverlayAc(winner,turBitti){
   var eski=document.getElementById('d8-isim-overlay');
   if(eski)eski.remove();
   var overlay=document.createElement('div');
@@ -2416,6 +2541,7 @@ function d8IsimSonucOverlayAc(winner){
   box.style.cssText='background:var(--white);border-radius:20px;padding:32px 26px;max-width:340px;width:100%;box-shadow:var(--shadow-lg);text-align:center;animation:izlenceIn .25s cubic-bezier(.22,1,.36,1) both;';
   box.innerHTML='<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">🎡 Seçilen İsim</div>'
     +'<div id="d8-isim-overlay-name" style="font-size:26px;font-weight:800;color:var(--navy);line-height:1.25;word-break:break-word;">'+winner+'</div>'
+    +(turBitti?'<div style="margin-top:10px;font-size:11.5px;color:var(--accent);font-weight:700;">🔁 Tur tamamlandı — yeni tur başlıyor</div>':'')
     +'<div style="margin-top:20px;">'
     +'<button id="d8-isim-overlay-fisek" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(90deg,#F97316,#FB923C);color:#fff;font-weight:700;font-size:15px;cursor:pointer;font-family:\'Sora\',sans-serif;">🎆 Kutla!</button>'
     +'</div>';
@@ -2503,15 +2629,8 @@ function d8IsimListesiDuzenle(){
     var lines=document.getElementById('d8-isim-textarea').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
     try{localStorage.setItem('d8_isim_listesi',JSON.stringify(lines));}catch(e){}
     overlay.remove();
-    if(typeof buildDesktopSidebar==='function')buildDesktopSidebar();
+    d8CarkOverlayYenile();
   };
-}
-function d8EnsureIsimCekStyles(){
-  if(document.getElementById('d8-isimcek-style'))return;
-  var s=document.createElement('style');
-  s.id='d8-isimcek-style';
-  s.textContent='#d8-wheel{transition:transform 3.5s cubic-bezier(.17,.67,.12,.99);}';
-  document.head.appendChild(s);
 }
 function d8WheelGradient(list){
   var palette=['var(--navy)','var(--navy2)','var(--accent)','var(--accent2)','var(--red)','var(--green)','var(--amber)','var(--purple)','var(--brown)'];
@@ -2524,28 +2643,304 @@ function d8WheelGradient(list){
   }
   return 'conic-gradient('+stops.join(',')+')';
 }
-function d8IsimCekCardHTML(){
-  d8EnsureIsimCekStyles();
+function d8CarkEtiketFontBoyutu(n){
+  if(n<=6)return 28;
+  if(n<=10)return 23;
+  if(n<=16)return 19;
+  if(n<=22)return 16;
+  return 13;
+}
+function d8CarkEsc(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function d8CarkEtiketleriOlustur(list){
+  var n=list.length;
+  if(!n)return '';
+  var seg=360/n;
+  var fontSize=d8CarkEtiketFontBoyutu(n);
+  var html='';
+  for(var i=0;i<n;i++){
+    var theta=i*seg+seg/2;
+    var cssAngle=(theta-90).toFixed(2);
+    html+='<div class="d8-wheel-label" style="transform:rotate('+cssAngle+'deg);"><span style="font-size:'+fontSize+'px;">'+d8CarkEsc(list[i])+'</span></div>';
+  }
+  return html;
+}
+function d8CarkSeciciHTML(){
+  var aktif=window._d8CarkAktifKod;
+  var liste=window._d8CarkListesi||[];
+  var html='<div class="d8-cark-secici" id="d8-cark-secici">';
+  html+='<button class="d8-cark-chip'+(!aktif?' active':'')+'" onclick="d8CarkSecGit(null)">D8</button>';
+  liste.forEach(function(c){
+    var kodEsc=String(c.kod).replace(/'/g,"\\'");
+    html+='<button class="d8-cark-chip'+(aktif===c.kod?' active':'')+'" onclick="d8CarkSecGit(\''+kodEsc+'\')">'+d8CarkEsc(c.ad||c.kod)+'</button>';
+  });
+  html+='<button class="d8-cark-chip d8-cark-chip-yeni" onclick="d8CarkFormAc()">+ Yeni Çark</button>';
+  html+='</div>';
+  return html;
+}
+function d8CarkSeciciGuncelle(){
+  var el=document.getElementById('d8-cark-secici');
+  if(!el)return;
+  el.outerHTML=d8CarkSeciciHTML();
+}
+function d8CarkSecGit(kod){
+  if(d8WheelSpinning)return;
+  if(!kod){d8CarkVarsayilanaDon(true);}
+  else{d8CarkOzelYuklemeyeBaslaVeUrlGuncelle(kod);}
+}
+function d8CarkListesiDinlemeyeBasla(){
+  (function dene(deneme){
+    if(typeof window.d8CarkListesiDinle!=='function'){
+      if(deneme>20)return;
+      setTimeout(function(){dene((deneme||0)+1);},250);
+      return;
+    }
+    window.d8CarkListesiDinle(function(liste){
+      window._d8CarkListesi=liste;
+      d8CarkSeciciGuncelle();
+    });
+  })(0);
+}
+function d8CarkOverlayIcerikHTML(){
+  var secici=d8CarkSeciciHTML();
+  if(window._d8CarkFormAcik){
+    return secici+d8CarkOlusturFormuHTML();
+  }
+  if(window._d8CarkAktifKod && window._d8CarkYukleniyor){
+    return secici+'<div class="d8-cark-durum">⏳ Çark yükleniyor…</div>';
+  }
+  if(window._d8CarkAktifKod && window._d8CarkHataMesaji){
+    return secici+'<div class="d8-cark-durum">⚠️ '+d8CarkEsc(window._d8CarkHataMesaji)+'</div>';
+  }
   var list=d8IsimListesiAl();
-  var sayacTxt=list.length?list.length+' isim arasından rastgele seçilir':'';
-  var gradient=list.length?d8WheelGradient(list):'var(--bg)';
+  var kalan=d8CarkHavuzAl(list);
+  var gosterilecek=kalan.length?kalan:list; // çarkta sadece o turda kalanlar görünür
+  var gradient=gosterilecek.length?d8WheelGradient(gosterilecek):'var(--bg)';
   var initialRotStyle=d8WheelRotation?('transform:rotate('+d8WheelRotation+'deg);'):'';
   var isAdmin=!!(window.d8IsAdmin&&window.d8IsAdmin());
-  var duzenleIcon=isAdmin?'<span onclick="d8IsimListesiDuzenle()" style="cursor:pointer;font-size:12px;opacity:.6;text-transform:none;letter-spacing:0;" title="Listeyi düzenle (yalnızca admin)">✎</span>':'';
-  return '<div class="dsb-card" id="d8-isimcek-card" style="text-align:center;">'
-    +'<div class="dsb-title" style="justify-content:space-between;">'
-      +'<span>🎡 Rastgele İsim Çark</span>'
-      +duzenleIcon
+  var etiketler=d8CarkEtiketleriOlustur(gosterilecek);
+  var kalanTxt=list.length?('Bu turda kalan: '+kalan.length+' / '+list.length):'Liste boş';
+  var ozelKod=window._d8CarkAktifKod;
+  var ozelAd=window._d8CarkAktifAd;
+
+  var baslikHtml='<div class="d8-cark-baslik">🎡 '+d8CarkEsc(ozelAd||'D8')+'</div>';
+
+  var altButonlar='<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">'
+    +'<button class="d8-cark-mini-btn" onclick="d8CarkTurSifirla()">↺ Turu Sıfırla</button>'
+    +(ozelKod
+        ?'<button class="d8-cark-mini-btn d8-cark-admin-btn" onclick="d8CarkOzelIsimleriDuzenle()">✎ İsimleri Düzenle</button>'
+        :(isAdmin?'<button class="d8-cark-mini-btn d8-cark-admin-btn" onclick="d8IsimListesiDuzenle()">✎ Listeyi Düzenle</button>':''))
+    +'</div>';
+
+  var paylasimHtml='';
+  if(ozelKod){
+    var link=d8CarkPaylasimLinki(ozelKod);
+    paylasimHtml='<div class="d8-cark-share">'
+      +'<div class="d8-cark-share-label">Bu çarkın kodu: <strong>'+d8CarkEsc(ozelKod)+'</strong></div>'
+      +'<div class="d8-cark-share-row">'
+        +'<input class="d8-cark-input d8-cark-share-input" id="d8-cark-share-link" type="text" readonly value="'+d8CarkEsc(link)+'" onclick="this.select()">'
+        +'<button class="d8-cark-mini-btn" onclick="d8CarkLinkiKopyala()">🔗 Kopyala</button>'
+      +'</div>'
+      +'<div class="d8-cark-share-hint">Bu bağlantıyla direkt açılır; ama artık yukarıdaki listeden de seçilebilir.</div>'
+    +'</div>';
+  }
+
+  return '<div class="d8-cark-wrap">'
+    +secici
+    +baslikHtml
+    +'<div class="d8-cark-wheel-outer">'
+      +'<div class="d8-cark-pointer"></div>'
+      +'<div id="d8-wheel" class="d8-cark-wheel" style="background-image:'+gradient+';'+initialRotStyle+'">'+etiketler+'</div>'
+      +'<div class="d8-cark-hub"></div>'
     +'</div>'
-    +'<div style="position:relative;width:132px;height:132px;margin:4px auto 6px;">'
-      +'<div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:13px solid var(--red);z-index:2;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25));"></div>'
-      +'<div id="d8-wheel" style="width:132px;height:132px;border-radius:50%;border:3px solid var(--white);box-shadow:var(--shadow-md);background-image:'+gradient+';will-change:transform;transition:transform 3.5s cubic-bezier(.17,.67,.12,.99);'+initialRotStyle+'"></div>'
-      +'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:var(--white);border:2px solid var(--border);z-index:2;"></div>'
+    +'<button id="d8-isim-cek-btn" class="d8-cark-spin-btn" onclick="d8IsimCek()">🎡 Çarkı Çevir</button>'
+    +'<div class="d8-cark-toolbar">'
+      +'<div id="d8-isimcek-kalan" class="d8-cark-kalan">'+kalanTxt+'</div>'
+      +altButonlar
+      +paylasimHtml
     +'</div>'
-    +'<button id="d8-isim-cek-btn" onclick="d8IsimCek()" style="width:100%;margin-top:6px;padding:8px;border:none;border-radius:10px;background:linear-gradient(90deg,var(--navy),var(--navy2));color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:\'Sora\',sans-serif;">🎡 Çarkı Çevir</button>'
-    +'<div id="d8-isimcek-kalan" style="font-size:9.5px;color:var(--muted);margin-top:6px;">'+sayacTxt+'</div>'
   +'</div>';
 }
+function d8CarkOlusturFormuHTML(){
+  return '<div class="d8-cark-form-wrap">'
+    +'<div class="d8-cark-form-title">🎡 Yeni Çark Oluştur</div>'
+    +'<div class="d8-cark-form-sub">Giriş yapmana ya da kayıt olmana gerek yok. Oluşturduğun çark bu listede kalıcı olarak görünür; başka bir cihazdan girdiğinde de direkt seçebilirsin.</div>'
+    +'<label class="d8-cark-form-label">Çark Adı</label>'
+    +'<input id="d8-cark-form-ad" class="d8-cark-input" type="text" maxlength="60" placeholder="Örn: D4">'
+    +'<label class="d8-cark-form-label">İsimler (her satıra bir isim)</label>'
+    +'<textarea id="d8-cark-form-isimler" class="d8-cark-textarea" placeholder="Ahmet&#10;Ayşe&#10;Mehmet&#10;..."></textarea>'
+    +'<div id="d8-cark-form-hata" class="d8-cark-form-hata" style="display:none;"></div>'
+    +'<div style="display:flex;gap:8px;margin-top:12px;">'
+      +'<button id="d8-cark-form-olustur-btn" class="d8-cark-spin-btn" style="max-width:none;flex:1;" onclick="d8CarkFormGonder()">🎡 Çarkı Oluştur</button>'
+      +'<button class="d8-cark-mini-btn" onclick="d8CarkFormIptal()">İptal</button>'
+    +'</div>'
+  +'</div>';
+}
+function d8CarkOverlayYenile(){
+  var body=document.getElementById('d8-cark-body');
+  if(body)body.innerHTML=d8CarkOverlayIcerikHTML();
+}
+function d8CarkFormAc(){
+  window._d8CarkFormAcik=true;
+  d8CarkOverlayYenile();
+  setTimeout(function(){var el=document.getElementById('d8-cark-form-ad');if(el)el.focus();},50);
+}
+function d8CarkFormIptal(){
+  window._d8CarkFormAcik=false;
+  d8CarkOverlayYenile();
+}
+function d8CarkFormGonder(){
+  var adEl=document.getElementById('d8-cark-form-ad');
+  var listEl=document.getElementById('d8-cark-form-isimler');
+  var hataEl=document.getElementById('d8-cark-form-hata');
+  var btn=document.getElementById('d8-cark-form-olustur-btn');
+  var ad=(adEl?adEl.value:'').trim();
+  var isimler=(listEl?listEl.value:'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
+  if(!ad){if(hataEl){hataEl.textContent='Çark için bir isim gir (örn: D4).';hataEl.style.display='block';}return;}
+  if(isimler.length<2){if(hataEl){hataEl.textContent='En az 2 isim gir.';hataEl.style.display='block';}return;}
+  if(hataEl)hataEl.style.display='none';
+  if(typeof window.d8CarkBulutOlustur!=='function'){
+    if(hataEl){hataEl.textContent='Bulut bağlantısı henüz yüklenemedi, birkaç saniye sonra tekrar dene.';hataEl.style.display='block';}
+    return;
+  }
+  if(btn){btn.disabled=true;btn.textContent='Oluşturuluyor…';}
+  window.d8CarkBulutOlustur(ad,isimler).then(function(kod){
+    window._d8CarkFormAcik=false;
+    d8CarkOzelYuklemeyeBaslaVeUrlGuncelle(kod);
+  }).catch(function(e){
+    console.warn('[D8 Çark] Oluşturma hatası:',e);
+    if(hataEl){hataEl.textContent='Çark oluşturulamadı. İnternet bağlantını kontrol edip tekrar dene.';hataEl.style.display='block';}
+    if(btn){btn.disabled=false;btn.textContent='🎡 Çarkı Oluştur';}
+  });
+}
+function d8CarkPaylasimLinki(kod){
+  return location.origin+location.pathname+'?cark='+encodeURIComponent(kod);
+}
+function d8CarkLinkiKopyala(){
+  var inp=document.getElementById('d8-cark-share-link');
+  if(!inp)return;
+  inp.select();
+  try{inp.setSelectionRange(0,99999);}catch(e){}
+  function basarili(){
+    var btns=document.querySelectorAll('.d8-cark-share .d8-cark-mini-btn');
+    btns.forEach(function(b){var t=b.textContent;b.textContent='✓ Kopyalandı';setTimeout(function(){b.textContent=t;},1500);});
+  }
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(inp.value).then(basarili).catch(function(){try{document.execCommand('copy');basarili();}catch(e2){}});
+    }else{
+      document.execCommand('copy');basarili();
+    }
+  }catch(e){}
+}
+function d8CarkOzelIsimleriDuzenle(){
+  var kod=window._d8CarkAktifKod;
+  if(!kod)return;
+  var mevcut=d8IsimListesiAl();
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:999997;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:20px;';
+  var box=document.createElement('div');
+  box.style.cssText='background:var(--white);border-radius:14px;padding:18px;max-width:360px;width:100%;box-shadow:var(--shadow-lg);';
+  box.innerHTML='<div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--text);">İsim Listesi (her satıra bir isim)</div>'
+    +'<textarea id="d8-cark-ozel-textarea" style="width:100%;height:220px;border:1px solid var(--border);border-radius:8px;padding:8px;font-family:\'JetBrains Mono\',monospace;font-size:12px;resize:vertical;background:var(--bg);color:var(--text);"></textarea>'
+    +'<div style="display:flex;gap:8px;margin-top:10px;">'
+    +'<button id="d8-cark-ozel-kaydet" style="flex:1;padding:9px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-weight:700;cursor:pointer;font-family:\'Sora\',sans-serif;">Kaydet</button>'
+    +'<button id="d8-cark-ozel-iptal" style="flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-family:\'Sora\',sans-serif;">İptal</button>'
+    +'</div>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  document.getElementById('d8-cark-ozel-textarea').value=mevcut.join('\n');
+  document.getElementById('d8-cark-ozel-iptal').onclick=function(){overlay.remove();};
+  overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.remove();});
+  document.getElementById('d8-cark-ozel-kaydet').onclick=function(){
+    var lines=document.getElementById('d8-cark-ozel-textarea').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+    overlay.remove();
+    if(typeof window.d8CarkBulutGuncelle==='function'){
+      window.d8CarkBulutGuncelle(kod,lines).catch(function(e){console.warn('[D8 Çark] Güncelleme hatası:',e);});
+    }
+    // Not: canlı dinleyici (onSnapshot) güncel veriyi otomatik geri getirip çarkı yeniler.
+  };
+}
+function d8CarkOzelYukle(kod){
+  window._d8CarkAktifKod=kod;
+  window._d8CarkAktifAd=null;
+  window._d8CarkAktifIsimler=[];
+  window._d8CarkYukleniyor=true;
+  window._d8CarkHataMesaji=null;
+  d8CarkOverlayYenile();
+  (function dinlemeyeBasla(deneme){
+    if(typeof window.d8CarkBulutDinle!=='function'){
+      if(deneme>20){
+        window._d8CarkYukleniyor=false;
+        window._d8CarkHataMesaji='Bulut bağlantısı kurulamadı. Sayfayı yenileyip tekrar dene.';
+        d8CarkOverlayYenile();
+        return;
+      }
+      setTimeout(function(){dinlemeyeBasla((deneme||0)+1);},250);
+      return;
+    }
+    window.d8CarkBulutDinle(kod,function(veri){
+      window._d8CarkYukleniyor=false;
+      if(!veri){
+        window._d8CarkHataMesaji='Bu kodla bir çark bulunamadı: '+kod;
+        d8CarkOverlayYenile();
+        return;
+      }
+      window._d8CarkHataMesaji=null;
+      window._d8CarkAktifAd=veri.ad;
+      window._d8CarkAktifIsimler=veri.isimler;
+      d8CarkOverlayYenile();
+    });
+  })(0);
+}
+function d8CarkOzelYuklemeyeBaslaVeUrlGuncelle(kod){
+  try{
+    var url=new URL(location.href);
+    url.searchParams.set('cark',kod);
+    history.replaceState(null,'',url.pathname+url.search+url.hash);
+  }catch(e){}
+  d8CarkOzelYukle(kod);
+}
+function d8CarkVarsayilanaDon(urlTemizle){
+  if(typeof window.d8CarkBulutDinlemeyiDurdur==='function')window.d8CarkBulutDinlemeyiDurdur();
+  window._d8CarkAktifKod=null;
+  window._d8CarkAktifAd=null;
+  window._d8CarkAktifIsimler=null;
+  window._d8CarkYukleniyor=false;
+  window._d8CarkHataMesaji=null;
+  if(urlTemizle){
+    try{
+      var url=new URL(location.href);
+      url.searchParams.delete('cark');
+      history.replaceState(null,'',url.pathname+(url.search||'')+url.hash);
+    }catch(e){}
+  }
+  d8CarkOverlayYenile();
+}
+window.d8CarkOpenOverlay=function(){
+  var ov=document.getElementById('d8-cark-overlay');
+  if(!ov)return;
+  ov.classList.add('open');
+  document.body.style.overflow='hidden';
+  d8PushScreen('cark');
+  window._d8CarkFormAcik=false;
+  d8CarkListesiDinlemeyeBasla();
+  if(window._d8CarkAktifKod===undefined){
+    var kod=null;
+    try{ kod=new URLSearchParams(location.search).get('cark'); }catch(e){}
+    if(kod){ d8CarkOzelYukle(kod.trim().toUpperCase()); return; }
+    window._d8CarkAktifKod=null;
+  }
+  d8CarkOverlayYenile();
+};
+window.d8CarkCloseOverlay=function(){
+  var ov=document.getElementById('d8-cark-overlay');
+  if(!ov)return;
+  ov.classList.remove('open');
+  document.body.style.overflow='';
+  d8NotifyScreenClosed('cark');
+};
 function d8QRImg(){if(window._d8QRCache)return window._d8QRCache;var b='/mS/wQvQbqQrt1vF26xK7BYZB/qq/gGhAL5mPngOKL7QTXk4YhRqbr/MYqoIHpdRkKmqrvoAUMc/nqvwUlGLrx/912Ne6x5LBBu5/so/gA==';var bin=atob(b),bits=[],n=25,cell=24,pad=48,vp=pad*2+n*cell;for(var i=0;i<bin.length;i++){var v=bin.charCodeAt(i);for(var k=7;k>=0;k--)bits.push((v>>k)&1);}var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+vp+'" height="'+vp+'"><g fill="#000">';for(var r=0;r<n;r++)for(var c=0;c<n;c++)if(bits[r*n+c])svg+='<rect x="'+(pad+c*cell)+'" y="'+(pad+r*cell)+'" width="'+cell+'" height="'+cell+'"/>';svg+='</g></svg>';window._d8QRCache='data:image/svg+xml,'+encodeURIComponent(svg);return window._d8QRCache;}
 function buildDesktopSidebar(){var el=document.getElementById('desktop-sidebar');if(!el)return;if(window.innerWidth<=900){el.innerHTML='';return;}
 // === BUGÜNÜN DERSLERİ WIDGET ===
@@ -2594,12 +2989,12 @@ function buildDesktopSidebar(){var el=document.getElementById('desktop-sidebar')
   if(examWrap&&examWrap.nextSibling){dsb.insertBefore(weekWrap,examWrap.nextSibling);}else{dsb.appendChild(weekWrap);}
 })();
 var today=new Date();today.setHours(0,0,0,0);var TR_M=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];var TR_MS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];var fmtD=function(d){return d.getDate()+' '+TR_M[d.getMonth()];};var html='';var RAMtarih=new Date(2026,4,18,23,59,59);if(new Date()<=RAMtarih){var ramDiff=Math.ceil((new Date(2026,4,18)-today)/86400000);var ramStr=ramDiff===0?'Bugün!':ramDiff===1?'Yarın':ramDiff+' gün sonra';html+='<div class="dsb-card dsb-ram">';html+='<div class="dsb-title">🏥 Önemli Bildirim</div>';html+='<div class="dsb-ram-row">';html+='<div class="dsb-ram-icon">🏥</div>';html+='<div><div class="dsb-ram-name">Kocasinan RAM Ziyareti <span class="dsb-ram-badge">'+ramStr+'</span></div>';html+='<div class="dsb-ram-meta">18 Mayıs 2026, Pzt · 10:00<br>D8\'in Tamamı · Prof. Dr. M. K. Özgen</div></div>';html+='</div></div>';}
-var start=new Date(2026,6,6),end=new Date(2026,8,11);var total=Math.round((end-start)/86400000);var elapsed=Math.min(Math.max(Math.round((today-start)/86400000),0),total);var pct=Math.round(elapsed/total*100);var kalan=Math.max(Math.ceil((end-today)/86400000),0);var statusEmoji=pct<30?'🌱':pct<60?'📈':pct<85?'🔥':'🏁';html+='<div class="dsb-card">';html+='<div class="dsb-title">'+statusEmoji+' Dönem İlerlemesi</div>';html+='<div class="dsb-donem-pct">%'+pct+'</div>';html+='<div class="dsb-track"><div class="dsb-fill" id="dsb-fill" style="width:0%"></div></div>';html+='<div class="dsb-meta"><span>'+fmtD(start)+' – '+fmtD(end)+'</span>';html+='<span class="dsb-kalan">'+(kalan>0?kalan+' gün':'✅ Bitti')+'</span></div>';html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">📅 İzlence Haftası</span><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:var(--navy);">'+ (function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})() +' / 10</span></div><div style="width:100%;height:6px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--border);"><div style="height:100%;width:'+((function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()*10)+'%;border-radius:99px;background:linear-gradient(90deg,#F59E0B,#FBBF24);"></div></div><div style="font-size:9.5px;color:var(--muted);margin-top:4px;">Şu an <strong style=\"color:var(--text);\">'+(function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()+'. Hafta</strong></div></div>';html+='</div>';html+=d8IsimCekCardHTML();var cdItems=[{label:'Demokrasi Bayramı',date:'2026-07-15',icon:'🇹🇷'},{label:'II. Dönem Ara Sınavı',date:'2026-08-03',icon:'📝'}];var cdValid=cdItems.filter(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);return Math.ceil((t-today)/86400000)>=0;});if(cdValid.length){html+='<div class="dsb-card">';html+='<div class="dsb-title">⏳ Geri Sayım</div>';cdValid.forEach(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);var diff=Math.ceil((t-today)/86400000);var diffStr=diff===0?'Bugün':''+diff+'g';var dtFmt=t.getDate()+' '+TR_MS[t.getMonth()];html+='<div class="dsb-cd-row">';html+='<div class="dsb-cd-icon">'+it.icon+'</div>';html+='<div class="dsb-cd-body"><div class="dsb-cd-label">'+it.label+'</div><div class="dsb-cd-date">'+dtFmt+'</div></div>';html+='<div class="dsb-cd-badge'+(diff===0?' today':'')+'">'+diffStr+'</div>';html+='</div>';});html+='</div>';}
+var start=new Date(2026,6,6),end=new Date(2026,8,11);var total=Math.round((end-start)/86400000);var elapsed=Math.min(Math.max(Math.round((today-start)/86400000),0),total);var pct=Math.round(elapsed/total*100);var kalan=Math.max(Math.ceil((end-today)/86400000),0);var statusEmoji=pct<30?'🌱':pct<60?'📈':pct<85?'🔥':'🏁';html+='<div class="dsb-card">';html+='<div class="dsb-title">'+statusEmoji+' Dönem İlerlemesi</div>';html+='<div class="dsb-donem-pct">%'+pct+'</div>';html+='<div class="dsb-track"><div class="dsb-fill" id="dsb-fill" style="width:0%"></div></div>';html+='<div class="dsb-meta"><span>'+fmtD(start)+' – '+fmtD(end)+'</span>';html+='<span class="dsb-kalan">'+(kalan>0?kalan+' gün':'✅ Bitti')+'</span></div>';html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">📅 İzlence Haftası</span><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:var(--navy);">'+ (function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})() +' / 10</span></div><div style="width:100%;height:6px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--border);"><div style="height:100%;width:'+((function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()*10)+'%;border-radius:99px;background:linear-gradient(90deg,#F59E0B,#FBBF24);"></div></div><div style="font-size:9.5px;color:var(--muted);margin-top:4px;">Şu an <strong style=\"color:var(--text);\">'+(function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()+'. Hafta</strong></div></div>';html+='</div>';var cdItems=[{label:'Demokrasi Bayramı',date:'2026-07-15',icon:'🇹🇷'},{label:'II. Dönem Ara Sınavı',date:'2026-08-03',icon:'📝'}];var cdValid=cdItems.filter(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);return Math.ceil((t-today)/86400000)>=0;});if(cdValid.length){html+='<div class="dsb-card">';html+='<div class="dsb-title">⏳ Geri Sayım</div>';cdValid.forEach(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);var diff=Math.ceil((t-today)/86400000);var diffStr=diff===0?'Bugün':''+diff+'g';var dtFmt=t.getDate()+' '+TR_MS[t.getMonth()];html+='<div class="dsb-cd-row">';html+='<div class="dsb-cd-icon">'+it.icon+'</div>';html+='<div class="dsb-cd-body"><div class="dsb-cd-label">'+it.label+'</div><div class="dsb-cd-date">'+dtFmt+'</div></div>';html+='<div class="dsb-cd-badge'+(diff===0?' today':'')+'">'+diffStr+'</div>';html+='</div>';});html+='</div>';}
 html+='<div class="dsb-card" style="text-align:center;">';html+='<div class="dsb-title">📱 QR Kod</div>';html+='<div style="display:flex;justify-content:center;padding:4px 0;">';html+='<img src="'+d8QRImg()+'" alt="QR Kod" style="width:170px;height:170px;border-radius:8px;background:#fff;padding:4px;border:1px solid var(--border);" />';html+='</div>';html+='<div style="font-size:10px;color:var(--muted);margin-top:6px;line-height:1.4;">Sayfayı telefona paylaşmak için okutun</div>';html+='</div>';el.innerHTML=html;requestAnimationFrame(function(){setTimeout(function(){var f=document.getElementById('dsb-fill');if(f)f.style.width=pct+'%';},80);});}
 function buildProfilPage(){var el=document.getElementById('profil-content');if(!el)return;var today=new Date();today.setHours(0,0,0,0);var TR_M=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];var TR_MS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];var fmtD=function(d){return d.getDate()+' '+TR_M[d.getMonth()];};var html='';var authUser=window._d8AuthUser||null;html+='<div class="profil-section">';html+='<div class="profil-section-title">👤 Hesap</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="handleAuthClick()" style="cursor:pointer;">';html+='<div class="profil-setting-icon" style="position:relative;">'+(authUser?(authUser.photoURL?'<img src=\''+authUser.photoURL+'\' referrerpolicy="no-referrer" onerror="this.replaceWith(document.createTextNode(\'\\u2705\'))" style=\'width:26px;height:26px;border-radius:50%;display:block;\'>':'✅'):'👤')+(authUser?'<span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:#4ADE80;border:2px solid var(--white);box-sizing:content-box;"></span>':'')+'</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">'+(authUser?'✓ '+(authUser.displayName||authUser.email||'Hesabım'):'Google ile Giriş Yap')+'</div><div class="profil-setting-sub">'+(authUser?'Giriş yapıldı · Ayarların bulutta senkron · Çıkış için dokun':'Ayarların (tema, mod, dönem) tüm cihazlarında senkronize olsun')+'</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div></div></div>';html+='<div id="profil-admin-anchor"></div>';var RAMtarih=new Date(2026,4,18,23,59,59);if(new Date()<=RAMtarih){var ramDiff=Math.ceil((new Date(2026,4,18)-today)/86400000);var ramStr=ramDiff===0?'Bugün!':ramDiff===1?'Yarın':ramDiff+' gün sonra';html+='<div class="profil-section">';html+='<div class="profil-section-title">🏥 Önemli Bildirim</div>';html+='<div class="profil-ram-card">';html+='<div class="profil-ram-icon">🏥</div>';html+='<div>';html+='<div class="profil-ram-title">Kocasinan RAM Ziyareti <span class="profil-ram-badge">'+ramStr+'</span></div>';html+='<div class="profil-ram-meta">18 Mayıs 2026, Pazartesi · Saat 10:00<br>Kapsam: D8\'in Tamamı · Prof. Dr. M. K. Özgen</div>';html+='</div></div></div>';}
 try{var weekStart=new Date(today);weekStart.setDate(today.getDate()-(today.getDay()===0?6:today.getDay()-1));var weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);if(typeof ranges!=='undefined'){var weekTatils=ranges.filter(function(r){if(r.type!=='tatil')return false;var rs=new Date(r.start);rs.setHours(0,0,0,0);var re=new Date(r.end);re.setHours(23,59,59,999);return rs<=weekEnd&&re>=weekStart&&re>=today;});if(weekTatils.length){html+='<div class="profil-section">';html+='<div class="profil-section-title">🎉 Tatil</div>';weekTatils.forEach(function(r){var icon=getTatilIcon(r.label);var rs=new Date(r.start);rs.setHours(0,0,0,0);var tDiff=Math.ceil((rs-today)/86400000);var tStr=tDiff<=0?'Bu hafta · ders yok':tDiff===1?'Yarın':''+tDiff+' gün sonra';var badge=tDiff<=0?'Aktif':tDiff+' gün';html+='<div class="profil-tatil-card">';html+='<div class="profil-tatil-icon">'+icon+'</div>';html+='<div><div class="profil-tatil-title">'+r.label+'</div><div class="profil-tatil-sub">'+tStr+'</div></div>';html+='<div class="profil-tatil-badge">'+badge+'</div>';html+='</div>';});html+='</div>';}}}catch(e){}
 var start=new Date(2026,6,6),end=new Date(2026,8,11);var total=Math.round((end-start)/86400000);var elapsed=Math.min(Math.max(Math.round((today-start)/86400000),0),total);var pct=Math.round(elapsed/total*100);var kalan=Math.max(Math.ceil((end-today)/86400000),0);var statusEmoji=pct<30?'🌱':pct<60?'📈':pct<85?'🔥':'🏁';html+='<div class="profil-section">';html+='<div class="profil-section-title">'+statusEmoji+' Dönem İlerlemesi</div>';html+='<div class="profil-card">';html+='<div class="profil-donem-header">';html+='<div class="profil-donem-title">II. Dönem</div>';html+='<div class="profil-donem-pct">%'+pct+'</div>';html+='</div>';html+='<div class="profil-donem-track"><div class="profil-donem-fill" id="profil-donem-fill" style="width:0%"></div></div>';html+='<div class="profil-donem-footer">';html+='<div class="profil-donem-dates">'+fmtD(start)+' – '+fmtD(end)+'&nbsp;&nbsp;·&nbsp;&nbsp;'+elapsed+'/'+total+' gün</div>';html+='<div class="profil-donem-kalan">'+(kalan>0?kalan+' gün kaldı':'✅ Tamamlandı')+'</div>';html+='</div>';html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">📅 İzlence Haftası</span><span style="font-family:\'JetBrains Mono\',monospace;font-size:12px;font-weight:700;color:var(--navy);">'+ (function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})() +' / 10</span></div><div style="width:100%;height:8px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--border);"><div style="height:100%;width:'+((function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()*10)+'%;border-radius:99px;background:linear-gradient(90deg,#F59E0B,#FBBF24);"></div></div><div style="font-size:9.5px;color:var(--muted);margin-top:4px;">Şu an <strong style=\"color:var(--text);\">'+(function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()+'. Hafta</strong></div></div>';html+='</div></div>';var cdItems=[{label:'Demokrasi Bayramı',date:'2026-07-15',icon:'🇹🇷'},{label:'II. Dönem Ara Sınavı',date:'2026-08-03',icon:'📝'}];var cdValid=cdItems.filter(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);return Math.ceil((t-today)/86400000)>=0;});if(cdValid.length){html+='<div class="profil-section">';html+='<div class="profil-section-title">⏳ Geri Sayım</div>';html+='<div class="profil-card">';cdValid.forEach(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);var diff=Math.ceil((t-today)/86400000);var diffStr=diff===0?'Bugün! 🎯':diff+'g kaldı';var dtFmt=t.getDate()+' '+TR_MS[t.getMonth()]+' '+t.getFullYear();html+='<div class="profil-cd-row">';html+='<div class="profil-cd-icon">'+it.icon+'</div>';html+='<div class="profil-cd-body"><div class="profil-cd-label">'+it.label+'</div><div class="profil-cd-date">'+dtFmt+'</div></div>';html+='<div class="profil-cd-badge'+(diff===0?' today':'')+'">'+diffStr+'</div>';html+='</div>';});html+='</div></div>';}
-(function(){var now2=new Date();var weekNo2=Math.floor((now2-new Date(now2.getFullYear(),0,1))/604800000);var qq=quotes[weekNo2%quotes.length];if(!qq)return;html+='<div class="profil-section">';html+='<div class="profil-section-title">✨ Haftanın Sözü</div>';html+='<div class="profil-quote-card">';html+='<div class="profil-quote-mark">❝</div>';html+='<div class="profil-quote-body"><div class="profil-quote-text">'+qq.text+'</div><div class="profil-quote-author">— '+qq.author+'</div></div>';html+='</div></div>';})();html+='<div class="profil-section">';html+='<div class="profil-section-title">🛠️ Araçlar</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="installToHomeScreen()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">📲</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Ana Ekrana Ekle</div><div class="profil-setting-sub">'+(window._pwaAlreadyInstalled?'✓ Zaten yüklü':'Uygulama gibi kullan, çevrimdışı çalışır')+'</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="openScreensaver()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">⏱️</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Sınıf Zamanlayıcısı</div><div class="profil-setting-sub">Tam ekran ders/sınav geri sayımını aç</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="d8ActOpenOverlay()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">🎤</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Sınıf Etkinliği</div><div class="profil-setting-sub">Herkesin telefondan yazdığı cümleyi tahtada canlı göster</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div></div></div>';var isDark=document.body.classList.contains('dark');html+='<div class="profil-section">';html+='<div class="profil-section-title">⚙️ Görünüm</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="toggleDark();buildProfilPage()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">'+(isDark?'☀️':'🌙')+'</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">'+(isDark?'Aydınlık Mod':'Karanlık Mod')+'</div>';html+='<div class="profil-setting-sub">Şu an: '+(isDark?'🌙 Karanlık':'☀️ Aydınlık')+'</div></div>';html+='<div class="profil-setting-toggle '+(isDark?'on':'off')+'"><div class="profil-toggle-knob"></div></div>';html+='</div>';html+='</div>';html+='</div>';html+='<div class="profil-section">';html+='<div class="profil-section-title">📚 Dönem Görünümü</div>';html+='<div class="profil-card"><div class="profil-card-sublabel">Referans olarak hangi dönemi görmek istersin?</div><div class="profil-theme-grid"><div class="profil-theme-item'+(window._d8DonemMode==='d1'?' active':'')+'" onclick="setDonemMode(\'d1\')"><div class="profil-theme-swatch" style="background:linear-gradient(135deg,#0C2461,#3B82F6)"></div><div class="profil-theme-name">1. Dönem</div>'+(window._d8DonemMode==='d1'?'<div class="profil-theme-check">✓</div>':'')+'</div><div class="profil-theme-item'+(window._d8DonemMode!=='d1'?' active':'')+'" onclick="setDonemMode(\'d2\')"><div class="profil-theme-swatch" style="background:linear-gradient(135deg,#059669,#34D399)"></div><div class="profil-theme-name">2. Dönem</div>'+(window._d8DonemMode!=='d1'?'<div class="profil-theme-check">✓</div>':'')+'</div></div><div style="font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.5;">1. Dönem seçilince ders ve sınav programı geçmiş kayıt olarak, referans amaçlı gösterilir.</div></div>';el.innerHTML=html;if(typeof window.d8PlaceAdminControls==='function'){try{window.d8PlaceAdminControls();}catch(e){}}requestAnimationFrame(function(){setTimeout(function(){var f=document.getElementById('profil-donem-fill');if(f)f.style.width=pct+'%';},120);});}
+(function(){var now2=new Date();var weekNo2=Math.floor((now2-new Date(now2.getFullYear(),0,1))/604800000);var qq=quotes[weekNo2%quotes.length];if(!qq)return;html+='<div class="profil-section">';html+='<div class="profil-section-title">✨ Haftanın Sözü</div>';html+='<div class="profil-quote-card">';html+='<div class="profil-quote-mark">❝</div>';html+='<div class="profil-quote-body"><div class="profil-quote-text">'+qq.text+'</div><div class="profil-quote-author">— '+qq.author+'</div></div>';html+='</div></div>';})();html+='<div class="profil-section">';html+='<div class="profil-section-title">🛠️ Araçlar</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="installToHomeScreen()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">📲</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Ana Ekrana Ekle</div><div class="profil-setting-sub">'+(window._pwaAlreadyInstalled?'✓ Zaten yüklü':'Uygulama gibi kullan, çevrimdışı çalışır')+'</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="openScreensaver()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">⏱️</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Sınıf Zamanlayıcısı</div><div class="profil-setting-sub">Tam ekran ders/sınav geri sayımını aç</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="d8ActOpenOverlay()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">🎤</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Sınıf Etkinliği</div><div class="profil-setting-sub">Herkesin telefondan yazdığı cümleyi tahtada canlı göster</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="d8CarkOpenOverlay()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">🎡</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">İsim Çarkı</div><div class="profil-setting-sub">Rastgele öğrenci seç, bir tur boyunca isimler tekrar çıkmaz</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div></div></div>';var isDark=document.body.classList.contains('dark');html+='<div class="profil-section">';html+='<div class="profil-section-title">⚙️ Görünüm</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="toggleDark();buildProfilPage()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">'+(isDark?'☀️':'🌙')+'</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">'+(isDark?'Aydınlık Mod':'Karanlık Mod')+'</div>';html+='<div class="profil-setting-sub">Şu an: '+(isDark?'🌙 Karanlık':'☀️ Aydınlık')+'</div></div>';html+='<div class="profil-setting-toggle '+(isDark?'on':'off')+'"><div class="profil-toggle-knob"></div></div>';html+='</div>';html+='</div>';html+='</div>';html+='<div class="profil-section">';html+='<div class="profil-section-title">📚 Dönem Görünümü</div>';html+='<div class="profil-card"><div class="profil-card-sublabel">Referans olarak hangi dönemi görmek istersin?</div><div class="profil-theme-grid"><div class="profil-theme-item'+(window._d8DonemMode==='d1'?' active':'')+'" onclick="setDonemMode(\'d1\')"><div class="profil-theme-swatch" style="background:linear-gradient(135deg,#0C2461,#3B82F6)"></div><div class="profil-theme-name">1. Dönem</div>'+(window._d8DonemMode==='d1'?'<div class="profil-theme-check">✓</div>':'')+'</div><div class="profil-theme-item'+(window._d8DonemMode!=='d1'?' active':'')+'" onclick="setDonemMode(\'d2\')"><div class="profil-theme-swatch" style="background:linear-gradient(135deg,#059669,#34D399)"></div><div class="profil-theme-name">2. Dönem</div>'+(window._d8DonemMode!=='d1'?'<div class="profil-theme-check">✓</div>':'')+'</div></div><div style="font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.5;">1. Dönem seçilince ders ve sınav programı geçmiş kayıt olarak, referans amaçlı gösterilir.</div></div>';el.innerHTML=html;if(typeof window.d8PlaceAdminControls==='function'){try{window.d8PlaceAdminControls();}catch(e){}}requestAnimationFrame(function(){setTimeout(function(){var f=document.getElementById('profil-donem-fill');if(f)f.style.width=pct+'%';},120);});}
 function buildWidgetStack(){}
 function buildDonemProgress(){}
 function updateHeaderProgress(){
@@ -4127,6 +4522,71 @@ function ensureAnyAuth(){
   return signInAnonymously(auth).then(function(cred){ return cred.user; });
 }
 
+// ==== Genel / paylaşılabilir İsim Çarkları ====
+// carklar/{kod} = { ad, isimler, ownerUid, createdAt, updatedAt }
+// Giriş/kayıt gerektirmez (ensureAnyAuth anonim kimlik açar); kodu bilen
+// herkes bir çarkı görüntüleyebilir, çevirebilir ve isim listesini
+// düzenleyebilir — kod, paylaşılan bağlantı üzerinden taşınan bir
+// erişim anahtarı gibi davranır.
+function carkRef(kod){ return doc(db, "carklar", kod); }
+function d8CarkKoduUret(){
+  var alfabe='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // karışabilecek karakterler (I,O,0,1) çıkarıldı
+  var kod='';
+  for(var i=0;i<6;i++){ kod+=alfabe[Math.floor(Math.random()*alfabe.length)]; }
+  return kod;
+}
+window.d8CarkBulutOlustur = function(ad, isimler){
+  return ensureAnyAuth().then(function(user){
+    const kod = d8CarkKoduUret();
+    return setDoc(carkRef(kod), {
+      ad: (ad||'').trim().slice(0,60),
+      isimler: isimler,
+      ownerUid: user.uid,
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    }).then(function(){ return kod; });
+  });
+};
+let d8CarkBulutUnsub = null;
+window.d8CarkBulutDinle = function(kod, onUpdate){
+  if(d8CarkBulutUnsub){ d8CarkBulutUnsub(); d8CarkBulutUnsub = null; }
+  d8CarkBulutUnsub = onSnapshot(carkRef(kod), function(snap){
+    if(!snap.exists()){ onUpdate(null); return; }
+    const d = snap.data();
+    onUpdate({ kod: kod, ad: d.ad || '', isimler: Array.isArray(d.isimler) ? d.isimler : [] });
+  }, function(err){
+    console.warn('[D8 Çark] Dinleme hatası:', err);
+    onUpdate(null);
+  });
+};
+window.d8CarkBulutDinlemeyiDurdur = function(){
+  if(d8CarkBulutUnsub){ d8CarkBulutUnsub(); d8CarkBulutUnsub = null; }
+};
+window.d8CarkBulutGuncelle = function(kod, isimler){
+  return setDoc(carkRef(kod), { isimler: isimler, updatedAt: Date.now() }, { merge: true });
+};
+// Tüm oluşturulmuş paylaşılan çarkların listesi (isim çekmek için değil,
+// seçim listesinde göstermek için) — herhangi bir cihaz, kod/bağlantı
+// bilmeden, bu listeden bir çark seçebilsin diye.
+let d8CarkListesiUnsub = null;
+window.d8CarkListesiDinle = function(onUpdate){
+  if(d8CarkListesiUnsub){ d8CarkListesiUnsub(); d8CarkListesiUnsub = null; }
+  const q = query(collection(db, "carklar"), orderBy("createdAt", "asc"), limit(200));
+  d8CarkListesiUnsub = onSnapshot(q, function(snap){
+    const liste = snap.docs.map(function(d){
+      const data = d.data();
+      return { kod: d.id, ad: data.ad || d.id, isimSayisi: Array.isArray(data.isimler) ? data.isimler.length : 0 };
+    });
+    onUpdate(liste);
+  }, function(err){
+    console.warn('[D8 Çark] Liste dinleme hatası:', err);
+    onUpdate([]);
+  });
+};
+window.d8CarkListesiDinlemeyiDurdur = function(){
+  if(d8CarkListesiUnsub){ d8CarkListesiUnsub(); d8CarkListesiUnsub = null; }
+};
+
 // Mevcut yerel ayarları topla
 function collectLocalSettings(){
   return {
@@ -4836,6 +5296,16 @@ td.td-full[data-fam="uygulama"] {
       modBagla();
       dersHesabiBagla();
       D8.dekore();
+
+      /* Paylaşılan bir çark bağlantısıyla gelinmişse (?cark=KOD),
+         İsim Çarkı sekmesini otomatik aç. Bulut modülü henüz yüklenmemiş
+         olabileceğinden kısa bir gecikme veriyoruz; asıl bekleme mantığı
+         d8CarkOzelYukle içindeki yeniden deneme döngüsünde. */
+      try{
+        if(new URLSearchParams(location.search).get('cark') && typeof window.d8CarkOpenOverlay==='function'){
+          setTimeout(function(){ window.d8CarkOpenOverlay(); },400);
+        }
+      }catch(e){}
 
       /* Tanılama: yalnızca localStorage.d8Debug='1' ya da ?d8debug ile */
       if (D8.hataAyiklama && D8.hataAyiklama()) {
