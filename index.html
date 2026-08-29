@@ -1164,7 +1164,7 @@ body.dark #kaynaklar-picker-dropdown{background:#111827;border-color:#1E2840;}
 <div class="leg" onclick="openModal('211')" style="cursor:pointer" title="İzlenceyi aç"><div class="leg-dot" style="background:var(--c102t)"></div><div><div class="leg-name">Akademide Kültür ve Sanat Uygulamaları II</div><div class="leg-sub">Dr. Yıldız Çay · 2 saat</div></div></div>
 </div>
 
-</div><!-- Haftanın Sözü pill'e taşındı --> </div>
+</div> </div>
 <div id="panel-takvim" style="display:none">
 <div class="cal-container"> <div class="cal-main" style="width:100%;">
 <div class="cal-nav">
@@ -1204,7 +1204,6 @@ body.dark #kaynaklar-picker-dropdown{background:#111827;border-color:#1E2840;}
 <span class="period-status status-upcoming">Yaklaşıyor</span>
 </div>
 </div>
-<!-- Haftanın Sözü pill'e taşındı -->
 </div> </div> <div id="panel-sinav" style="display:none"><div class="mobile-schedule" id="sinav-mobile-schedule"></div><div id="sinav-d1" style="display:none"><div id="sinav-empty-state" style="display:none;text-align:center;padding:32px 16px;color:var(--muted);font-size:13px;"><div style="font-size:32px;margin-bottom:10px">📝</div>Sınav bilgisi bulunamadı</div> <div class="table-wrap">
 <table class="prog" style="min-width:420px;">
 <thead>
@@ -2611,7 +2610,6 @@ function d8IsimListesiDuzenle(){
   box.style.cssText='background:var(--white);border-radius:14px;padding:18px;max-width:360px;width:100%;box-shadow:var(--shadow-lg);';
   box.innerHTML='<div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--text);">İsim Listesi (her satıra bir isim)</div>'
     +'<textarea id="d8-isim-textarea" style="width:100%;height:220px;border:1px solid var(--border);border-radius:8px;padding:8px;font-family:\'JetBrains Mono\',monospace;font-size:12px;resize:vertical;background:var(--bg);color:var(--text);"></textarea>'
-    +d8CarkFotoButonuHTML('d8-isim-foto-input','d8-isim-textarea','d8-isim-foto-durum')
     +'<div style="display:flex;gap:8px;margin-top:10px;">'
     +'<button id="d8-isim-kaydet" style="flex:1;padding:9px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-weight:700;cursor:pointer;font-family:\'Sora\',sans-serif;">Kaydet</button>'
     +'<button id="d8-isim-iptal" style="flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-family:\'Sora\',sans-serif;">İptal</button>'
@@ -2764,7 +2762,6 @@ function d8CarkOlusturFormuHTML(){
     +'<input id="d8-cark-form-ad" class="d8-cark-input" type="text" maxlength="60" placeholder="Örn: D4">'
     +'<label class="d8-cark-form-label">İsimler (her satıra bir isim)</label>'
     +'<textarea id="d8-cark-form-isimler" class="d8-cark-textarea" placeholder="Ahmet&#10;Ayşe&#10;Mehmet&#10;..."></textarea>'
-    +d8CarkFotoButonuHTML('d8-cark-form-foto-input','d8-cark-form-isimler','d8-cark-form-foto-durum')
     +'<div id="d8-cark-form-hata" class="d8-cark-form-hata" style="display:none;"></div>'
     +'<div style="display:flex;gap:8px;margin-top:12px;">'
       +'<button id="d8-cark-form-olustur-btn" class="d8-cark-spin-btn" style="max-width:none;flex:1;" onclick="d8CarkFormGonder()">🎡 Çarkı Oluştur</button>'
@@ -2809,203 +2806,6 @@ function d8CarkFormGonder(){
     if(btn){btn.disabled=false;btn.textContent='🎡 Çarkı Oluştur';}
   });
 }
-/* ==== Fotoğraftan isim listesi çıkarma (OCR) ====
-   Tesseract.js'i sadece kullanıcı gerçekten bir fotoğraf seçtiğinde,
-   CDN'den yükler (sayfa ilk açılışını yavaşlatmasın diye). Okunan metin
-   satırlara bölünüp textarea'ya eklenir; OCR hata yapabileceğinden
-   sonuç asla otomatik kaydedilmez — kullanıcı gözden geçirip düzeltir. */
-var _d8OcrYukleniyorPromise=null;
-var _d8OcrWorkerPromise=null;
-function d8CarkOcrHazirla(){
-  if(window.Tesseract)return Promise.resolve();
-  if(_d8OcrYukleniyorPromise)return _d8OcrYukleniyorPromise;
-  _d8OcrYukleniyorPromise=new Promise(function(resolve,reject){
-    var s=document.createElement('script');
-    s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
-    s.onload=function(){resolve();};
-    s.onerror=function(){_d8OcrYukleniyorPromise=null;reject(new Error('Tesseract.js yüklenemedi'));};
-    document.head.appendChild(s);
-  });
-  return _d8OcrYukleniyorPromise;
-}
-/* Basılı metni okurken defalarca worker kurmamak için tek worker'ı saklayıp
-   yeniden kullanıyoruz (setParameters ile PSM/OEM ayarlarını her seferinde
-   değiştirmeye gerek kalmıyor). */
-function d8CarkOcrWorkerAl(logger){
-  if(_d8OcrWorkerPromise)return _d8OcrWorkerPromise;
-  _d8OcrWorkerPromise=d8CarkOcrHazirla().then(function(){
-    // oem=1 -> yalnızca LSTM sinir ağı motoru (eski "legacy" motordan belirgin
-    // biçimde daha isabetli); psm 6 -> "tek, düzgün metin bloğu" varsayımı,
-    // fotoğraflanan bir isim listesi/sütunu için legacy varsayılan moddan
-    // (otomatik sayfa düzeni analizi) daha kararlı sonuç verir.
-    return window.Tesseract.createWorker('tur',1,{logger:logger}).then(function(worker){
-      return worker.setParameters({tessedit_pageseg_mode:'6'}).then(function(){return worker;});
-    });
-  }).catch(function(e){
-    _d8OcrWorkerPromise=null;
-    throw e;
-  });
-  return _d8OcrWorkerPromise;
-}
-/* ---- Görüntü ön-işleme ----
-   Telefonla çekilen fotoğraflar genelde düşük kontrastlı, gölgeli ve/veya
-   çok küçük/çok büyük çözünürlükte oluyor; bunlar OCR'ın en çok hata yaptığı
-   durumlar. Tesseract'a ham dosya yerine önce şunları uygulanmış bir görüntü
-   veriyoruz: gri tonlama, gerekiyorsa büyütme/küçültme (OCR için ideal
-   genişlik ~2000px), Otsu yöntemiyle otomatik eşik hesaplayıp siyah-beyaza
-   indirgeme (binarization). Bu adım özellikle eğri/donuk ışıkta çekilmiş
-   fotoğraflarda okunurluğu belirgin biçimde artırır. İşleme herhangi bir
-   sebeple başarısız olursa orijinal dosyayla devam edilir, hiçbir zaman
-   işlem tamamen durmaz. */
-function d8CarkGoruntuIsle(file){
-  return new Promise(function(resolve){
-    var url=URL.createObjectURL(file);
-    var img=new Image();
-    img.onload=function(){
-      URL.revokeObjectURL(url);
-      try{
-        var hedefGenislik=2000;
-        var olcek=hedefGenislik/img.naturalWidth;
-        if(!isFinite(olcek)||olcek<=0)olcek=1;
-        if(olcek<0.4)olcek=0.4; // devasa fotoğrafları aşırı küçültüp detay kaybetmeyelim
-        if(olcek>3)olcek=3; // çok küçük görselleri aşırı büyütüp bulanıklaştırmayalım
-        var w=Math.max(1,Math.round(img.naturalWidth*olcek));
-        var h=Math.max(1,Math.round(img.naturalHeight*olcek));
-        var canvas=document.createElement('canvas');
-        canvas.width=w;canvas.height=h;
-        var ctx=canvas.getContext('2d');
-        ctx.imageSmoothingEnabled=true;
-        ctx.imageSmoothingQuality='high';
-        ctx.drawImage(img,0,0,w,h);
-        var imgData=ctx.getImageData(0,0,w,h);
-        var d=imgData.data;
-        var n=w*h;
-        var gri=new Uint8ClampedArray(n);
-        for(var i=0,p=0;i<d.length;i+=4,p++){
-          gri[p]=(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2])|0;
-        }
-        var esiklenmis=d8AdaptifEsikle(gri,w,h);
-        for(var i2=0,p3=0;i2<d.length;i2+=4,p3++){
-          var son=esiklenmis[p3];
-          d[i2]=d[i2+1]=d[i2+2]=son;
-        }
-        ctx.putImageData(imgData,0,0);
-        canvas.toBlob(function(blob){resolve(blob||file);},'image/png');
-      }catch(e){
-        console.warn('[D8 Çark OCR] Ön işleme atlandı:',e);
-        resolve(file);
-      }
-    };
-    img.onerror=function(){URL.revokeObjectURL(url);resolve(file);};
-    img.src=url;
-  });
-}
-/* Bölgesel (adaptif) eşikleme — Bradley/Roth entegral görüntü yöntemi.
-   ÖNEMLİ: Eskiden burada TEK bir global eşik (Otsu) tüm fotoğrafa birden
-   uygulanıyordu. Telefonla çekilen fotoğraflarda ışık nadiren eşit dağılır
-   (gölge, parlama, sayfanın bir kenarının diğerinden karanlık olması gibi);
-   global bir eşik gölgeli bölgeleri tamamen siyaha, parlak bölgeleri
-   tamamen beyaza gömüp metni yok ediyor ya da anlamsız leke bloklarına
-   çeviriyordu — Tesseract da bu lekelerden gerçek isimlerle hiç alakası
-   olmayan karakterler "okuyordu". Bölgesel eşikleme her pikseli SADECE
-   kendi yakın çevresinin ortalama parlaklığıyla karşılaştırır, bu yüzden
-   fotoğrafın bir tarafı diğerinden daha karanlık/aydınlık olsa bile metin
-   korunur. */
-function d8AdaptifEsikle(gri,w,h){
-  var n=w*h;
-  var integral=new Float64Array(n);
-  for(var y=0;y<h;y++){
-    var satirToplam=0;
-    for(var x=0;x<w;x++){
-      var idx=y*w+x;
-      satirToplam+=gri[idx];
-      integral[idx]=satirToplam+(y>0?integral[idx-w]:0);
-    }
-  }
-  var pencere=Math.max(15,Math.round(w/8)); // yerel ortalamanın hesaplanacağı komşuluk boyutu
-  var yari=Math.floor(pencere/2);
-  var esikOrani=0.85; // yerel ortalamanın %85'inden koyu olan pikseller "metin" (siyah) sayılır
-  var sonuc=new Uint8ClampedArray(n);
-  for(var y2=0;y2<h;y2++){
-    var y1=Math.max(0,y2-yari), y3=Math.min(h-1,y2+yari);
-    for(var x2=0;x2<w;x2++){
-      var x1=Math.max(0,x2-yari), x3=Math.min(w-1,x2+yari);
-      var alan=(x3-x1+1)*(y3-y1+1);
-      var toplam=integral[y3*w+x3]
-        -(x1>0?integral[y3*w+x1-1]:0)
-        -(y1>0?integral[(y1-1)*w+x3]:0)
-        +((x1>0&&y1>0)?integral[(y1-1)*w+x1-1]:0);
-      var ortalama=toplam/alan;
-      sonuc[y2*w+x2]=(gri[y2*w+x2]<ortalama*esikOrani)?0:255;
-    }
-  }
-  return sonuc;
-}
-/* ---- Okunan satırları isim listesine dönüştürme ----
-   Sınıf listesi fotoğrafları çoğunlukla numaralı ("1. Ahmet Yılmaz") ya da
-   sütunlu (isim + cinsiyet/no gibi ek sütunlar) olduğundan, ham OCR
-   çıktısını olduğu gibi eklemek isim dışı gürültüyü de listeye taşıyordu.
-   Bu adım her satırdan sıra numarasını ve tek harfli cinsiyet sütununu
-   ayıklar, sonra gerçekten bir isme benzemeyen (harf içermeyen, tablo
-   başlığı olan) satırları eler. */
-var D8_ISIM_OCR_BASLIK_KELIME=['SIRA','SIRA NO','SIRA NUMARASI','NO','NUMARA','OKUL NO','OKUL NUMARASI','ÖĞRENCİ NO','OGRENCI NO','ÖĞRENCİ NUMARASI','ADI','SOYADI','ADI SOYADI','AD SOYAD','ADI VE SOYADI','ÖĞRENCİ ADI SOYADI','CİNSİYET','CINSIYET','SINIF','SINIFI','SINIF NO','SINIF ŞUBESİ','TC','TC KİMLİK','TC KİMLİK NO','TCKN','T.C. KİMLİK NO','VELİ ADI SOYADI','VELİ','DOĞUM TARİHİ','DOGUM TARIHI','DEVAM DURUMU'];
-function d8CarkOcrSatirTemizle(s){
-  var t=String(s||'').trim();
-  t=t.replace(/^\s*\d{1,3}\s*[\.\)\-:]\s*/,''); // başta "1.", "12)", "3 -" gibi sıra no
-  t=t.replace(/\s+(K|E|Kız|Erkek|Kadın)\s*$/i,''); // sonda tek başına cinsiyet sütunu
-  return t.trim();
-}
-function d8CarkOcrSatirGecerliMi(s){
-  if(!s)return false;
-  var harfSayisi=(s.match(/[A-Za-zÇĞİÖŞÜçğıöşü]/g)||[]).length;
-  if(harfSayisi<2)return false; // tek harf/rakam/noktalama gürültüsü
-  if(D8_ISIM_OCR_BASLIK_KELIME.indexOf(s.toLocaleUpperCase('tr-TR'))!==-1)return false; // tablo başlığı satırı
-  return true;
-}
-function d8CarkFotoDosyaSecildi(inputEl,textareaId,statusId){
-  var file=inputEl.files&&inputEl.files[0];
-  inputEl.value=''; // aynı dosya tekrar seçilebilsin diye sıfırla
-  if(!file)return;
-  d8CarkFotoIsimCikar(file,textareaId,statusId);
-}
-function d8CarkFotoIsimCikar(file,textareaId,statusId){
-  var statusEl=document.getElementById(statusId);
-  var taEl=document.getElementById(textareaId);
-  if(statusEl){statusEl.textContent='⏳ Fotoğraf hazırlanıyor…';statusEl.style.color='var(--muted)';}
-  var logger=function(m){
-    if(statusEl&&m&&m.status==='recognizing text'&&typeof m.progress==='number'){
-      statusEl.textContent='⏳ Okunuyor… %'+Math.round(m.progress*100);
-    }
-  };
-  Promise.all([d8CarkGoruntuIsle(file),d8CarkOcrWorkerAl(logger)]).then(function(sonuclar){
-    var islenmisGorsel=sonuclar[0];
-    var worker=sonuclar[1];
-    if(statusEl){statusEl.textContent='⏳ Fotoğraf okunuyor… (biraz sürebilir)';}
-    return worker.recognize(islenmisGorsel);
-  }).then(function(result){
-    var metin=(result&&result.data&&result.data.text)||'';
-    var satirlar=metin.split('\n').map(d8CarkOcrSatirTemizle).filter(d8CarkOcrSatirGecerliMi);
-    if(!satirlar.length){
-      if(statusEl){statusEl.textContent='⚠️ Fotoğrafta okunabilir isim bulunamadı, elle yazmayı dene.';statusEl.style.color='var(--red)';}
-      return;
-    }
-    if(taEl){
-      var mevcut=taEl.value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
-      taEl.value=mevcut.concat(satirlar).join('\n');
-    }
-    if(statusEl){statusEl.textContent='✓ '+satirlar.length+' satır okundu — lütfen gözden geçirip hataları düzelt.';statusEl.style.color='var(--green)';}
-  }).catch(function(e){
-    console.warn('[D8 Çark OCR] Hata:',e);
-    if(statusEl){statusEl.textContent='⚠️ Fotoğraf okunamadı. İnternet bağlantını kontrol et ya da elle yaz.';statusEl.style.color='var(--red)';}
-  });
-}
-function d8CarkFotoButonuHTML(inputId,textareaId,statusId){
-  return '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;">'
-    +'<button type="button" class="d8-cark-mini-btn" onclick="document.getElementById(\''+inputId+'\').click()">📷 Fotoğraftan İsim Ekle</button>'
-    +'<span id="'+statusId+'" style="font-size:11px;color:var(--muted);"></span>'
-    +'</div>'
-    +'<input type="file" id="'+inputId+'" accept="image/*" capture="environment" style="display:none" onchange="d8CarkFotoDosyaSecildi(this,\''+textareaId+'\',\''+statusId+'\')">';
-}
 function d8CarkOzelIsimleriDuzenle(){
   var kod=window._d8CarkAktifKod;
   if(!kod)return;
@@ -3016,7 +2816,6 @@ function d8CarkOzelIsimleriDuzenle(){
   box.style.cssText='background:var(--white);border-radius:14px;padding:18px;max-width:360px;width:100%;box-shadow:var(--shadow-lg);';
   box.innerHTML='<div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--text);">İsim Listesi (her satıra bir isim)</div>'
     +'<textarea id="d8-cark-ozel-textarea" style="width:100%;height:220px;border:1px solid var(--border);border-radius:8px;padding:8px;font-family:\'JetBrains Mono\',monospace;font-size:12px;resize:vertical;background:var(--bg);color:var(--text);"></textarea>'
-    +d8CarkFotoButonuHTML('d8-cark-ozel-foto-input','d8-cark-ozel-textarea','d8-cark-ozel-foto-durum')
     +'<div style="display:flex;gap:8px;margin-top:10px;">'
     +'<button id="d8-cark-ozel-kaydet" style="flex:1;padding:9px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-weight:700;cursor:pointer;font-family:\'Sora\',sans-serif;">Kaydet</button>'
     +'<button id="d8-cark-ozel-iptal" style="flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-family:\'Sora\',sans-serif;">İptal</button>'
@@ -3167,7 +2966,7 @@ html+='<div class="dsb-card" style="text-align:center;">';html+='<div class="dsb
 function buildProfilPage(){var el=document.getElementById('profil-content');if(!el)return;var today=new Date();today.setHours(0,0,0,0);var TR_M=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];var TR_MS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];var fmtD=function(d){return d.getDate()+' '+TR_M[d.getMonth()];};var html='';var authUser=window._d8AuthUser||null;html+='<div class="profil-section">';html+='<div class="profil-section-title">👤 Hesap</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="handleAuthClick()" style="cursor:pointer;">';html+='<div class="profil-setting-icon" style="position:relative;">'+(authUser?(authUser.photoURL?'<img src=\''+authUser.photoURL+'\' referrerpolicy="no-referrer" onerror="this.replaceWith(document.createTextNode(\'\\u2705\'))" style=\'width:26px;height:26px;border-radius:50%;display:block;\'>':'✅'):'👤')+(authUser?'<span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:#4ADE80;border:2px solid var(--white);box-sizing:content-box;"></span>':'')+'</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">'+(authUser?'✓ '+(authUser.displayName||authUser.email||'Hesabım'):'Google ile Giriş Yap')+'</div><div class="profil-setting-sub">'+(authUser?'Giriş yapıldı · Ayarların bulutta senkron · Çıkış için dokun':'Ayarların (tema, mod, dönem) tüm cihazlarında senkronize olsun')+'</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div></div></div>';html+='<div id="profil-admin-anchor"></div>';var RAMtarih=new Date(2026,4,18,23,59,59);if(new Date()<=RAMtarih){var ramDiff=Math.ceil((new Date(2026,4,18)-today)/86400000);var ramStr=ramDiff===0?'Bugün!':ramDiff===1?'Yarın':ramDiff+' gün sonra';html+='<div class="profil-section">';html+='<div class="profil-section-title">🏥 Önemli Bildirim</div>';html+='<div class="profil-ram-card">';html+='<div class="profil-ram-icon">🏥</div>';html+='<div>';html+='<div class="profil-ram-title">Kocasinan RAM Ziyareti <span class="profil-ram-badge">'+ramStr+'</span></div>';html+='<div class="profil-ram-meta">18 Mayıs 2026, Pazartesi · Saat 10:00<br>Kapsam: D8\'in Tamamı · Prof. Dr. M. K. Özgen</div>';html+='</div></div></div>';}
 try{var weekStart=new Date(today);weekStart.setDate(today.getDate()-(today.getDay()===0?6:today.getDay()-1));var weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);if(typeof ranges!=='undefined'){var weekTatils=ranges.filter(function(r){if(r.type!=='tatil')return false;var rs=new Date(r.start);rs.setHours(0,0,0,0);var re=new Date(r.end);re.setHours(23,59,59,999);return rs<=weekEnd&&re>=weekStart&&re>=today;});if(weekTatils.length){html+='<div class="profil-section">';html+='<div class="profil-section-title">🎉 Tatil</div>';weekTatils.forEach(function(r){var icon=getTatilIcon(r.label);var rs=new Date(r.start);rs.setHours(0,0,0,0);var tDiff=Math.ceil((rs-today)/86400000);var tStr=tDiff<=0?'Bu hafta · ders yok':tDiff===1?'Yarın':''+tDiff+' gün sonra';var badge=tDiff<=0?'Aktif':tDiff+' gün';html+='<div class="profil-tatil-card">';html+='<div class="profil-tatil-icon">'+icon+'</div>';html+='<div><div class="profil-tatil-title">'+r.label+'</div><div class="profil-tatil-sub">'+tStr+'</div></div>';html+='<div class="profil-tatil-badge">'+badge+'</div>';html+='</div>';});html+='</div>';}}}catch(e){}
 var start=new Date(2026,6,6),end=new Date(2026,8,11);var total=Math.round((end-start)/86400000);var elapsed=Math.min(Math.max(Math.round((today-start)/86400000),0),total);var pct=Math.round(elapsed/total*100);var kalan=Math.max(Math.ceil((end-today)/86400000),0);var statusEmoji=pct<30?'🌱':pct<60?'📈':pct<85?'🔥':'🏁';html+='<div class="profil-section">';html+='<div class="profil-section-title">'+statusEmoji+' Dönem İlerlemesi</div>';html+='<div class="profil-card">';html+='<div class="profil-donem-header">';html+='<div class="profil-donem-title">II. Dönem</div>';html+='<div class="profil-donem-pct">%'+pct+'</div>';html+='</div>';html+='<div class="profil-donem-track"><div class="profil-donem-fill" id="profil-donem-fill" style="width:0%"></div></div>';html+='<div class="profil-donem-footer">';html+='<div class="profil-donem-dates">'+fmtD(start)+' – '+fmtD(end)+'&nbsp;&nbsp;·&nbsp;&nbsp;'+elapsed+'/'+total+' gün</div>';html+='<div class="profil-donem-kalan">'+(kalan>0?kalan+' gün kaldı':'✅ Tamamlandı')+'</div>';html+='</div>';html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">📅 İzlence Haftası</span><span style="font-family:\'JetBrains Mono\',monospace;font-size:12px;font-weight:700;color:var(--navy);">'+ (function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})() +' / 10</span></div><div style="width:100%;height:8px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--border);"><div style="height:100%;width:'+((function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()*10)+'%;border-radius:99px;background:linear-gradient(90deg,#F59E0B,#FBBF24);"></div></div><div style="font-size:9.5px;color:var(--muted);margin-top:4px;">Şu an <strong style=\"color:var(--text);\">'+(function(){var s=new Date(2026,6,6),t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()+'. Hafta</strong></div></div>';html+='</div></div>';var cdItems=[{label:'Demokrasi Bayramı',date:'2026-07-15',icon:'🇹🇷'},{label:'II. Dönem Ara Sınavı',date:'2026-08-03',icon:'📝'}];var cdValid=cdItems.filter(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);return Math.ceil((t-today)/86400000)>=0;});if(cdValid.length){html+='<div class="profil-section">';html+='<div class="profil-section-title">⏳ Geri Sayım</div>';html+='<div class="profil-card">';cdValid.forEach(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);var diff=Math.ceil((t-today)/86400000);var diffStr=diff===0?'Bugün! 🎯':diff+'g kaldı';var dtFmt=t.getDate()+' '+TR_MS[t.getMonth()]+' '+t.getFullYear();html+='<div class="profil-cd-row">';html+='<div class="profil-cd-icon">'+it.icon+'</div>';html+='<div class="profil-cd-body"><div class="profil-cd-label">'+it.label+'</div><div class="profil-cd-date">'+dtFmt+'</div></div>';html+='<div class="profil-cd-badge'+(diff===0?' today':'')+'">'+diffStr+'</div>';html+='</div>';});html+='</div></div>';}
-(function(){var now2=new Date();var weekNo2=Math.floor((now2-new Date(now2.getFullYear(),0,1))/604800000);var qq=quotes[weekNo2%quotes.length];if(!qq)return;html+='<div class="profil-section">';html+='<div class="profil-section-title">✨ Haftanın Sözü</div>';html+='<div class="profil-quote-card">';html+='<div class="profil-quote-mark">❝</div>';html+='<div class="profil-quote-body"><div class="profil-quote-text">'+qq.text+'</div><div class="profil-quote-author">— '+qq.author+'</div></div>';html+='</div></div>';})();html+='<div class="profil-section">';html+='<div class="profil-section-title">🛠️ Araçlar</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="installToHomeScreen()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">📲</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Ana Ekrana Ekle</div><div class="profil-setting-sub">'+(window._pwaAlreadyInstalled?'✓ Zaten yüklü':'Uygulama gibi kullan, çevrimdışı çalışır')+'</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="openScreensaver()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">⏱️</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Sınıf Zamanlayıcısı</div><div class="profil-setting-sub">Tam ekran ders/sınav geri sayımını aç</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="d8ActOpenOverlay()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">🎤</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Sınıf Etkinliği</div><div class="profil-setting-sub">Herkesin telefondan yazdığı cümleyi tahtada canlı göster</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="d8CarkOpenOverlay()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">🎡</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">İsim Çarkı</div><div class="profil-setting-sub">Rastgele öğrenci seç, bir tur boyunca isimler tekrar çıkmaz</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div></div></div>';var isDark=document.body.classList.contains('dark');html+='<div class="profil-section">';html+='<div class="profil-section-title">⚙️ Görünüm</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="toggleDark();buildProfilPage()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">'+(isDark?'☀️':'🌙')+'</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">'+(isDark?'Aydınlık Mod':'Karanlık Mod')+'</div>';html+='<div class="profil-setting-sub">Şu an: '+(isDark?'🌙 Karanlık':'☀️ Aydınlık')+'</div></div>';html+='<div class="profil-setting-toggle '+(isDark?'on':'off')+'"><div class="profil-toggle-knob"></div></div>';html+='</div>';html+='</div>';html+='</div>';html+='<div class="profil-section">';html+='<div class="profil-section-title">📚 Dönem Görünümü</div>';html+='<div class="profil-card"><div class="profil-card-sublabel">Referans olarak hangi dönemi görmek istersin?</div><div class="profil-theme-grid"><div class="profil-theme-item'+(window._d8DonemMode==='d1'?' active':'')+'" onclick="setDonemMode(\'d1\')"><div class="profil-theme-swatch" style="background:linear-gradient(135deg,#0C2461,#3B82F6)"></div><div class="profil-theme-name">1. Dönem</div>'+(window._d8DonemMode==='d1'?'<div class="profil-theme-check">✓</div>':'')+'</div><div class="profil-theme-item'+(window._d8DonemMode!=='d1'?' active':'')+'" onclick="setDonemMode(\'d2\')"><div class="profil-theme-swatch" style="background:linear-gradient(135deg,#059669,#34D399)"></div><div class="profil-theme-name">2. Dönem</div>'+(window._d8DonemMode!=='d1'?'<div class="profil-theme-check">✓</div>':'')+'</div></div><div style="font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.5;">1. Dönem seçilince ders ve sınav programı geçmiş kayıt olarak, referans amaçlı gösterilir.</div></div>';el.innerHTML=html;if(typeof window.d8PlaceAdminControls==='function'){try{window.d8PlaceAdminControls();}catch(e){}}requestAnimationFrame(function(){setTimeout(function(){var f=document.getElementById('profil-donem-fill');if(f)f.style.width=pct+'%';},120);});}
+html+='<div class="profil-section">';html+='<div class="profil-section-title">🛠️ Araçlar</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="installToHomeScreen()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">📲</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Ana Ekrana Ekle</div><div class="profil-setting-sub">'+(window._pwaAlreadyInstalled?'✓ Zaten yüklü':'Uygulama gibi kullan, çevrimdışı çalışır')+'</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="openScreensaver()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">⏱️</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Sınıf Zamanlayıcısı</div><div class="profil-setting-sub">Tam ekran ders/sınav geri sayımını aç</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="d8ActOpenOverlay()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">🎤</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Sınıf Etkinliği</div><div class="profil-setting-sub">Herkesin telefondan yazdığı cümleyi tahtada canlı göster</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="d8CarkOpenOverlay()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">🎡</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">İsim Çarkı</div><div class="profil-setting-sub">Rastgele öğrenci seç, bir tur boyunca isimler tekrar çıkmaz</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div></div></div>';var isDark=document.body.classList.contains('dark');html+='<div class="profil-section">';html+='<div class="profil-section-title">⚙️ Görünüm</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="toggleDark();buildProfilPage()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">'+(isDark?'☀️':'🌙')+'</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">'+(isDark?'Aydınlık Mod':'Karanlık Mod')+'</div>';html+='<div class="profil-setting-sub">Şu an: '+(isDark?'🌙 Karanlık':'☀️ Aydınlık')+'</div></div>';html+='<div class="profil-setting-toggle '+(isDark?'on':'off')+'"><div class="profil-toggle-knob"></div></div>';html+='</div>';html+='</div>';html+='</div>';html+='<div class="profil-section">';html+='<div class="profil-section-title">📚 Dönem Görünümü</div>';html+='<div class="profil-card"><div class="profil-card-sublabel">Referans olarak hangi dönemi görmek istersin?</div><div class="profil-theme-grid"><div class="profil-theme-item'+(window._d8DonemMode==='d1'?' active':'')+'" onclick="setDonemMode(\'d1\')"><div class="profil-theme-swatch" style="background:linear-gradient(135deg,#0C2461,#3B82F6)"></div><div class="profil-theme-name">1. Dönem</div>'+(window._d8DonemMode==='d1'?'<div class="profil-theme-check">✓</div>':'')+'</div><div class="profil-theme-item'+(window._d8DonemMode!=='d1'?' active':'')+'" onclick="setDonemMode(\'d2\')"><div class="profil-theme-swatch" style="background:linear-gradient(135deg,#059669,#34D399)"></div><div class="profil-theme-name">2. Dönem</div>'+(window._d8DonemMode!=='d1'?'<div class="profil-theme-check">✓</div>':'')+'</div></div><div style="font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.5;">1. Dönem seçilince ders ve sınav programı geçmiş kayıt olarak, referans amaçlı gösterilir.</div></div>';el.innerHTML=html;if(typeof window.d8PlaceAdminControls==='function'){try{window.d8PlaceAdminControls();}catch(e){}}requestAnimationFrame(function(){setTimeout(function(){var f=document.getElementById('profil-donem-fill');if(f)f.style.width=pct+'%';},120);});}
 function buildWidgetStack(){}
 function buildDonemProgress(){}
 function updateHeaderProgress(){
@@ -3203,7 +3002,7 @@ card.style.borderLeft=`3px solid ${colorMap[g.kod]}`;card.onclick=()=>openModal(
 <div class="mob-card-arrow">›</div>`;container.appendChild(card);});});});}
 function buildCountdownBar(){const today=new Date();today.setHours(0,0,0,0);const milliPerDay=86400000;const todayTime=today.getTime();const items=[{label:'Demokrasi Bayramı',date:'2026-07-15',icon:'🇹🇷'},{label:'II. Dönem Ara Sınavı',date:'2026-08-03',icon:'📝'},];var htmlParts=[];items.forEach(function(item){var target=new Date(item.date);target.setHours(0,0,0,0);var diff=Math.ceil((target-today)/milliPerDay);if(item.endDate){var end=new Date(item.endDate);end.setHours(0,0,0,0);if(today>end)return;if(today>=target&&today<=end){var daysLeft=Math.ceil((end-today)/milliPerDay);var numText=daysLeft===0?'🎯':daysLeft;var lbl=daysLeft===0?'Son gün!':'gün kaldı';htmlParts.push('<div class="cdown-card" style="border-left:3px solid #A0234E;"><div class="cdown-icon">'+item.icon+'</div><div><div class="cdown-num" style="color:#A0234E;">'+numText+'</div><div class="cdown-label">'+lbl+'<br><strong>'+item.label+'</strong></div></div></div>');return;}}else{if(diff<0)return;}
 if(diff<0)return;var label2=diff===0?'Bugün!':'gün kaldı';var numText2=diff===0?'🎯':diff;htmlParts.push('<div class="cdown-card"><div class="cdown-icon">'+item.icon+'</div><div><div class="cdown-num">'+numText2+'</div><div class="cdown-label">'+label2+'<br><strong>'+item.label+'</strong></div></div></div>');});var rendered=htmlParts.join('');['countdown-bar'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=rendered;});}
-const quotes=[{text:"Türk milletinin yürüyeceği yol, medeniyetin, ilmin ve fennin yoludur.",author:"Atatürk — Nutuk"},{text:"Bilgi güçtür; ancak bu güç insanlık yararına kullanıldığı zaman anlam kazanır.",author:"Orhun Abideleri ruhundan"},{text:"İlim öğrenin; zira ilim öğrenmek her Müslümana farzdır.",author:"Kutadgu Bilig — Yusuf Has Hacib"},{text:"Dil, milletin kalbidir; dili yaşayan millet, ölümsüzdür.",author:"Dîvânu Lugâti't-Türk — Kaşgarlı Mahmud"},{text:"Ey Türk oğlu! Atalarını unutma, onların adını yaşat.",author:"Orhun Kitabeleri — Bilge Kağan"},{text:"Aklın başı, dili tutmaktır; akıllı ol, sözünü dengeli söyle.",author:"Kutadgu Bilig — Yusuf Has Hacib"},{text:"Gel gel, ne olursan ol yine gel; ister kâfir, ister Mecusi, ister puta tapan ol yine gel.",author:"Mesnevi — Mevlana Celaleddin Rumi"},{text:"Yunus'um, derdim vardır bin bir dermandan içeri.",author:"Divan — Yunus Emre"},{text:"Milletimi seviyorum. Bu sevgi benim en büyük kuvvetim, en sarsılmaz dayanak noktamdır.",author:"Atatürk — Nutuk"},{text:"Şu karşıma dikilmiş yıkılmaz gibi duran medeniyet, tek dişi kalmış canavar.",author:"Safahat — Mehmet Akif Ersoy"},{text:"İnsanlık âleminde bir güneş varsa o da ilimdir.",author:"Kutadgu Bilig — Yusuf Has Hacib"},{text:"Söz var, pırlantadan kıymetli; söz var, taştan değersiz. İkisini de söyleyen dildir.",author:"Dede Korkut Hikâyeleri"},{text:"Biz bize benzeriz.",author:"Mesnevi — Mevlana Celaleddin Rumi"},{text:"Vatan ne Türkiye'dir Türklere, ne Türkistan; vatan büyük ve müebbet bir ülkedir: Turan.",author:"Safahat — Mehmet Akif Ersoy"},{text:"Yol odur ki doğru vara, göz odur ki Hak'kı göre.",author:"Divan — Yunus Emre"},{text:"Türk'ün bilge kağanı konuşuyor, dinle: Aç milleti doyurdum, çıplak milleti giydirdim.",author:"Orhun Kitabeleri — Bilge Kağan"},];function setWeeklyQuote(){const now=new Date();const weekNo=Math.floor((now-new Date(now.getFullYear(),0,1))/604800000);const q=quotes[weekNo%quotes.length];const qtEl=document.getElementById('quote-text');const qaEl=document.getElementById('quote-author');if(qtEl)qtEl.textContent='❝ '+q.text+' ❞';if(qaEl)qaEl.textContent='— '+q.author;const qtI=document.getElementById('quote-text-inline');const qaI=document.getElementById('quote-author-inline');if(qtI)qtI.textContent='❝ '+q.text+' ❞';if(qaI)qaI.textContent='— '+q.author;}
+
 const GUN_DOW=Object.freeze({'Pazartesi':1,'Salı':2,'Çarşamba':3,'Perşembe':4,'Cuma':5});const GUN_ICON={'Pazartesi':'🎉','Salı':'🎉','Çarşamba':'🎉','Perşembe':'🎉','Cuma':'🎉'};const TATIL_ICON=Object.freeze({default:'🎉',bayram:'🌙',milli:'🇹🇷',yilbasi:'🎆'});function getTatilIcon(label){const l=label.toLowerCase();if(/kurban|ramazan/.test(l))return'🌙';if(/cumhuriyet|atatürk|zafer|egemenlik|gençlik|demokrasi/.test(l))return'🇹🇷';if(/yılbaşı|yilbaşı/.test(l))return'🎆';if(l.includes('emek'))return'✊';return'🎉';}
 function applyHolidayOverlaysToTable(){const today=new Date();today.setHours(0,0,0,0);const dayHolidays={};for(let targetDow=1;targetDow<=5;targetDow++){const todayDow=today.getDay();let diff=targetDow-todayDow;if(diff<0)diff+=7;const d=new Date(today);d.setDate(today.getDate()+diff);ranges.forEach(r=>{if(r.type==='tatil'){const rs=mkDate(r.start),re=mkDate(r.end);if(d>=rs&&d<=re){if(!dayHolidays[targetDow]){dayHolidays[targetDow]={label:r.label,icon:getTatilIcon(r.label),dateStr:d.getDate()+' '+['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'][d.getMonth()]};}}}});}
 if(Object.keys(dayHolidays).length===0)return;const table=getActiveProgRoot().querySelector('table.prog tbody');if(!table||!Object.keys(dayHolidays).length)return;const rows=table.querySelectorAll('tr');rows.forEach(tr=>{const gunTd=tr.querySelector('.td-gun');if(!gunTd)return;const gunText=gunTd.textContent.trim().split('\n')[0].trim();const rowDow=GUN_DOW[gunText];if(!rowDow||!dayHolidays[rowDow])return;const holiday=dayHolidays[rowDow];tr.classList.add('row-holiday');gunTd.innerHTML=gunText+'<span class="gl">'+holiday.icon+' Tatil · '+holiday.dateStr+'</span>';});}
@@ -3377,7 +3176,7 @@ function applyDonemMode(){
 }
 document.addEventListener('DOMContentLoaded',()=>{buildDonemProgress();updateHeaderProgress();buildCountdownBar();updateLiveBanner();diInit();applyDonemMode();if(window.innerWidth>900)buildDesktopSidebar();(function(){var RAMTarih=new Date(2026,4,18,23,59,59);var today=new Date();if(today>RAMTarih)return;var card=document.createElement('div');card.id='ram-ziyaret-karti';card.innerHTML=`
     <div style="display:flex;align-items:flex-start;gap:12px;"> <div style="font-size:24px;flex-shrink:0;margin-top:1px;">🏥</div> <div style="flex:1;min-width:0;"> <div class="ram-title">Kocasinan RAM Ziyareti</div> <div class="ram-body"> <strong>Tarih:</strong> 18 Mayıs 2026, Pazartesi · <strong>Saat:</strong> 10:00<br> <strong>Kapsam:</strong> <span class="ram-kapsam">D8'in Tamamı</span><br> <strong>Sorumlu:</strong> Prof. Dr. M. Kasım Özgen
-        </div> </div> </div>`;card.className='ram-notice-card';var bar=document.getElementById('sticky-widget-bar');if(bar&&bar.parentNode){bar.parentNode.insertBefore(card,bar.nextSibling);}else{var target=document.getElementById('holiday-week-wrap');if(target&&target.parentNode)target.parentNode.insertBefore(card,target);}})();var idleTasks=[buildMobileSchedule,buildHolidayWeekBanner,applyHolidayOverlaysToTable,applyTodayRowHighlight,setWeeklyQuote,];if(typeof requestIdleCallback!=='undefined'){idleTasks.forEach(function(fn){requestIdleCallback(fn,{timeout:1500});});}else{setTimeout(function(){idleTasks.forEach(function(fn){fn();});},100);}
+        </div> </div> </div>`;card.className='ram-notice-card';var bar=document.getElementById('sticky-widget-bar');if(bar&&bar.parentNode){bar.parentNode.insertBefore(card,bar.nextSibling);}else{var target=document.getElementById('holiday-week-wrap');if(target&&target.parentNode)target.parentNode.insertBefore(card,target);}})();var idleTasks=[buildMobileSchedule,buildHolidayWeekBanner,applyHolidayOverlaysToTable,applyTodayRowHighlight,];if(typeof requestIdleCallback!=='undefined'){idleTasks.forEach(function(fn){requestIdleCallback(fn,{timeout:1500});});}else{setTimeout(function(){idleTasks.forEach(function(fn){fn();});},100);}
 (function(){function scheduleNextUpdate(){var now=new Date(),dow=now.getDay(),h=now.getHours();var delay=(dow===0||dow===6||h>=21||h<8)?5*60*1000:60*1000;setTimeout(function(){updateLiveBanner();scheduleNextUpdate();},delay);}
 setInterval(updateHeaderProgress,60*60*1000);
 scheduleNextUpdate();})();(function(){var b=new Date();var bugunDow=b.getDay();var bugunIso=b.getFullYear()+'-'+String(b.getMonth()+1).padStart(2,'0')+'-'+String(b.getDate()).padStart(2,'0');setTimeout(function(){if(window.innerWidth<=660){var hedef=document.getElementById('mob-ders-gun-'+bugunDow);if(hedef){hedef.scrollIntoView({behavior:'instant',block:'start'});}}},700);})();});const SINAV_GUNLERI_D1=[{name:'Cumartesi',tarih:'27.06.2026',dateStr:'2026-06-27',dersler:[{ad:'İngilizce Öğretim Yöntemleri',saat:'10:00–10:50',bas:'10:00',bitis:'10:50',ders:1,sinav:true,kod:'110'},{ad:'Türkçenin Söz Varlığı ve Maarif Sözlüğü',saat:'11:50–12:40',bas:'11:50',bitis:'12:40',ders:2,sinav:true,kod:'107'}]},{name:'Pazar',tarih:'28.06.2026',dateStr:'2026-06-28',dersler:[{ad:'İngilizce Eğitiminde Farklılaştırma',saat:'10:00–10:50',bas:'10:00',bitis:'10:50',ders:1,sinav:true,kod:'109'},{ad:'Veri Temelli İzleme ve Değerlendirme',saat:'11:50–12:40',bas:'11:50',bitis:'12:40',ders:2,sinav:true,kod:'103'}]},{name:'Pazartesi',tarih:'29.06.2026',dateStr:'2026-06-29',dersler:[{ad:'Eğitimde Hak ve Sorumluluklar',saat:'10:00–10:50',bas:'10:00',bitis:'10:50',ders:1,sinav:true,kod:'105'},{ad:'İnsan ve Öğrenme',saat:'11:50–12:40',bas:'11:50',bitis:'12:40',ders:2,sinav:true,kod:'104'}]},{name:'Salı',tarih:'30.06.2026',dateStr:'2026-06-30',dersler:[{ad:'Program Okuryazarlığı ve Türkiye Yüzyılı Maarif Modeli',saat:'10:00–10:50',bas:'10:00',bitis:'10:50',ders:1,sinav:true,kod:'101'},{ad:'Türk Kültürünün Kurucu Metinleri',saat:'11:50–12:40',bas:'11:50',bitis:'12:40',ders:2,sinav:true,kod:'106'},{ad:'Medya, Toplum ve Eğitim',saat:'13:40–14:30',bas:'13:40',bitis:'14:30',ders:3,sinav:true,kod:'108'}]}];
