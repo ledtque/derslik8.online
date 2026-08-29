@@ -2393,6 +2393,12 @@ function d8IsimListesiAl(){
   if(window._d8CarkAktifKod){
     return Array.isArray(window._d8CarkAktifIsimler)?window._d8CarkAktifIsimler:[];
   }
+  // Bulutta güncel bir liste varsa (tüm kullanıcılar için geçerli olan
+  // global kayıt) her zaman onu kullan. localStorage burada yalnızca
+  // bulut cevabı gelene kadarki geçici bir önbellektir.
+  if(Array.isArray(window._d8IsimListesiBulut)&&window._d8IsimListesiBulut.length){
+    return window._d8IsimListesiBulut;
+  }
   try{
     var raw=localStorage.getItem('d8_isim_listesi');
     if(raw){var arr=JSON.parse(raw);if(Array.isArray(arr)&&arr.length)return arr;}
@@ -2617,7 +2623,20 @@ function d8IsimListesiDuzenle(){
   overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.remove();});
   document.getElementById('d8-isim-kaydet').onclick=function(){
     var lines=document.getElementById('d8-isim-textarea').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+    var kaydetBtn=document.getElementById('d8-isim-kaydet');
+    if(kaydetBtn){kaydetBtn.disabled=true;kaydetBtn.textContent='Kaydediliyor…';}
+    // İyimser güncelleme: bulut cevabını beklemeden yerelde hemen göster,
+    // ardından herkese yansıması için buluta yaz.
     try{localStorage.setItem('d8_isim_listesi',JSON.stringify(lines));}catch(e){}
+    window._d8IsimListesiBulut=lines;
+    if(typeof window.d8IsimListesiVarsayilanGuncelle==='function'){
+      window.d8IsimListesiVarsayilanGuncelle(lines).then(function(){
+        if(typeof window.d8ShowToast==='function')window.d8ShowToast('✅ Liste güncellendi — tüm kullanıcılara yansıdı');
+      }).catch(function(e){
+        console.warn('[D8 Çark] İsim listesi bulut güncelleme hatası:',e);
+        if(typeof window.d8ShowToast==='function')window.d8ShowToast('⚠️ Kaydedildi ama bulut senkronu başarısız oldu (bu cihazda görünür, diğerlerine yansımamış olabilir)');
+      });
+    }
     overlay.remove();
     d8CarkOverlayYenile();
   };
@@ -4710,6 +4729,37 @@ window.d8CarkListesiDinle = function(onUpdate){
 };
 window.d8CarkListesiDinlemeyiDurdur = function(){
   if(d8CarkListesiUnsub){ d8CarkListesiUnsub(); d8CarkListesiUnsub = null; }
+};
+
+// ---- Varsayılan D8 çarkının isim listesi: herkese açık okuma, sadece admin yazabilir ----
+// Not: Bu, kullanıcı bazlı bir ayar DEĞİLDİR — admin "Listeyi Düzenle" ile
+// kaydettiğinde tüm cihazlara/kullanıcılara anında yansır (announcements/
+// siteConfig ile aynı desen). window._d8IsimListesiBulut: undefined = henüz
+// buluttan cevap gelmedi, null = bulutta özel bir kayıt yok (kod içindeki
+// D8_ISIM_LISTESI_VARSAYILAN kullanılır), dizi = buluttaki güncel liste.
+function isimListesiVarsayilanRef(){ return doc(db, "siteConfig", "isimListesiVarsayilan"); }
+onSnapshot(isimListesiVarsayilanRef(), function(snap){
+  var arr = null;
+  if(snap.exists()){
+    var data = snap.data();
+    if(Array.isArray(data.isimler) && data.isimler.length) arr = data.isimler;
+  }
+  window._d8IsimListesiBulut = arr;
+  try{ if(arr) localStorage.setItem('d8_isim_listesi', JSON.stringify(arr)); }catch(e){}
+  // Şu an varsayılan D8 çarkı gösteriliyorsa (özel/paylaşılan bir çark değil)
+  // ve çark o an dönmüyorsa, ekranı güncel listeyle tazele.
+  if(!window._d8CarkAktifKod && !window.d8WheelSpinning && typeof window.d8CarkOverlayYenile === 'function'){
+    window.d8CarkOverlayYenile();
+  }
+}, function(err){ console.warn('[D8 Çark] Varsayılan isim listesi senkron hatası:', err); });
+
+window.d8IsimListesiVarsayilanGuncelle = function(isimler){
+  if(!window.d8IsAdmin || !window.d8IsAdmin()) return Promise.reject(new Error('yetkisiz'));
+  return setDoc(isimListesiVarsayilanRef(), {
+    isimler: isimler,
+    updatedAt: Date.now(),
+    updatedBy: (currentUser ? currentUser.email : null)
+  }, { merge: true });
 };
 
 // Mevcut yerel ayarları topla
