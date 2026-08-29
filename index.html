@@ -2881,24 +2881,12 @@ function d8CarkGoruntuIsle(file){
         var d=imgData.data;
         var n=w*h;
         var gri=new Uint8ClampedArray(n);
-        var enKucuk=255,enBuyuk=0;
         for(var i=0,p=0;i<d.length;i+=4,p++){
-          var g=(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2])|0;
-          gri[p]=g;
-          if(g<enKucuk)enKucuk=g;
-          if(g>enBuyuk)enBuyuk=g;
+          gri[p]=(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2])|0;
         }
-        var aralik=(enBuyuk-enKucuk)||1;
-        var hist=new Array(256).fill(0);
-        var gerilmis=new Uint8ClampedArray(n);
-        for(var p2=0;p2<n;p2++){
-          var v=Math.round(((gri[p2]-enKucuk)/aralik)*255);
-          gerilmis[p2]=v;
-          hist[v]++;
-        }
-        var esik=d8OtsuEsigi(hist,n);
+        var esiklenmis=d8AdaptifEsikle(gri,w,h);
         for(var i2=0,p3=0;i2<d.length;i2+=4,p3++){
-          var son=gerilmis[p3]>=esik?255:0;
+          var son=esiklenmis[p3];
           d[i2]=d[i2+1]=d[i2+2]=son;
         }
         ctx.putImageData(imgData,0,0);
@@ -2912,25 +2900,67 @@ function d8CarkGoruntuIsle(file){
     img.src=url;
   });
 }
-/* Basit histogram tabanlı Otsu eşiği: görüntüyü metin/arka plan olarak
-   ikiye ayıran eşik değerini otomatik bulur (sabit bir eşik yerine her
-   fotoğrafa göre kendini ayarlar). */
-function d8OtsuEsigi(hist,toplamPiksel){
-  var toplam=0;
-  for(var i=0;i<256;i++)toplam+=i*hist[i];
-  var toplamB=0,agirlikB=0,enIyiEsik=127,enIyiVaryans=0;
-  for(var t=0;t<256;t++){
-    agirlikB+=hist[t];
-    if(agirlikB===0)continue;
-    var agirlikF=toplamPiksel-agirlikB;
-    if(agirlikF===0)break;
-    toplamB+=t*hist[t];
-    var ortB=toplamB/agirlikB;
-    var ortF=(toplam-toplamB)/agirlikF;
-    var varyansAra=agirlikB*agirlikF*(ortB-ortF)*(ortB-ortF);
-    if(varyansAra>enIyiVaryans){enIyiVaryans=varyansAra;enIyiEsik=t;}
+/* Bölgesel (adaptif) eşikleme — Bradley/Roth entegral görüntü yöntemi.
+   ÖNEMLİ: Eskiden burada TEK bir global eşik (Otsu) tüm fotoğrafa birden
+   uygulanıyordu. Telefonla çekilen fotoğraflarda ışık nadiren eşit dağılır
+   (gölge, parlama, sayfanın bir kenarının diğerinden karanlık olması gibi);
+   global bir eşik gölgeli bölgeleri tamamen siyaha, parlak bölgeleri
+   tamamen beyaza gömüp metni yok ediyor ya da anlamsız leke bloklarına
+   çeviriyordu — Tesseract da bu lekelerden gerçek isimlerle hiç alakası
+   olmayan karakterler "okuyordu". Bölgesel eşikleme her pikseli SADECE
+   kendi yakın çevresinin ortalama parlaklığıyla karşılaştırır, bu yüzden
+   fotoğrafın bir tarafı diğerinden daha karanlık/aydınlık olsa bile metin
+   korunur. */
+function d8AdaptifEsikle(gri,w,h){
+  var n=w*h;
+  var integral=new Float64Array(n);
+  for(var y=0;y<h;y++){
+    var satirToplam=0;
+    for(var x=0;x<w;x++){
+      var idx=y*w+x;
+      satirToplam+=gri[idx];
+      integral[idx]=satirToplam+(y>0?integral[idx-w]:0);
+    }
   }
-  return enIyiEsik;
+  var pencere=Math.max(15,Math.round(w/8)); // yerel ortalamanın hesaplanacağı komşuluk boyutu
+  var yari=Math.floor(pencere/2);
+  var esikOrani=0.85; // yerel ortalamanın %85'inden koyu olan pikseller "metin" (siyah) sayılır
+  var sonuc=new Uint8ClampedArray(n);
+  for(var y2=0;y2<h;y2++){
+    var y1=Math.max(0,y2-yari), y3=Math.min(h-1,y2+yari);
+    for(var x2=0;x2<w;x2++){
+      var x1=Math.max(0,x2-yari), x3=Math.min(w-1,x2+yari);
+      var alan=(x3-x1+1)*(y3-y1+1);
+      var toplam=integral[y3*w+x3]
+        -(x1>0?integral[y3*w+x1-1]:0)
+        -(y1>0?integral[(y1-1)*w+x3]:0)
+        +((x1>0&&y1>0)?integral[(y1-1)*w+x1-1]:0);
+      var ortalama=toplam/alan;
+      sonuc[y2*w+x2]=(gri[y2*w+x2]<ortalama*esikOrani)?0:255;
+    }
+  }
+  return sonuc;
+}
+/* ---- Okunan satırları isim listesine dönüştürme ----
+   Sınıf listesi fotoğrafları çoğunlukla numaralı ("1. Ahmet Yılmaz") ya da
+   sütunlu (isim + cinsiyet/no gibi ek sütunlar) olduğundan, ham OCR
+   çıktısını olduğu gibi eklemek isim dışı gürültüyü de listeye taşıyordu.
+   Bu adım her satırdan sıra numarasını ve tek harfli cinsiyet sütununu
+   ayıklar, sonra gerçekten bir isme benzemeyen (harf içermeyen, tablo
+   başlığı olan) satırları eler. */
+var D8_ISIM_OCR_BASLIK_KELIME=['SIRA','SIRA NO','SIRA NUMARASI','NO','NUMARA','OKUL NO','OKUL NUMARASI','ÖĞRENCİ NO','OGRENCI NO','ÖĞRENCİ NUMARASI','ADI','SOYADI','ADI SOYADI','AD SOYAD','ADI VE SOYADI','ÖĞRENCİ ADI SOYADI','CİNSİYET','CINSIYET','SINIF','SINIFI','SINIF NO','SINIF ŞUBESİ','TC','TC KİMLİK','TC KİMLİK NO','TCKN','T.C. KİMLİK NO','VELİ ADI SOYADI','VELİ','DOĞUM TARİHİ','DOGUM TARIHI','DEVAM DURUMU'];
+function d8CarkOcrSatirTemizle(s){
+  var t=String(s||'').trim();
+  t=t.replace(/^\s*\d{1,3}\s*[\.\)\-:]\s*/,''); // başta "1.", "12)", "3 -" gibi sıra no
+  t=t.replace(/\s+(K|E|Kız|Erkek|Kadın)\s*$/i,''); // sonda tek başına cinsiyet sütunu
+  return t.trim();
+}
+function d8CarkOcrSatirGecerliMi(s){
+  if(!s)return false;
+  var harfSayisi=(s.match(/[A-Za-zÇĞİÖŞÜçğıöşü]/g)||[]).length;
+  if(harfSayisi<2)return false; // tek harf/rakam/noktalama gürültüsü
+  if(D8_ISIM_OCR_BASLIK_KELIME.indexOf(s.toLocaleUpperCase('tr-TR'))!==-1)return false; // tablo başlığı satırı
+  return true;
 }
 function d8CarkFotoDosyaSecildi(inputEl,textareaId,statusId){
   var file=inputEl.files&&inputEl.files[0];
@@ -2954,9 +2984,7 @@ function d8CarkFotoIsimCikar(file,textareaId,statusId){
     return worker.recognize(islenmisGorsel);
   }).then(function(result){
     var metin=(result&&result.data&&result.data.text)||'';
-    var satirlar=metin.split('\n').map(function(s){return s.trim();}).filter(function(s){
-      return !!s && /[A-Za-zÇĞİÖŞÜçğıöşü]/.test(s); // sadece rakam/noktalama olan gürültü satırlarını ele
-    });
+    var satirlar=metin.split('\n').map(d8CarkOcrSatirTemizle).filter(d8CarkOcrSatirGecerliMi);
     if(!satirlar.length){
       if(statusEl){statusEl.textContent='⚠️ Fotoğrafta okunabilir isim bulunamadı, elle yazmayı dene.';statusEl.style.color='var(--red)';}
       return;
