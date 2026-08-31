@@ -3595,7 +3595,17 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
 #ss-bar-wrap{width:min(600px,75vw);margin-top:clamp(24px,4.5vh,56px);
   opacity:0;transition:opacity .6s .2s;}
 #ss-bar-track{width:100%;height:5px;background:rgba(255,255,255,0.06);
-  border-radius:99px;overflow:hidden;}
+  border-radius:99px;overflow:hidden;position:relative;}
+.ss-lock{position:absolute;top:0;bottom:0;width:0;pointer-events:none;opacity:0;
+  transition:opacity .6s,width 1s linear;
+  background:repeating-linear-gradient(45deg,rgba(225,75,75,0.85) 0 3px,rgba(225,75,75,0.22) 3px 8px);}
+#ss-lock-s{left:0;border-radius:99px 0 0 99px;}
+#ss-lock-e{right:0;border-radius:0 99px 99px 0;}
+#ss-lock-note{font-family:'Sora',sans-serif;
+  font-size:clamp(11px,1.35vmin,17px);letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,0.22);margin-top:clamp(10px,1.6vh,18px);text-align:center;
+  font-weight:600;white-space:nowrap;opacity:0;transition:opacity .5s,color 1s;}
+#ss-lock-note.aktif{color:rgba(235,115,115,0.92);}
 #ss-bar{height:100%;border-radius:99px;width:0%;
   background:rgba(255,255,255,0.35);transition:width 1s linear,background 1s;}
 #ss-bar-meta{display:flex;justify-content:space-between;
@@ -3666,11 +3676,14 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
     <div id="ss-bar-wrap">
       <div id="ss-bar-track">
         <div id="ss-bar"></div>
+        <div class="ss-lock" id="ss-lock-s"></div>
+        <div class="ss-lock" id="ss-lock-e"></div>
       </div>
       <div id="ss-bar-meta">
         <span id="ss-bar-s">--:--</span>
         <span id="ss-bar-e">--:--</span>
       </div>
+      <div id="ss-lock-note"></div>
     </div>
   </div>
 
@@ -3713,51 +3726,39 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
     {id:'p6',  type:'lesson',label:'6. DERS',  start:'15:30',end:'16:20'},
   ];
 
-  // ── SINAV günleri slotları (Cum-Pzt-Sal: 2 sınav; Salı 30.06: 3 sınav) ──
-  var SINAV_SLOTS_2=[
-    {id:'pre',  type:'pre',    label:'BAŞLAMADI', start:'00:00',end:'10:00'},
-    {id:'s1',   type:'sinav',  label:'1. SINAV',  start:'10:00',end:'10:50'},
-    {id:'ara1', type:'ara',    label:'ARA',       start:'10:50',end:'11:50'},
-    {id:'s2',   type:'sinav',  label:'2. SINAV',  start:'11:50',end:'12:40'},
-    {id:'post', type:'post',   label:'BİTTİ',     start:'12:40',end:'23:59'},
-  ];
-  var SINAV_SLOTS_3=[
-    {id:'pre',  type:'pre',    label:'BAŞLAMADI', start:'00:00',end:'10:00'},
-    {id:'s1',   type:'sinav',  label:'1. SINAV',  start:'10:00',end:'10:50'},
-    {id:'ara1', type:'ara',    label:'ARA',       start:'10:50',end:'11:50'},
-    {id:'s2',   type:'sinav',  label:'2. SINAV',  start:'11:50',end:'12:40'},
-    {id:'ara2', type:'ara',    label:'ARA',       start:'12:40',end:'13:40'},
-    {id:'s3',   type:'sinav',  label:'3. SINAV',  start:'13:40',end:'14:30'},
-    {id:'post', type:'post',   label:'BİTTİ',     start:'14:30',end:'23:59'},
-  ];
-  // Geriye uyumluluk için SINAV_SLOTS varsayılan olarak 2-sınav versiyonu
-  var SINAV_SLOTS=SINAV_SLOTS_2;
-
-  // Sınav tarihleri (ISO yyyy-mm-dd)
-  var SINAV_TARIHLERI={
-    '2026-06-27':true,'2026-06-28':true,'2026-06-29':true,
-    '2026-06-30':true
-  };
-  // Son ders günü (26 Haziran dahil, bu gün dersler biter)
-  var DERS_SON_TARIH='2026-06-26';
-  // 2. Dönem'in başladığı tarih (bu tarihten itibaren normal ders saatleri geçerli)
-  var IKINCI_DONEM_BASLANGIC='2026-07-06';
-
+  /* ── SINAV günleri: slotlar doğrudan sınav takviminden (SINAV_GUNLERI_*) üretilir ──
+     Böylece sınav tarihleri/saatleri değiştiğinde burada hiçbir şey elle güncellenmez. */
   function toIso(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
-
-  function isSinavGunu(d){return !!SINAV_TARIHLERI[toIso(d)];}
-
+  function ssSinavGun(d){return (typeof _diSinavGun==='function')?_diSinavGun(d):null;}
+  function isSinavGunu(d){return !!ssSinavGun(d);}
+  function ssBas(d){return d.bas||String(d.saat||'').split('\u2013')[0];}
+  /* Bir sınav gününün slot zinciri: BAŞLAMADI → 1. SINAV → ARA → 2. SINAV → … → BİTTİ */
+  function buildSinavSlots(gun){
+    var sinavlar=gun.dersler.filter(function(x){return x.sinav;});
+    if(!sinavlar.length)return null;
+    var out=[{id:'pre',type:'pre',label:'BA\u015eLAMADI',start:'00:00',end:ssBas(sinavlar[0])}];
+    sinavlar.forEach(function(d,i){
+      out.push({id:'s'+(i+1),type:'sinav',label:(i+1)+'. SINAV',start:ssBas(d),end:d.bitis,ad:d.ad,kod:d.kod});
+      var nx=sinavlar[i+1];
+      if(nx&&toMin(ssBas(nx))>toMin(d.bitis)){
+        out.push({id:'ara'+(i+1),type:'ara',label:'ARA',start:d.bitis,end:ssBas(nx)});
+      }
+    });
+    out.push({id:'post',type:'post',label:'B\u0130TT\u0130',start:sinavlar[sinavlar.length-1].bitis,end:'23:59'});
+    return out;
+  }
+  /* Ne ders ne sınav olan günler (dönem sonu sınav haftası öncesi/sonrası, dönem arası tatil) */
   function isDersSonrasiBoşGun(d){
-    // Yalnızca 1. Dönem sınavları bitişi ile 2. Dönem başlangıcı arasındaki boşlukta geçerli
-    var iso=toIso(d);
-    return iso>DERS_SON_TARIH && iso<IKINCI_DONEM_BASLANGIC && !isSinavGunu(d);
+    if(isSinavGunu(d))return false;
+    return (typeof _diDersHaftasi==='function')?!_diDersHaftasi(d):false;
   }
 
+  /* Sınav salonundan çıkılamayan bölümler (dakika). Kural değişirse tek yerden güncellenir. */
+  var SS_SINAV_KILIT=(typeof D8_SINAV_KILIT!=='undefined')?D8_SINAV_KILIT:{ilkDk:15,sonDk:5};
+
   function getSlots(now){
-    if(isSinavGunu(now)){
-      var iso=toIso(now);
-      return iso==='2026-06-30'?SINAV_SLOTS_3:SINAV_SLOTS_2;
-    }
+    var gun=ssSinavGun(now);
+    if(gun){var s=buildSinavSlots(gun);if(s)return s;}
     return now.getDay()===5?DERS_SLOTS_CUMA:DERS_SLOTS;
   }
   function toMin(s){var p=s.split(':');return+p[0]*60+ +p[1];}
@@ -3787,6 +3788,14 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
 
     document.getElementById('ss-clock').textContent=p2(now.getHours())+':'+p2(now.getMinutes());
     document.getElementById('ss-date').textContent=p2(now.getDate())+'/'+p2(now.getMonth()+1)+'/'+now.getFullYear();
+
+    /* Kilitli bölge göstergeleri her turda sıfırlanır; yalnızca sınav slotunda açılır */
+    var lockS=document.getElementById('ss-lock-s');
+    var lockE=document.getElementById('ss-lock-e');
+    var lockN=document.getElementById('ss-lock-note');
+    if(lockS)lockS.style.opacity='0';
+    if(lockE)lockE.style.opacity='0';
+    if(lockN){lockN.style.opacity='0';lockN.classList.remove('aktif');}
 
     // Ders sonu sonrası boş gün (sınav haftası bekleme)
     if(isDersSonrasiBoşGun(now)){
@@ -3906,6 +3915,30 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
 
       bwrap.style.opacity='1';
       bar.style.background=warn?'rgba(200,80,80,0.5)':'rgba(255,255,255,0.18)';
+
+      /* ── Salondan çıkılamayan bölümler: ilk 15 dk ve son 5 dk ── */
+      if(total>0&&lockS&&lockE){
+        var yari=Math.floor(total/2);
+        var ilkS=Math.min(SS_SINAV_KILIT.ilkDk*60,yari);
+        var sonS=Math.min(SS_SINAV_KILIT.sonDk*60,yari);
+        lockS.style.width=(ilkS/total*100).toFixed(2)+'%';
+        lockE.style.width=(sonS/total*100).toFixed(2)+'%';
+        lockS.style.opacity=elapsed<ilkS?'1':'0.34';
+        lockE.style.opacity=remain<=sonS?'1':'0.34';
+        if(lockN){
+          lockN.style.opacity='1';
+          if(elapsed<ilkS){
+            lockN.classList.add('aktif');
+            lockN.textContent='ÇIKIŞ SERBEST KALMASINA '+fmtSec(ilkS-elapsed);
+          }else if(remain<=sonS){
+            lockN.classList.add('aktif');
+            lockN.textContent='SON '+Math.round(sonS/60)+' DK · SALONDAN ÇIKIŞ YOK';
+          }else{
+            lockN.classList.remove('aktif');
+            lockN.textContent='İLK '+Math.round(ilkS/60)+' DK / SON '+Math.round(sonS/60)+' DK ÇIKIŞ YOK';
+          }
+        }
+      }
 
     } else if(sl.type==='ara'){
       /* ── SICAK AMBER / KAHVE ── */
