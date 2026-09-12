@@ -6002,6 +6002,37 @@ td.td-full[data-fam="uygulama"] {
 #d8-bb-btn:active{transform:scale(.88)}
 @media (max-width:900px){#d8-bb-btn{display:none!important}}
 
+/* Fark edilsin diye: 8 sn'de bir çift nabız + iki kademeli yeşil halka.
+   Hover'da animasyon kapanır ki normal hover durumu devralsın. */
+#d8-bb-btn{opacity:.26;animation:d8bbPulse 8s ease-in-out 3s infinite}
+@keyframes d8bbPulse{
+  0%{opacity:.26;transform:scale(1);color:var(--muted);
+     border-color:rgba(128,128,128,.22);box-shadow:0 0 0 rgba(90,219,142,0)}
+  4%{opacity:.95;transform:scale(1.38);color:#5ADB8E;
+     border-color:rgba(90,219,142,.75);box-shadow:0 0 14px 2px rgba(90,219,142,.35)}
+  9%{opacity:.42;transform:scale(1.02);color:#5ADB8E;
+     border-color:rgba(90,219,142,.35);box-shadow:0 0 4px rgba(90,219,142,.12)}
+  13%{opacity:.85;transform:scale(1.26);color:#5ADB8E;
+     border-color:rgba(90,219,142,.6);box-shadow:0 0 11px 1px rgba(90,219,142,.28)}
+  22%,100%{opacity:.26;transform:scale(1);color:var(--muted);
+     border-color:rgba(128,128,128,.22);box-shadow:0 0 0 rgba(90,219,142,0)}}
+
+#d8-bb-btn::before,#d8-bb-btn::after{content:'';position:absolute;inset:-1px;border-radius:50%;
+ pointer-events:none;border:1.5px solid rgba(90,219,142,.8);opacity:0}
+#d8-bb-btn::before{animation:d8bbRing 8s ease-out 3s infinite}
+#d8-bb-btn::after{animation:d8bbRing 8s ease-out 3.35s infinite}
+@keyframes d8bbRing{
+  0%{opacity:0;transform:scale(1)}
+  4%{opacity:.85;transform:scale(1)}
+  26%{opacity:0;transform:scale(3.4)}
+  100%{opacity:0;transform:scale(3.4)}}
+
+#d8-bb-btn:hover,#d8-bb-btn:hover::before,#d8-bb-btn:hover::after,
+#d8-bb-btn:focus-visible,#d8-bb-btn:focus-visible::before,#d8-bb-btn:focus-visible::after{animation:none}
+@media (prefers-reduced-motion:reduce){
+ #d8-bb-btn,#d8-bb-btn::before,#d8-bb-btn::after{animation:none}
+ #d8-bb-btn{opacity:.5;color:#5ADB8E;border-color:rgba(90,219,142,.45)}}
+
 #d8-bb{position:fixed;inset:0;z-index:2147483646;display:none;align-items:center;justify-content:center;
  background:#050706;overflow:hidden;cursor:pointer;margin:0;padding:0;opacity:0;transition:opacity .45s ease}
 #d8-bb.on{display:flex;opacity:1}
