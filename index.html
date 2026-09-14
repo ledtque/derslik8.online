@@ -2176,10 +2176,12 @@ function d8SonrakiSinav(ref){
     var sinavlar=g.dersler.filter(function(x){return x.sinav;});
     for(var j=0;j<sinavlar.length;j++){
       var ds=sinavlar[j];
-      if(g.dateStr===iso&&ns>=toS(ds.bitis))continue;
+      var _ov=(typeof d8SinavOvOku==='function')?d8SinavOvOku():null;
+      var _kaydirili=!!(_ov&&_ov.d===g.dateStr&&_ov.i===j);
+      if(g.dateStr===iso&&ns>=(_kaydirili?_ov.bit:toS(ds.bitis)))continue;
       var hedef=new Date(g.dateStr+'T00:00:00');
       var bugun0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-      var bas=ds.bas||String(ds.saat||'').split('\u2013')[0];
+      var bas=_kaydirili?_diSaatFmt(_ov.bas):(ds.bas||String(ds.saat||'').split('\u2013')[0]);
       return {gun:g,ders:ds,no:j+1,toplam:sinavlar.length,bas:bas,
               gunFarki:Math.round((hedef-bugun0)/86400000)};
     }
@@ -2246,13 +2248,84 @@ function diInit(){
 }
 function _diHideDesktop(){_diGizle();}
 
-function _diSinavSlots(gun){
-  function toS(t){var p=String(t||'0:0').split(':');return ((+p[0])*60+(+p[1]))*60;}
+function _diSaatS(t){var p=String(t||'0:0').split(':');return ((+p[0])*60+(+p[1]))*60;}
+function _diSaatFmt(s){s=Math.max(0,Math.min(86399,Math.round(s)));return String(Math.floor(s/3600)).padStart(2,'0')+':'+String(Math.floor((s%3600)/60)).padStart(2,'0');}
+/* ---- "Sinavi simdi baslat" esnekligi --------------------------------------
+   Sinav planlanandan gec basladiginda kullanici tek dokunusla o oturumu o anda
+   baslatir. Oturum kendi normal suresi kadar (or. 50 dk) geri sayar; fakat bir
+   sonraki sinavin baslangicina asla tasmaz -- gecikme aradan kisilir, sonraki
+   oturumlarin saatleri hic degismez. Kayit yalnizca ayni gun icin gecerlidir. */
+var D8_SINAV_OV_KEY='d8SinavOverride';
+function d8SinavOvOku(){
+  try{
+    var r=JSON.parse(localStorage.getItem(D8_SINAV_OV_KEY)||'null');
+    if(!r||!r.d||typeof r.i!=='number')return null;
+    if(r.d!==_diIso(new Date())){localStorage.removeItem(D8_SINAV_OV_KEY);return null;}
+    return r;
+  }catch(e){return null;}
+}
+function d8SinavOvYaz(o){
+  try{if(o)localStorage.setItem(D8_SINAV_OV_KEY,JSON.stringify(o));else localStorage.removeItem(D8_SINAV_OV_KEY);}catch(e){}
+}
+/* Takvimdeki ham (planlanan) oturumlar */
+function _diSinavHamSlots(gun){
   return gun.dersler.filter(function(d){return d.sinav;}).map(function(d,i){
     var bas=d.bas||String(d.saat||'').split('\u2013')[0];
-    return {no:i+1,ad:d.ad,kod:d.kod,bas:bas,bit:d.bitis,basS:toS(bas),bitS:toS(d.bitis),etiket:bas+'\u2013'+d.bitis};
+    return {no:i+1,ad:d.ad,kod:d.kod,bas:bas,bit:d.bitis,basS:_diSaatS(bas),bitS:_diSaatS(d.bitis),etiket:bas+'\u2013'+d.bitis,kaydirildi:false};
   });
 }
+/* Manuel baslatma varsa uygulanmis oturumlar */
+function _diSinavSlots(gun){
+  var slots=_diSinavHamSlots(gun);
+  var ov=d8SinavOvOku();
+  if(ov&&gun&&ov.d===gun.dateStr&&slots[ov.i]){
+    var s=slots[ov.i];
+    s.basS=ov.bas;s.bitS=ov.bit;
+    s.bas=_diSaatFmt(ov.bas);s.bit=_diSaatFmt(ov.bit);
+    s.etiket=s.bas+'\u2013'+s.bit;
+    s.kaydirildi=true;
+  }
+  return slots;
+}
+/* O gun icinde henuz bitmemis ilk oturumun sirasi (-1: gun bitti) */
+function _diHedefSlotIdx(gun,ns){
+  var ham=_diSinavHamSlots(gun),ov=d8SinavOvOku();
+  for(var i=0;i<ham.length;i++){
+    var bit=(ov&&ov.d===gun.dateStr&&ov.i===i)?ov.bit:ham[i].bitS;
+    if(ns<bit)return i;
+  }
+  return -1;
+}
+function d8SinaviSimdiBaslat(){
+  var now=new Date();
+  var gun=_diSinavGun(now);
+  if(!gun){alert('Bug\u00fcn planl\u0131 bir s\u0131nav yok.');return;}
+  var ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
+  var ham=_diSinavHamSlots(gun);
+  var idx=_diHedefSlotIdx(gun,ns);
+  if(idx<0){alert('Bug\u00fcn\u00fcn s\u0131navlar\u0131 tamamland\u0131.');return;}
+  var ak=_diSinavSlots(gun)[idx];
+  if(ns>=ak.basS&&!confirm((idx+1)+'. s\u0131nav \u015fu an s\u00fcr\u00fcyor g\u00f6r\u00fcn\u00fcyor.\nGeri say\u0131m \u015fu andan itibaren yeniden ba\u015flat\u0131ls\u0131n m\u0131?'))return;
+  var sure=ham[idx].bitS-ham[idx].basS;
+  var tavan=ham[idx+1]?ham[idx+1].basS:86340;
+  var bas=ns,bit=ns+sure,kisildi=false;
+  if(bit>tavan){bit=tavan;kisildi=true;}
+  if(bit<=bas){alert('Bir sonraki s\u0131nava kadar yeterli s\u00fcre kalmad\u0131.');return;}
+  d8SinavOvYaz({d:gun.dateStr,i:idx,bas:bas,bit:bit,sure:sure});
+  d8SinavOvYenile();
+  if(kisildi)setTimeout(function(){alert('S\u0131nav '+_diSaatFmt(bit)+'\u2019de bitecek \u015fekilde k\u0131salt\u0131ld\u0131:\nbir sonraki s\u0131nav\u0131n ba\u015flang\u0131c\u0131na ta\u015fmamas\u0131 i\u00e7in.');},80);
+}
+function d8SinavSaatiSifirla(){d8SinavOvYaz(null);d8SinavOvYenile();}
+function d8SinavOvYenile(){
+  try{if(typeof window.d8SsTick==='function')window.d8SsTick();}catch(e){}
+  try{diTick();}catch(e){}
+  try{if(typeof updateSinavTableCells==='function')updateSinavTableCells();}catch(e){}
+  try{if(typeof buildSinavMobile==='function')buildSinavMobile();}catch(e){}
+  try{if(typeof buildCountdownBar==='function')buildCountdownBar();}catch(e){}
+}
+window.d8SinaviSimdiBaslat=d8SinaviSimdiBaslat;
+window.d8SinavSaatiSifirla=d8SinavSaatiSifirla;
+window.d8SinavOvOku=d8SinavOvOku;
 function _diSinavFmt(sec){
   if(sec<0)sec=0;
   function p2(n){return String(n).padStart(2,'0');}
@@ -3628,6 +3701,28 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
   color:rgba(255,255,255,0.22);margin-top:clamp(10px,1.6vh,18px);text-align:center;
   font-weight:600;white-space:nowrap;opacity:0;transition:opacity .5s,color 1s;}
 #ss-lock-note.aktif{color:rgba(235,115,115,0.92);}
+#ss-exam-actions{display:none;flex-direction:column;align-items:center;gap:clamp(8px,1.2vh,14px);
+  margin-top:clamp(18px,3.2vh,42px);}
+#ss-exam-actions.on{display:flex;}
+#ss-exam-note{font-family:'Sora',sans-serif;font-size:clamp(11px,1.35vmin,17px);
+  letter-spacing:2px;text-transform:uppercase;font-weight:600;text-align:center;
+  color:rgba(255,190,60,0.72);white-space:nowrap;min-height:1em;}
+#ss-exam-btns{display:flex;align-items:center;gap:10px;}
+#ss-start-btn,#ss-reset-btn{font-family:'Sora',sans-serif;font-weight:700;cursor:pointer;
+  border-radius:99px;transition:background .2s,border-color .2s,color .2s,transform .12s;
+  -webkit-tap-highlight-color:transparent;}
+#ss-start-btn{font-size:clamp(13px,1.7vmin,21px);letter-spacing:1.4px;
+  padding:clamp(10px,1.5vh,18px) clamp(22px,3vw,42px);
+  background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.22);
+  color:rgba(255,255,255,0.80);}
+#ss-start-btn:hover{background:rgba(255,255,255,0.16);border-color:rgba(255,255,255,0.42);
+  color:#fff;}
+#ss-start-btn:active,#ss-reset-btn:active{transform:scale(0.96);}
+#ss-reset-btn{font-size:clamp(14px,1.9vmin,22px);line-height:1;
+  width:clamp(38px,4.6vh,54px);height:clamp(38px,4.6vh,54px);display:none;
+  background:transparent;border:1.5px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.42);}
+#ss-reset-btn.on{display:inline-flex;align-items:center;justify-content:center;}
+#ss-reset-btn:hover{border-color:rgba(255,255,255,0.35);color:rgba(255,255,255,0.75);}
 #ss-bar{height:100%;border-radius:99px;width:0%;
   background:rgba(255,255,255,0.35);transition:width 1s linear,background 1s;}
 #ss-bar-meta{display:flex;justify-content:space-between;
@@ -3707,6 +3802,14 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
       </div>
       <div id="ss-lock-note"></div>
     </div>
+
+    <div id="ss-exam-actions">
+      <div id="ss-exam-note"></div>
+      <div id="ss-exam-btns">
+        <button id="ss-start-btn" type="button" onclick="d8SinaviSimdiBaslat()">▶ Sınavı şimdi başlat</button>
+        <button id="ss-reset-btn" type="button" onclick="d8SinavSaatiSifirla()" title="Planlanan saatlere dön">↺</button>
+      </div>
+    </div>
   </div>
 
   <div id="ss-clock-wrap">
@@ -3756,17 +3859,20 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
   function ssBas(d){return d.bas||String(d.saat||'').split('\u2013')[0];}
   /* Bir sınav gününün slot zinciri: BAŞLAMADI → 1. SINAV → ARA → 2. SINAV → … → BİTTİ */
   function buildSinavSlots(gun){
-    var sinavlar=gun.dersler.filter(function(x){return x.sinav;});
-    if(!sinavlar.length)return null;
-    var out=[{id:'pre',type:'pre',label:'BA\u015eLAMADI',start:'00:00',end:ssBas(sinavlar[0])}];
+    /* Oturum saatleri _diSinavSlots'tan gelir; "Sınavı şimdi başlat" ile kaydırılan
+       oturum burada da otomatik olarak kaymış saatiyle görünür. */
+    var sinavlar=(typeof _diSinavSlots==='function')?_diSinavSlots(gun):
+      gun.dersler.filter(function(x){return x.sinav;}).map(function(d){return {ad:d.ad,kod:d.kod,bas:ssBas(d),bit:d.bitis};});
+    if(!sinavlar||!sinavlar.length)return null;
+    var out=[{id:'pre',type:'pre',label:'BA\u015eLAMADI',start:'00:00',end:sinavlar[0].bas}];
     sinavlar.forEach(function(d,i){
-      out.push({id:'s'+(i+1),type:'sinav',label:(i+1)+'. SINAV',start:ssBas(d),end:d.bitis,ad:d.ad,kod:d.kod});
+      out.push({id:'s'+(i+1),type:'sinav',label:(i+1)+'. SINAV',start:d.bas,end:d.bit,ad:d.ad,kod:d.kod});
       var nx=sinavlar[i+1];
-      if(nx&&toMin(ssBas(nx))>toMin(d.bitis)){
-        out.push({id:'ara'+(i+1),type:'ara',label:'ARA',start:d.bitis,end:ssBas(nx)});
+      if(nx&&toMin(nx.bas)>toMin(d.bit)){
+        out.push({id:'ara'+(i+1),type:'ara',label:'ARA',start:d.bit,end:nx.bas});
       }
     });
-    out.push({id:'post',type:'post',label:'B\u0130TT\u0130',start:sinavlar[sinavlar.length-1].bitis,end:'23:59'});
+    out.push({id:'post',type:'post',label:'B\u0130TT\u0130',start:sinavlar[sinavlar.length-1].bit,end:'23:59'});
     return out;
   }
   /* Ne ders ne sınav olan günler (dönem sonu sınav haftası öncesi/sonrası, dönem arası tatil) */
@@ -3803,6 +3909,31 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
 
   var ssTimer=null;
 
+  /* Tam ekran zamanlayıcıdaki "Sınavı şimdi başlat" kontrolü.
+     Yalnızca sınav gününde ve günün sınavları bitmemişken görünür. */
+  function ssExamActions(now,ns){
+    var wrap=document.getElementById('ss-exam-actions');
+    if(!wrap)return;
+    var btn =document.getElementById('ss-start-btn');
+    var rst =document.getElementById('ss-reset-btn');
+    var note=document.getElementById('ss-exam-note');
+    var gun=ssSinavGun(now);
+    var idx=(gun&&typeof _diHedefSlotIdx==='function')?_diHedefSlotIdx(gun,ns):-1;
+    if(!gun||idx<0){wrap.classList.remove('on');return;}
+    wrap.classList.add('on');
+    var slots=(typeof _diSinavSlots==='function')?_diSinavSlots(gun):[];
+    var hedef=slots[idx];
+    var basladi=!!(hedef&&ns>=toMin(hedef.bas)*60);
+    if(btn)btn.textContent=(basladi?'\u21bb ':'\u25b6 ')+(idx+1)+'. SINAVI \u015eİMD\u0130 BA\u015eLAT';
+    var ov=(typeof d8SinavOvOku==='function')?d8SinavOvOku():null;
+    var kaydirili=!!(ov&&ov.d===gun.dateStr&&ov.i===idx&&slots[idx]);
+    if(rst)rst.classList.toggle('on',kaydirili);
+    if(note)note.textContent=kaydirili
+      ?((idx+1)+'. SINAV ELLE BA\u015eLATILDI \u00b7 '+slots[idx].bas+'\u2013'+slots[idx].bit)
+      :'';
+  }
+  window.d8SsTick=function(){try{ssTick();}catch(e){}};
+
   function ssTick(){
     var now=new Date();
     var nm=now.getHours()*60+now.getMinutes();
@@ -3818,6 +3949,8 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
     if(lockS)lockS.style.opacity='0';
     if(lockE)lockE.style.opacity='0';
     if(lockN){lockN.style.opacity='0';lockN.classList.remove('aktif');}
+
+    ssExamActions(now,ns);
 
     // Ders sonu sonrası boş gün (sınav haftası bekleme)
     if(isDersSonrasiBoşGun(now)){
