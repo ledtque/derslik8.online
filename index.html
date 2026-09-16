@@ -3788,6 +3788,23 @@ document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('c
   font-family:'Space Mono',monospace;
   font-size:clamp(28px,3.8vmin,40px);font-weight:600;
   color:rgba(255,255,255,0.42);letter-spacing:1.2px;text-align:right;line-height:1;}
+/* ── Bekleme ekranı: eski TV'lerdeki gibi kenarlardan seken kutu ── */
+#ss-dvd{position:fixed;top:0;left:0;z-index:0;display:none;will-change:transform;
+  padding:clamp(10px,1.8vmin,22px) clamp(20px,3.4vmin,40px);border-radius:clamp(14px,2vmin,24px);
+  border:2px solid currentColor;background:transparent;color:#FFD166;text-align:center;opacity:.5;
+  font-family:'Sora',sans-serif;transition:color .25s,opacity .4s;pointer-events:none;}
+#ss-overlay.ss-dvd-on #ss-dvd{display:block;}
+#ss-dvd-logo{font-weight:800;line-height:1;letter-spacing:-0.02em;white-space:nowrap;
+  font-size:clamp(34px,6.5vmin,84px);}
+#ss-dvd-label{font-weight:700;letter-spacing:2px;font-size:clamp(10px,1.4vmin,16px);
+  white-space:nowrap;margin-top:clamp(4px,.8vmin,10px);}
+#ss-dvd-label:empty{display:none;}
+#ss-dvd-kose{font-size:clamp(9px,1.2vmin,14px);letter-spacing:1px;opacity:.7;
+  margin-top:clamp(3px,.6vmin,8px);white-space:nowrap;}
+#ss-dvd-kose:empty{display:none;}
+#ss-dvd.uyari{color:#FF6B6B!important;}
+#ss-dvd.kose{opacity:1;animation:ss-dvd-kose .45s ease-in-out 6;box-shadow:0 0 60px currentColor;}
+@keyframes ss-dvd-kose{0%,100%{filter:none;}50%{filter:brightness(1.8);}}
 #ss-brand{position:fixed;top:clamp(16px,2.6vh,32px);left:50%;transform:translateX(-50%);z-index:10;
   font-family:'Space Mono',monospace;font-size:clamp(14px,1.9vmin,20px);font-weight:600;
   color:rgba(255,255,255,0.42);letter-spacing:1.2px;line-height:1;}
@@ -3870,6 +3887,11 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
   </div>
   <div id="ss-brand">derslik<span style="color:rgba(255,180,60,0.7);">8</span><span style="color:rgba(255,255,255,0.20);">.online</span></div>
   <div id="ss-date"></div>
+  <div id="ss-dvd">
+    <div id="ss-dvd-logo">derslik8</div>
+    <div id="ss-dvd-label"></div>
+    <div id="ss-dvd-kose"></div>
+  </div>
 </div>
 
 <script>
@@ -4042,7 +4064,83 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
   }
   window.d8SsTick=function(){try{ssTick();}catch(e){}};
 
+  /* ── Seken kutu (bekleme ekranı) — arka planda dekoratif; sayaç yerinde kalır ──
+     Sınav başlayana kadar (sınav günü öncesi, ilk sınavdan önce, iki sınav arası)
+     geri sayım, eski TV'lerdeki gibi ekran kenarlarından seken bir kutuda gösterilir.
+     Her kenara çarpışta renk değişir; tam köşeye değerse kutlanır. */
+  var ssBekleme=null;
+  var DVD_RENK=['#FFD166','#06D6A0','#4CC9F0','#F72585','#B388FF','#FF8C42','#F1FAEE'];
+  var dvd={x:0,y:0,vx:1,vy:1,raf:0,son:0,renk:0,koseBitis:0};
+  function dvdKoseSayisi(){try{return +(localStorage.getItem('d8DvdKose')||0);}catch(e){return 0;}}
+  function dvdDur(){if(dvd.raf){cancelAnimationFrame(dvd.raf);dvd.raf=0;}}
+  function dvdKutla(box){
+    dvd.koseBitis=Date.now()+3000;
+    try{localStorage.setItem('d8DvdKose',String(dvdKoseSayisi()+1));}catch(e){}
+    box.classList.remove('kose');void box.offsetWidth;box.classList.add('kose');
+    setTimeout(function(){box.classList.remove('kose');},3000);
+    ssDvdYaz();
+  }
+  function dvdKare(t){
+    var box=document.getElementById('ss-dvd');
+    if(!box){dvd.raf=0;return;}
+    var dt=Math.min(0.05,Math.max(0,(t-dvd.son)/1000));dvd.son=t;
+    var W=window.innerWidth,H=window.innerHeight,bw=box.offsetWidth,bh=box.offsetHeight;
+    var maxX=Math.max(0,W-bw),maxY=Math.max(0,H-bh);
+    var hiz=Math.max(70,Math.min(W,H)*0.15);
+    dvd.x+=dvd.vx*hiz*dt;dvd.y+=dvd.vy*hiz*dt;
+    var hx=false,hy=false;
+    if(dvd.x<=0){dvd.x=0;dvd.vx=1;hx=true;}else if(dvd.x>=maxX){dvd.x=maxX;dvd.vx=-1;hx=true;}
+    if(dvd.y<=0){dvd.y=0;dvd.vy=1;hy=true;}else if(dvd.y>=maxY){dvd.y=maxY;dvd.vy=-1;hy=true;}
+    if(hx||hy){
+      var K=4;
+      var kose=(hx&&hy)||(hx&&(dvd.y<=K||dvd.y>=maxY-K))||(hy&&(dvd.x<=K||dvd.x>=maxX-K));
+      if(!box.classList.contains('uyari')){
+        dvd.renk=(dvd.renk+1+Math.floor(Math.random()*(DVD_RENK.length-1)))%DVD_RENK.length;
+        box.style.color=DVD_RENK[dvd.renk];
+      }
+      if(kose)dvdKutla(box);
+    }
+    box.style.transform='translate3d('+dvd.x.toFixed(1)+'px,'+dvd.y.toFixed(1)+'px,0)';
+    dvd.raf=requestAnimationFrame(dvdKare);
+  }
+  function dvdBaslat(box){
+    var W=window.innerWidth,H=window.innerHeight;
+    dvd.x=Math.random()*Math.max(0,W-box.offsetWidth);
+    dvd.y=Math.random()*Math.max(0,H-box.offsetHeight);
+    dvd.vx=Math.random()<0.5?1:-1;dvd.vy=Math.random()<0.5?1:-1;
+    box.style.color=DVD_RENK[dvd.renk];
+    dvd.son=performance.now();
+    dvd.raf=requestAnimationFrame(dvdKare);
+  }
+  function ssDvdYaz(){
+    if(!ssBekleme)return;
+    var koseAktif=Date.now()<dvd.koseBitis;
+    document.getElementById('ss-dvd-label').textContent=koseAktif?'\ud83c\udf89 K\u00d6\u015eEYE DE\u011eD\u0130!':'';
+    var n=dvdKoseSayisi();
+    document.getElementById('ss-dvd-kose').textContent=n>0?('k\u00f6\u015feye de\u011fme: '+n):'';
+  }
+  function ssDvdGuncelle(){
+    var ov=document.getElementById('ss-overlay'),box=document.getElementById('ss-dvd');
+    if(!ov||!box)return;
+    var on=!!ssBekleme&&ov.style.display!=='none';
+    var yeni=on&&!ov.classList.contains('ss-dvd-on');
+    ov.classList.toggle('ss-dvd-on',on);
+    if(!on){dvdDur();return;}
+    ssDvdYaz();
+    var uyari=!!ssBekleme.uyari;
+    if(uyari!==box.classList.contains('uyari')){
+      box.classList.toggle('uyari',uyari);
+      box.style.color=uyari?'':DVD_RENK[dvd.renk];
+    }
+    if(yeni||!dvd.raf){dvdDur();dvdBaslat(box);}
+  }
+
   function ssTick(){
+    ssBekleme=null;
+    ssTickIc();
+    try{ssDvdGuncelle();}catch(e){}
+  }
+  function ssTickIc(){
     var now=new Date();
     var nm=now.getHours()*60+now.getMinutes();
     var ns=now.getHours()*3600+now.getMinutes()*60+now.getSeconds();
@@ -4085,6 +4183,7 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
         timer.textContent=diffH>=48?(Math.floor(diffH/24)+'g '+(diffH%24)+'s'):(diffH>0?diffH+'s '+p2(diffM)+'d':p2(diffM)+':'+p2(Math.floor((diffMs%60000)/1000)));
         var tg=snB.gun.dateStr.split('-');
         sub.textContent=snB.no+'. SINAV \u00b7 '+tg[2]+'/'+tg[1]+' \u00b7 '+snB.bas;
+        ssBekleme={kalanS:Math.floor(diffMs/1000),etiket:'SONRAK\u0130 SINAVA KALAN S\u00dcRE',alt:sub.textContent,uyari:diffMs<=600000};
       } else {
         btxt.textContent='SINAV YOK';
         timer.textContent='--:--';sub.textContent='';
@@ -4222,6 +4321,7 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
       timer.style.textShadow='none';
       sub.style.color='rgba(255,190,60,0.28)';
       sub.textContent=(sl.sonrakiBas?sl.sonrakiNo+'. SINAV BAŞLANGICI · '+sl.sonrakiBas:'SONRAKİ SINAVA KALAN');
+      ssBekleme={kalanS:remain,etiket:sl.label,alt:sub.textContent,uyari:remain<=600};
 
       bwrap.style.opacity='1';
       bar.style.background='rgba(255,185,55,0.28)';
@@ -4252,6 +4352,7 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
       timer.style.textShadow='none';
       sub.style.color=warnPre?'rgba(220,100,100,0.35)':'rgba(255,255,255,0.15)';
       sub.textContent=isExamPre?'1. SINAVA KALAN':'1. DERS BAŞLAMASINA KALAN';
+      if(isExamPre&&remToStart>0)ssBekleme={kalanS:remToStart,etiket:'1. SINAVA KALAN S\u00dcRE',alt:'1. SINAV BA\u015eLANGICI \u00b7 '+sl.end,uyari:warnPre};
       if(warnPre){
         bwrap.style.opacity='1';
         bar.style.width=(Math.min(100,(warnSecPre-remToStart)/warnSecPre*100))+'%';
@@ -4327,6 +4428,7 @@ body.dark .cal-day.past.weekend .day-num { color: #F87171 !important; }
     document.body.style.overflow='';
     document.documentElement.style.overflow='';
     if(ssTimer){clearInterval(ssTimer);ssTimer=null;}
+    ssBekleme=null;try{ssDvdGuncelle();}catch(e){}
     d8NotifyScreenClosed('screensaver');
     /* Zamanlayıcı acikken ertelenen liste/kart yenilemeleri simdi uygulanir */
     if(window._d8OvBekleyen){
