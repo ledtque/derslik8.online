@@ -414,10 +414,11 @@ else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})
   D8.DONEMLER = {
     d1: { ad: 'I. Dönem',  kisa: '1. Dönem', bas: '2026-04-13', bit: '2026-06-26', hafta: 10, tip: 'ders', hazir: true },
     d2: { ad: 'II. Dönem', kisa: '2. Dönem', bas: '2026-07-06', bit: '2026-09-11', hafta: 10, tip: 'ders', hazir: true },
-    /* III. Dönem: teorik ders yok — tam zamanlı öğretmenlik uygulaması (staj).
-       Haftalık yük ~30 saat olarak öngörülüyor, ayrıntılar kesinleşmedi.      */
+    /* III. Dönem: teorik ders yok — Tam Zamanlı Öğretmenlik Deneyimi (staj).
+       Yönergeye göre günde 6, haftada 30 saat; 10 haftada toplam 300 saat.
+       Haftalık görev planı ve yönerge ayrıntıları: d8-tzod modülü.            */
     d3: { ad: 'III. Dönem', kisa: '3. Dönem', bas: '2026-09-28', bit: '2026-12-04', hafta: 10, tip: 'uygulama', hazir: false,
-          not: 'Tam zamanlı öğretmenlik uygulaması · ~30 saat/hafta (kesinleşmedi)' },
+          not: 'Tam Zamanlı Öğretmenlik Deneyimi · günde 6, haftada 30 saat · toplam 300 saat' },
     /* IV. Dönem: ders dönemi. `bit` ders bitişi, `bitGenel` ek sınav dâhil kapanış. */
     d4: { ad: 'IV. Dönem', kisa: '4. Dönem', bas: '2026-12-07', bit: '2027-02-12', bitGenel: '2027-02-22', hafta: 10, tip: 'ders', hazir: false }
   };
@@ -6247,9 +6248,10 @@ td.td-full[data-fam="uygulama"] {
 /* ==========================================================================
    D8 — III. ve IV. DÖNEM MODÜLÜ
    --------------------------------------------------------------------------
-   III. Dönem (28 Eyl – 4 Ara 2026): teorik ders yok, tam zamanlı öğretmenlik
-   uygulaması (~30 saat/hafta). Çizelge kesinleşmediği için sekme şimdilik
-   bilgi ekranı.
+   III. Dönem (28 Eyl – 4 Ara 2026): teorik ders yok, Tam Zamanlı Öğretmenlik
+   Deneyimi (günde 6, haftada 30 saat). Herkesin okulu ve saatleri farklı
+   olduğu için ortak tablo yok: sekme kişisel çizelge (d8-staj) ve yönergedeki
+   haftalık görev planını (d8-tzod) gösterir. Ders tanımı izlencede '301'.
    IV. Dönem (7 Ara 2026 – 22 Şub 2027): ders dönemi, program yayımlanmadı.
 
    Program açıklandığında doldurulacak tek yer çekirdekteki D8.PROGRAM:
@@ -6315,6 +6317,41 @@ td.td-full[data-fam="uygulama"] {
         notlar: '', flashcards: [], grup: d.grup
       };
     });
+  })();
+
+  /* III. Dönem dersi — Ders Tanımlama Formu (Millî Eğitim Akademisi, III. Dönem-Genel) */
+  (function d3Kaydet() {
+    var kok = izlenceKok();
+    if (!kok || kok['301']) return;
+    kok['301'] = {
+      ad: 'Tam Zamanlı Öğretmenlik Deneyimi',
+      ogretmen: 'Uygulama Öğretmeni · Eğitim Personeli',
+      donem: '3. Dönem', saat: 300, teori: 0, uyg: 30,
+      amac: 'Öğretmen adaylarının mesleğe hazırlıklarını güçlendirmek için onlara okul yaşamının tüm yönlerini deneyimleme; alan ve meslek bilgilerini uygulamalı pekiştirme; sınıf yönetimi, öğretim yöntemleri ve ölçme değerlendirme konularında deneyim kazanma imkânı sağlamak.',
+      icerik: 'Okul kültürüne ve ortamına uyum, sınıf gözlemi ve öğretim analizi, ders planlama ve öğretim tasarımı, öğretim yöntem ve tekniklerinin uygulanması, ölçme-değerlendirme süreçleri, öğrenci gelişimini izleme ve rehberlik, farklılaştırılmış ve kapsayıcı eğitim uygulamaları, eğitim teknolojilerinin kullanımı, okul içi iş birliği ve mesleki etkileşim, veli iletişimi ve paydaş iş birliği, mevzuat bilgisi, mesleki etik ve yansıtma.',
+      ciktilar: [
+        'Öğretmenlik mesleğine ilişkin teorik bilgileri uygulama temelli becerilerle bütünleştirerek okul ortamına etkili biçimde uyum sağlamalarını destekler.',
+        'Ders planı, etkinlik ve öğretim materyallerini gerçek eğitim ortamında uygular ve değerlendirir.',
+        'Okul ortamında karşılaşılan durumlara uygun çözüm üretme ve profesyonel karar verme becerisi geliştirir.',
+        'Öğretmenlik mesleğine yönelik tutum, sorumluluk ve mesleki öz güven geliştirir.'
+      ],
+      haftalar: [
+        'Eğitim Ortamını Tanıma',
+        'Sınıf İçi Uygulama/Ders Anlatımı — Öğrenci İzleme ve Değerlendirme',
+        'Sınıf İçi Uygulama/Ders Anlatımı — Nöbet',
+        'Sınıf İçi Uygulama/Ders Anlatımı — Ölçme Aracı Hazırlama ve Uygulama',
+        'Sınıf İçi Uygulama/Ders Anlatımı — Kurul ve Komisyonların İşleyişi',
+        'Sınıf İçi Uygulama/Ders Anlatımı — Sosyal Etkinlikler ve Projeler',
+        'Sınıf İçi Uygulama/Ders Anlatımı — Aile Katılımı ve İş Birliği Uygulaması',
+        'İyi Uygulama Örnekleri Paylaşımı (Eğitim ve Uygulama Merkezinde)',
+        'Sınıf İçi Uygulama/Ders Anlatımı — Bilişim Sistemleri ve MEBBİS Modülleri',
+        'Sınıf İçi Uygulama/Ders Anlatımı — Branşa Özgü Atölye ve Uygulamalar'
+      ],
+      yontemler: ['Gözlem', 'İnceleme', 'Görüşme', 'Buluş', 'Sunuş', 'Tartışma'],
+      kaynaklar: ['Tam Zamanlı Öğretmenlik Deneyimi Yönergesi (Genel) – Millî Eğitim Akademisi'],
+      degerlendirme: [{ ad: 'Uygulama', oran: '%100' }],
+      notlar: '', flashcards: []
+    };
   })();
 
   /** İçerik henüz yayımlanmadı mı? (haftalar dolunca kendiliğinden false) */
@@ -6735,12 +6772,18 @@ td.td-full[data-fam="uygulama"] {
   function d3Panel() {
     /* Yolculuk kartı burada tekrar edilmez: Profil'de ve masaüstü kenar
        çubuğunda zaten duruyor. */
-    if (programVar('d3')) return serit('d3') + tabloHtml('d3') +
-      (typeof window.d8StajBolumu === 'function' ? window.d8StajBolumu() : '');
+    var plan = '';
+    if (typeof window.d8TzodBolumu === 'function') { try { plan = window.d8TzodBolumu(); } catch (e) {} }
+    if (programVar('d3')) return tabloHtml('d3') +
+      (typeof window.d8StajBolumu === 'function' ? window.d8StajBolumu() : '') + plan;
 
-    var h = d3Ust();
+    /* Geri sayımlı bilgi kartı (d3Ust) kaldırıldı: dönem başladı, panel
+       doğrudan kişisel çizelgeyle açılır. */
+    var h = '';
     /* Kişisel çizelge en üstte: bu dönemde herkesin programı kendine ait. */
     if (typeof window.d8StajBolumu === 'function') { try { h += window.d8StajBolumu(); } catch (e) {} }
+    /* Yönergedeki 10 haftalık görev planı: kişinin aday sırasına göre */
+    h += plan;
     h += d3Adimlar();
 
     /* Değerlendirmeler yukarıda ayrıca gösterildi; buraya kalan tarihler girer. */
@@ -6826,10 +6869,13 @@ td.td-full[data-fam="uygulama"] {
            (mod === 'd3' ? 'Bu dönemde yazılı sınav yok' : 'Sınav takvimi henüz açıklanmadı') + '</div>';
     h +=   '<div class="d4-hero-note" style="margin-top:10px">' +
            (mod === 'd3'
-             ? 'Değerlendirme, dönem boyunca üç uygulama değerlendirmesi üzerinden yapılıyor. Akademik takvimdeki tarihler:'
+             ? 'Not %100 uygulamadan gelir: eğitim personeli, okul müdürü ve uygulama öğretmeni seni kendi formlarıyla dönem boyunca üçer kez değerlendirir. Akademik takvimdeki tarihler:'
              : 'Hangi dersin hangi gün ve saatte sınava gireceği belli olduğunda buraya işlenecek. Akademik takvimden bilinen tarihler:') +
            '</div></div>';
     h += '<div style="margin-top:12px">' + tarihListesi(olaylar) + '</div>';
+    if (mod === 'd3' && typeof window.d8TzodFormlar === 'function') {
+      try { h += '<div class="tz-fm-kap">' + window.d8TzodFormlar() + '</div>'; } catch (e) {}
+    }
     return h;
   }
 
@@ -7141,6 +7187,7 @@ td.td-full[data-fam="uygulama"] {
 
     durumlariYaz();
     try { tatilRozetleri(); } catch (e) {}
+    try { ustSeciciYolculuk(); } catch (e) {}
     /* Yapışkan gün şeridi: d3/d4'te haftalık liste yok, hemen gizlensin;
        diğer modlarda da kaydırma beklemeden tazelensin. */
     try {
@@ -7408,19 +7455,137 @@ td.td-full[data-fam="uygulama"] {
     else kap.appendChild(bolum);
   }
 
-  /** Masaüstü kenar çubuğunun en üstüne yolculuk kartını koyar.
-      buildDesktopSidebar sonunda innerHTML'i baştan yazdığı için kart her
-      yeniden çizimde tekrar eklenir; dönem değişince de kendiliğinden tazelenir. */
+  /** Yolculuk kartı kenar çubuğundan kaldırıldı: dönem durumu ve tamamlananlar
+      sağ üstteki dönem seçicisine taşındı (bkz. ustSeciciYolculuk). */
   function sidebarYolculuk() {
-    var sb = document.getElementById('desktop-sidebar');
-    if (!sb || window.innerWidth <= 900) return;
     var eski = document.getElementById('dsb-yolculuk');
     if (eski && eski.parentNode) eski.parentNode.removeChild(eski);
-    var kap = document.createElement('div');
-    kap.id = 'dsb-yolculuk';
-    kap.innerHTML = tamamlananlarHtml(true);
-    sb.insertBefore(kap, sb.firstChild);
+    try { ustSeciciYolculuk(); } catch (e) {}
   }
+
+  /* ------------------------------------ 12b. Üst dönem seçicisinde yolculuk
+     Her dönem düğmesinde durum (bitti ✓ / şimdi / sırada) ve ince bir
+     ilerleme çizgisi; sonda "🏅 2/4" düğmesi tamamlananların özetini açar. */
+  function donemPct(m) {
+    var d = don(m); if (!d || !d.bas) return 0;
+    var b = pIso(d.bas), z = pIso(d.bitGenel || d.bit), t = bugun();
+    if (t <= b) return 0; if (t >= z) return 100;
+    return Math.round((t - b) / (z - b) * 100);
+  }
+  function ustStil() {
+    if (document.getElementById('d34-ust-stil')) return;
+    var s = document.createElement('style');
+    s.id = 'd34-ust-stil';
+    s.textContent = [
+      '.dlevel-btn{display:inline-flex;flex-direction:column;align-items:center;gap:3px}',
+      '.dlevel-btn .dl-bar{display:block;width:100%;min-width:34px;height:2px;border-radius:2px;background:rgba(255,255,255,.22);overflow:hidden}',
+      '.dlevel-btn .dl-bar b{display:block;height:100%;background:rgba(255,255,255,.85);border-radius:2px}',
+      '.dlevel-btn.active .dl-bar{background:rgba(0,0,0,.1)}',
+      '.dlevel-btn.active .dl-bar b{background:var(--navy)}',
+      '.dlevel-btn[data-durum="bitti"] .dl-ad::before{content:"✓ ";opacity:.85}',
+      '.dlevel-btn[data-durum="simdi"]:not(.active) .dl-ad{color:#fff}',
+      '.dlevel-btn[data-mode="d4"]:not(.active)::after{display:none}',
+      '.dlevel-ozet{background:transparent;border:0;border-left:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.85);font:600 11px "Sora",sans-serif;padding:6px 9px 6px 11px;margin-left:2px;cursor:pointer;white-space:nowrap;border-radius:0 7px 7px 0}',
+      '.dlevel-ozet:hover,.dlevel-ozet[aria-expanded="true"]{color:#fff;background:rgba(255,255,255,.1)}',
+      '.dlevel-ozet:focus-visible,.dlevel-btn:focus-visible{outline:2px solid #fff;outline-offset:1px}',
+      '.dl-pop{position:fixed;z-index:1200;width:292px;background:var(--white);color:var(--text);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lg);padding:14px 15px 15px;font-family:"Sora",sans-serif}',
+      '.dl-pop-bas{font-size:13.5px;font-weight:800}',
+      '.dl-pop-alt{font-size:11px;color:var(--muted);margin-top:1px}',
+      '.dl-pop-donemler{display:flex;flex-direction:column;gap:5px;margin:12px 0}',
+      '.dl-pop-d{display:grid;grid-template-columns:62px 1fr auto;align-items:center;gap:9px;font-size:11px}',
+      '.dl-pop-d span:first-child{font-weight:700}',
+      '.dl-pop-d i{display:block;height:4px;border-radius:4px;background:var(--border);overflow:hidden}',
+      '.dl-pop-d i b{display:block;height:100%;background:var(--navy);border-radius:4px}',
+      '.dl-pop-d.bitti i b{background:var(--green,#059669)}',
+      '.dl-pop-d em{font-style:normal;color:var(--muted);font-size:10.5px}',
+      '.dl-pop-t{font-size:10.5px;font-weight:700;color:var(--muted);margin-bottom:6px}',
+      '.dl-pop-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px}',
+      '.dl-pop-stats div{background:var(--bg);border-radius:9px;padding:7px 9px}',
+      '.dl-pop-stats b{display:block;font-size:15px;font-variant-numeric:tabular-nums}',
+      '.dl-pop-stats span{font-size:10.5px;color:var(--muted)}',
+      /* Masaüstünde arka plan sade: desenli doku ve kalabalık kaldırıldı */
+      '@media (min-width:901px){body{background-image:radial-gradient(ellipse at 85% 6%,color-mix(in srgb,var(--accent) 12%,transparent) 0%,transparent 45%),radial-gradient(ellipse at 6% 94%,color-mix(in srgb,var(--navy2) 9%,transparent) 0%,transparent 50%)!important;background-attachment:fixed}}'
+    ].join('\n');
+    document.head.appendChild(s);
+  }
+
+  function ustSeciciYolculuk() {
+    ustStil();
+    var sira = ['d1', 'd2', 'd3', 'd4'], t = bugun();
+    var bitenler = tamamlananDonemler();
+    document.querySelectorAll('.dlevel-toggle').forEach(function (tg) {
+      tg.querySelectorAll('.dlevel-btn').forEach(function (b) {
+        var m = b.getAttribute('data-mode'), d = don(m) || {};
+        var bitti = bitenler.indexOf(m) > -1;
+        var simdi = !bitti && d.bas && t >= pIso(d.bas);
+        var durum = bitti ? 'bitti' : (simdi ? 'simdi' : 'sonra');
+        b.setAttribute('data-durum', durum);
+        if (!b.querySelector('.dl-ad')) {
+          var ad = b.textContent.trim();
+          b.innerHTML = '<span class="dl-ad">' + ad + '</span><span class="dl-bar"><b></b></span>';
+        }
+        b.querySelector('.dl-bar b').style.width = donemPct(m) + '%';
+        b.title = (d.ad || '') + ' · ' + (bitti ? 'Tamamlandı' : (simdi ? 'Devam ediyor' : 'Sırada')) +
+                  (d.bas ? ' · ' + fmtKisa(d.bas) + ' – ' + fmtKisa(d.bitGenel || d.bit) : '');
+      });
+      /* Özet düğmesi yalnız masaüstü başlığında */
+      if (tg.id !== 'dlevelToggleDesktop') return;
+      var oz = tg.querySelector('.dlevel-ozet');
+      if (!oz) {
+        oz = document.createElement('button');
+        oz.type = 'button'; oz.className = 'dlevel-ozet';
+        oz.setAttribute('aria-haspopup', 'dialog'); oz.setAttribute('aria-expanded', 'false');
+        oz.title = 'Tamamlananlar';
+        oz.onclick = function (e) { e.stopPropagation(); ustPopAc(oz); };
+        tg.appendChild(oz);
+      }
+      oz.textContent = '🏅 ' + bitenler.length + '/4';
+    });
+    var acikPop = document.getElementById('dl-pop');
+    if (acikPop) acikPop.innerHTML = ustPopIcerik();
+  }
+
+  function ustPopIcerik() {
+    var v = tamamlananlarVeri(), sira = ['d1', 'd2', 'd3', 'd4'], roma = ['I.', 'II.', 'III.', 'IV.'];
+    var h = '<div class="dl-pop-bas">' + (TMM_BASLIK[v.mods.length] || 'Yolculuk') + '</div>' +
+            '<div class="dl-pop-alt">Millî Eğitim Akademisi · ' + v.mods.length + ' / 4 dönem tamamlandı</div>';
+    h += '<div class="dl-pop-donemler">';
+    sira.forEach(function (m, i) {
+      var d = don(m) || {}, bitti = v.mods.indexOf(m) > -1, pct = donemPct(m);
+      h += '<div class="dl-pop-d' + (bitti ? ' bitti' : '') + '"><span>' + roma[i] + ' Dönem</span>' +
+           '<i><b style="width:' + pct + '%"></b></i><em>' + (bitti ? '✓' : (pct ? '%' + pct : (d.bas ? fmtKisa(d.bas) : ''))) + '</em></div>';
+    });
+    h += '</div>';
+    if (v.mods.length) {
+      h += '<div class="dl-pop-t">Tamamlanan dönemlerde</div><div class="dl-pop-stats">' +
+           '<div><b>' + v.ders + '</b><span>ders</span></div>' +
+           '<div><b>' + v.hafta + '</b><span>hafta</span></div>' +
+           '<div><b>' + v.teoriSaat + '</b><span>teorik ders saati</span></div>' +
+           '<div><b>' + v.uygSaat + '</b><span>uygulama saati</span></div></div>';
+    }
+    return h;
+  }
+  function ustPopKapat() {
+    var p = document.getElementById('dl-pop'); if (p) p.remove();
+    document.querySelectorAll('.dlevel-ozet').forEach(function (o) { o.setAttribute('aria-expanded', 'false'); });
+  }
+  function ustPopAc(oz) {
+    if (document.getElementById('dl-pop')) { ustPopKapat(); return; }
+    var p = document.createElement('div');
+    p.id = 'dl-pop'; p.className = 'dl-pop'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Tamamlananlar');
+    p.innerHTML = ustPopIcerik();
+    p.addEventListener('click', function (e) { e.stopPropagation(); });
+    document.body.appendChild(p);
+    var r = oz.getBoundingClientRect();
+    p.style.top = Math.round(r.bottom + 8) + 'px';
+    p.style.right = Math.max(8, Math.round(window.innerWidth - r.right)) + 'px';
+    oz.setAttribute('aria-expanded', 'true');
+  }
+  document.addEventListener('click', ustPopKapat);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ustPopKapat(); });
+  window.addEventListener('scroll', ustPopKapat, { passive: true });
+  window.addEventListener('resize', ustPopKapat);
+  D8.ustSeciciYolculuk = ustSeciciYolculuk;
 
   function profilSarmala() {
     var orij = window.buildProfilPage;
@@ -7522,7 +7687,7 @@ td.td-full[data-fam="uygulama"] {
 
   /* ------------------------------------------------------------- 1. Veri */
   function bosVeri() {
-    return { okul: '', danisman: '', kademe: '', gunler: { 1: [], 2: [], 3: [], 4: [], 5: [] }, guncel: 0 };
+    return { okul: '', danisman: '', kademe: '', gorevler: {}, form: {}, isaret: {}, gunler: { 1: [], 2: [], 3: [], 4: [], 5: [] }, guncel: 0 };
   }
 
   function duzelt(v) {
@@ -7531,6 +7696,28 @@ td.td-full[data-fam="uygulama"] {
     y.okul = String(v.okul || '');
     y.danisman = String(v.danisman || '');
     y.kademe = String(v.kademe || '');
+    /* Haftalık görev planı (d8-tzod): hafta → görev kodu, doldurulan
+       yansıtıcı formlar ve işaretlenen görev çalışmaları */
+    y.gorevler = {}; y.form = {};
+    if (v.gorevler && typeof v.gorevler === 'object') {
+      Object.keys(v.gorevler).forEach(function (h) {
+        var n = Number(h), k = String(v.gorevler[h] || '');
+        if (n >= 1 && n <= 10 && /^[a-z]+$/.test(k)) y.gorevler[n] = k;
+      });
+    }
+    if (v.form && typeof v.form === 'object') {
+      Object.keys(v.form).forEach(function (h) {
+        var n = Number(h); if (n >= 1 && n <= 10 && v.form[h]) y.form[n] = true;
+      });
+    }
+    y.isaret = {};
+    if (v.isaret && typeof v.isaret === 'object') {
+      Object.keys(v.isaret).forEach(function (k) {
+        if (Array.isArray(v.isaret[k])) {
+          y.isaret[k] = v.isaret[k].map(Number).filter(function (n) { return n >= 0 && n < 50; });
+        }
+      });
+    }
     y.guncel = Number(v.guncel || 0);
     for (var g = 1; g <= 5; g++) {
       var liste = (v.gunler && v.gunler[g]) || [];
@@ -7579,6 +7766,12 @@ td.td-full[data-fam="uygulama"] {
     tazele();
   }
   D8.stajVeri = function () { return veri; };
+  /** Başka modüllerin (ör. d8-tzod) tek alan güncellemesi — kaydeder ve eşitler */
+  D8.stajGuncelle = function (fn) {
+    var v = duzelt(JSON.parse(JSON.stringify(veri)));
+    try { fn(v); } catch (e) { return; }
+    kaydet(duzelt(v), true);
+  };
 
   /* --------------------------------------------------- 2. Bulut köprüsü */
   window.d8StajBuluttanGeldi = function (bulut) {
@@ -7816,53 +8009,121 @@ td.td-full[data-fam="uygulama"] {
     }
     h += '</div>';
 
-    /* Haftalık çizelge */
-    var bugun = bugunDow();
-    h += '<div class="staj-hafta">';
-    for (var g = 1; g <= 5; g++) {
-      var liste = veri.gunler[g] || [];
-      var bosGun = !liste.length;
-      h += '<div class="staj-gun' + (g === bugun ? ' staj-bugun' : '') + (bosGun ? ' staj-gun-bosgun' : '') + '">';
-      h +=   '<div class="staj-gun-bas"><span class="staj-gun-ad">' + GUN_KISA[g] + '</span>' +
-             (g === bugun ? '<span class="staj-gun-rozet">bugün</span>' : '') +
-             '<span class="staj-gun-sure">' + (gunToplam(g) ? gunToplam(g) + ' saat' : '—') + '</span></div>';
-      if (bosGun) {
-        h += '<div class="staj-gun-bos">Okulda değilim</div>';
-      } else {
-        var sira = 0;
-        liste.forEach(function (b) {
-          var t = TURLER[b.tur] || TURLER.ders;
-          if (b.tur !== 'bos') sira++;
-          h += '<div class="staj-kart ' + t.sinif + '">' +
-               '<div class="staj-kart-ust">' +
-                 '<span class="staj-kart-saat">' + kac(b.bas) + (b.bit ? '–' + kac(b.bit) : '') + '</span>' +
-                 (sira && b.tur !== 'bos' ? '<span class="staj-kart-no">' + sira + '. saat</span>' : '') +
-               '</div>' +
-               '<div class="staj-kart-ad">' + (b.ad ? kac(b.ad) : t.ad) + '</div>' +
-               '<div class="staj-kart-alt">' + t.ikon + ' ' + t.ad + (b.yer ? ' · ' + kac(b.yer) : '') + '</div>' +
-               '</div>';
-        });
-      }
-      h += '</div>';
-    }
-    h += '</div>';
-
-    h += '<div class="staj-lejant">';
-    ['ders', 'gozlem', 'bos'].forEach(function (k) {
-      var t = TURLER[k];
-      var adet = 0;
-      for (var g2 = 1; g2 <= 5; g2++) {
-        (veri.gunler[g2] || []).forEach(function (b) { if (b.tur === k) adet++; });
-      }
-      h += '<span class="staj-lej ' + t.sinif + '"><i></i>' + t.ad +
-           (adet ? ' <b>' + adet + '</b>' : '') + '</span>';
-    });
-    h += '</div>';
+    /* Haftalık çizelge — I./II. dönemdeki ders programı görünümüyle aynı:
+       masaüstünde gün × ders saati tablosu, telefonda gün gün kart listesi.
+       Kaynak kişinin kendi girdiği bloklar. */
+    h += cizelgeHtml();
 
     h += senkronSatiri();
     h += '</div>';
     return h;
-  };;
+  };
+
+  /* ------------------------------------ 4b. Ders programı görünümü (tablo) */
+  var PALET = ['c101', 'c102', 'c103', 'c104', 'c105', 'c106', 'c107', 'c108', 'c109', 'c110', 'c111'];
+  var GUN_TAM = { 1: 'Pazartesi', 2: 'Salı', 3: 'Çarşamba', 4: 'Perşembe', 5: 'Cuma' };
+
+  function blokAnahtar(b) {
+    var t = TURLER[b.tur] || TURLER.ders;
+    return String(b.ad || t.ad).trim().toLocaleLowerCase('tr-TR');
+  }
+  /** Aynı adlı dersler hep aynı rengi alır (ilk göründüğü sıraya göre) */
+  function renkHaritasi() {
+    var m = {}, i = 0;
+    for (var g = 1; g <= 5; g++) {
+      (veri.gunler[g] || []).forEach(function (b) {
+        if (b.tur === 'bos') return;
+        var k = blokAnahtar(b);
+        if (!(k in m)) m[k] = PALET[i++ % PALET.length];
+      });
+    }
+    return m;
+  }
+  function saatAraligi(b) { return kac(b.bas) + (b.bit ? '–' + kac(b.bit) : ''); }
+
+  function cizelgeHtml() {
+    var renk = renkHaritasi(), bugun = bugunDow();
+    var N = 0, g, k;
+    for (g = 1; g <= 5; g++) N = Math.max(N, (veri.gunler[g] || []).length);
+    if (!N) return '';
+
+    /* Sütunun saati bütün günlerde aynıysa başlıkta, değilse hücrede yazılır */
+    var ortak = [];
+    for (k = 0; k < N; k++) {
+      var set = {};
+      for (g = 1; g <= 5; g++) { var b0 = (veri.gunler[g] || [])[k]; if (b0) set[b0.bas + '|' + b0.bit] = b0; }
+      var anah = Object.keys(set);
+      ortak[k] = anah.length === 1 ? set[anah[0]] : null;
+    }
+
+    /* Şu an süren blok vurgulanır */
+    var simdi = null;
+    try { var dh = durumHesapla(); if (dh && dh.tip === 'simdi') simdi = dh.blok; } catch (e) {}
+
+    /* ---- Masaüstü tablo ---- */
+    var h = '<div class="table-wrap staj-tablo"><table class="prog"><thead><tr><th class="th-gun">Gün</th>';
+    for (k = 0; k < N; k++) {
+      h += '<th class="th-p"><span class="pn">' + (k + 1) + '</span>' +
+           (ortak[k] ? '<span class="pt">' + saatAraligi(ortak[k]) + '</span>' : '') + '</th>';
+    }
+    h += '</tr></thead><tbody>';
+    for (g = 1; g <= 5; g++) {
+      var liste = veri.gunler[g] || [];
+      var sayi = gunToplam(g);
+      h += '<tr data-dow="' + g + '"' + (g === bugun ? ' class="staj-tr-bugun"' : '') + '>' +
+           '<td class="td-gun">' + GUN_TAM[g] +
+           '<span class="gl">' + (sayi ? sayi + ' ders saati' : 'Okulda değil') + '</span>' +
+           (g === bugun ? '<span class="gl staj-gl-bugun">▶ Bugün</span>' : '') + '</td>';
+      if (!liste.length) {
+        h += '<td class="td-cell staj-td-yok" colspan="' + N + '">Okulda değilim</td></tr>';
+        continue;
+      }
+      for (k = 0; k < N; k++) {
+        var b = liste[k];
+        if (!b) { h += '<td class="td-cell"></td>'; continue; }
+        var t = TURLER[b.tur] || TURLER.ders;
+        var zaman = ortak[k] ? '' : saatAraligi(b);
+        var alt = [];
+        if (zaman) alt.push(zaman);
+        if (b.tur === 'gozlem') alt.push('👀 Gözlem');
+        if (b.yer) alt.push(kac(b.yer));
+        var cls = b.tur === 'bos' ? 'ci staj-ci-bos' : 'ci ' + renk[blokAnahtar(b)];
+        if (b === simdi) cls += ' staj-ci-simdi';
+        h += '<td class="td-cell"><div class="' + cls + '" onclick="d8StajDuzenle()" title="Programı düzenle">' +
+             '<div class="cn">' + (b.ad ? kac(b.ad) : t.ad) + '</div>' +
+             (alt.length ? '<div class="ct">' + alt.join(' · ') + '</div>' : '') + '</div></td>';
+      }
+      h += '</tr>';
+    }
+    h += '</tbody></table></div>';
+
+    /* ---- Telefon: gün başlıkları + ders kartları ---- */
+    h += '<div class="mobile-schedule staj-mob" id="mobile-schedule-d3">';
+    for (g = 1; g <= 5; g++) {
+      var l2 = veri.gunler[g] || [];
+      var bu = g === bugun, s2 = gunToplam(g);
+      h += '<div class="mob-day-header' + (bu ? ' today-header' : '') + '">' + GUN_TAM[g] +
+           '<span style="font-size:9.5px;opacity:.75;font-weight:500">· ' + (s2 ? s2 + ' ders saati' : 'okulda değil') + '</span>' +
+           (bu ? '<span class="today-badge">▶ Bugün</span>' : '') + '</div>';
+      if (!l2.length) { h += '<div class="mob-lesson-card staj-mob-yok">Okulda değilim</div>'; continue; }
+      l2.forEach(function (b, i) {
+        var t = TURLER[b.tur] || TURLER.ders, bos = b.tur === 'bos';
+        var c = bos ? null : renk[blokAnahtar(b)];
+        var zamanStil = bos ? '' : ' style="background:var(--' + c + ');color:var(--' + c + 't);border:none"';
+        h += '<div class="mob-lesson-card' + (b === simdi ? ' mob-current' : '') + (bos ? ' staj-mob-bos' : '') + '"' +
+             (bos ? '' : ' style="border-left:3px solid var(--' + c + 't)"') + ' onclick="d8StajDuzenle()">' +
+             '<div class="mob-card-time"' + zamanStil + '>' + kac(b.bas) + '<br>' + kac(b.bit) +
+             '<span class="mob-card-period">' + (i + 1) + '. ders</span></div>' +
+             '<div class="mob-card-body"><div class="mob-card-name">' + (b.ad ? kac(b.ad) : t.ad) + '</div>' +
+             '<div class="mob-card-teacher">' + t.ikon + ' ' + t.ad + (b.yer ? ' · ' + kac(b.yer) : '') + '</div></div>' +
+             '<div class="mob-card-arrow">›</div></div>';
+      });
+    }
+    h += '</div>';
+
+    return h;
+  }
+
 
   function senkronSatiri() {
     if (girisVar()) {
@@ -8030,6 +8291,8 @@ td.td-full[data-fam="uygulama"] {
     for (var g = 1; g <= 5; g++) {
       taslak.gunler[g] = taslak.gunler[g].filter(function (s) { return s.bas || s.ad; });
     }
+    /* Düzenleyici açıkken plandan yapılan işaretler kaybolmasın */
+    taslak.gorevler = veri.gorevler; taslak.form = veri.form; taslak.isaret = veri.isaret;
     kaydet(duzelt(taslak), true);
     window.d8StajKapat();
     try { if (typeof window.d8ShowToast === 'function') window.d8ShowToast('✅ Uygulama programın kaydedildi'); } catch (e) {}
@@ -8160,6 +8423,18 @@ td.td-full[data-fam="uygulama"] {
       '.t-gozlem{--t:var(--sj-gozlem);--tbg:var(--sj-gozlem-bg)}',
       '.t-bos{--t:var(--sj-bos);--tbg:transparent}',
 
+      /* Ders programı görünümü (I./II. dönemle aynı tablo) */
+      '.staj-blok .table-wrap,.staj-blok .mobile-schedule{margin-top:10px}',
+      '.staj-tablo table.prog td.td-cell{min-width:104px}',
+      '.staj-td-yok{text-align:center;font-size:12px;color:var(--muted);font-style:italic;background:repeating-linear-gradient(135deg,transparent 0 8px,rgba(127,127,127,.06) 8px 16px)}',
+      '.staj-ci-bos{background:transparent;border:1.5px dashed var(--border);color:var(--muted)}',
+      '.staj-ci-bos .cn{font-weight:600;color:var(--muted)}',
+      '.staj-ci-simdi{box-shadow:0 0 0 2px var(--accent),0 4px 14px rgba(0,0,0,.12)}',
+      '.staj-tr-bugun .td-gun{box-shadow:inset 3px 0 0 var(--accent)}',
+      '.staj-gl-bugun{color:var(--accent)!important;font-weight:700}',
+      '.staj-mob-yok{cursor:default;font-size:12px;color:var(--muted);font-style:italic;justify-content:center}',
+      '.staj-mob-bos .mob-card-name{color:var(--muted);font-weight:600}',
+      '.staj-mob-bos .mob-card-time{border-style:dashed}',
       '.staj-baslik{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;padding-left:2px}',
       '.staj-baslik-ad{font-size:12.5px;font-weight:700;color:var(--navy);letter-spacing:.2px}',
       '.staj-btn{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border:none;border-radius:11px;padding:11px 22px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-md)}',
@@ -8313,6 +8588,1013 @@ td.td-full[data-fam="uygulama"] {
 </script>
 <style id="d8-tema">:root{--tema-hafta1:#F59E0B;--tema-hafta2:#FBBF24;--tema-sec:rgba(6,182,212,0.25)}::selection{background:var(--tema-sec)}body{transition:background-color .45s ease,color .45s ease}html[data-tema="guz"]{--tema-hafta1:#C98A16;--tema-hafta2:#E0A526;--tema-sec:rgba(194,65,12,0.22);--bg-image:radial-gradient(ellipse at 85% 8%,rgba(224,165,38,0.22) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(154,52,18,0.13) 0%,transparent 50%),url("data:image/svg+xml,<svg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'> <g fill='none' stroke='rgba%28154%2C52%2C18%2C0.17%29' stroke-width='1.3' stroke-linecap='round'> <path d='M14 9 C20 14 20 24 14 29 C8 24 8 14 14 9Z'/> <path d='M50 38 C56 43 56 53 50 58 C44 53 44 43 50 38Z'/> </g> <g fill='none' stroke='rgba%28194%2C65%2C12%2C0.12%29' stroke-width='0.9' stroke-linecap='round'> <path d='M14 10 L14 28 M14 16 L10 13 M14 16 L18 13 M14 21 L10 18 M14 21 L18 18'/> <path d='M50 39 L50 57 M50 45 L46 42 M50 45 L54 42 M50 50 L46 47 M50 50 L54 47'/> </g> <g fill='rgba%28224%2C165%2C38%2C0.26%29'> <circle cx='58' cy='13' r='1.7'/><circle cx='30' cy='50' r='1.2'/><circle cx='63' cy='28' r='0.9'/> </g> <path d='M0 66 Q17 60 35 66 T70 66' stroke='rgba%2879%2C119%2C45%2C0.11%29' stroke-width='1.2' fill='none'/> </svg>");color-scheme:light}html[data-tema="guz"] body.dark,html[data-tema="guz"].dark-pre body{--bg-image:radial-gradient(ellipse at 85% 8%,rgba(194,65,12,0.17) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(224,165,38,0.10) 0%,transparent 50%),url("data:image/svg+xml,<svg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'> <g fill='none' stroke='rgba%28240%2C168%2C104%2C0.13%29' stroke-width='1.3' stroke-linecap='round'> <path d='M14 9 C20 14 20 24 14 29 C8 24 8 14 14 9Z'/> <path d='M50 38 C56 43 56 53 50 58 C44 53 44 43 50 38Z'/> </g> <g fill='none' stroke='rgba%28226%2C113%2C29%2C0.10%29' stroke-width='0.9' stroke-linecap='round'> <path d='M14 10 L14 28 M14 16 L10 13 M14 16 L18 13 M14 21 L10 18 M14 21 L18 18'/> <path d='M50 39 L50 57 M50 45 L46 42 M50 45 L54 42 M50 50 L46 47 M50 50 L54 47'/> </g> <g fill='rgba%28224%2C165%2C38%2C0.18%29'> <circle cx='58' cy='13' r='1.7'/><circle cx='30' cy='50' r='1.2'/><circle cx='63' cy='28' r='0.9'/> </g> <path d='M0 66 Q17 60 35 66 T70 66' stroke='rgba%28156%2C196%2C90%2C0.08%29' stroke-width='1.2' fill='none'/> </svg>");color-scheme:dark}html[data-tema="kis"]{--tema-hafta1:#B9822F;--tema-hafta2:#D8A83F;--tema-sec:rgba(37,99,235,0.22);--bg-image:radial-gradient(ellipse at 85% 8%,rgba(147,197,253,0.26) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(30,58,138,0.10) 0%,transparent 50%),url("data:image/svg+xml,<svg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'> <g stroke='rgba%2830%2C58%2C138%2C0.15%29' stroke-width='1.15' stroke-linecap='round' fill='none'> <g transform='translate%2816%2C18%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> <g transform='translate%2852%2C48%29 scale%280.78%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> </g> <g stroke='rgba%2896%2C165%2C250%2C0.16%29' stroke-width='0.85' stroke-linecap='round' fill='none'> <g transform='translate%2854%2C14%29 scale%280.5%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> <g transform='translate%2814%2C54%29 scale%280.45%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> </g> <g fill='rgba%28147%2C197%2C253%2C0.34%29'> <circle cx='36' cy='8' r='1.5'/><circle cx='66' cy='32' r='1.1'/><circle cx='33' cy='36' r='0.9'/> </g> </svg>");color-scheme:light}html[data-tema="kis"] body.dark,html[data-tema="kis"].dark-pre body{--bg-image:radial-gradient(ellipse at 85% 8%,rgba(96,165,250,0.15) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(191,219,254,0.08) 0%,transparent 50%),url("data:image/svg+xml,<svg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'> <g stroke='rgba%28147%2C197%2C253%2C0.13%29' stroke-width='1.15' stroke-linecap='round' fill='none'> <g transform='translate%2816%2C18%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> <g transform='translate%2852%2C48%29 scale%280.78%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> </g> <g stroke='rgba%2896%2C165%2C250%2C0.11%29' stroke-width='0.85' stroke-linecap='round' fill='none'> <g transform='translate%2854%2C14%29 scale%280.5%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> <g transform='translate%2814%2C54%29 scale%280.45%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> </g> <g fill='rgba%28191%2C219%2C254%2C0.18%29'> <circle cx='36' cy='8' r='1.5'/><circle cx='66' cy='32' r='1.1'/><circle cx='33' cy='36' r='0.9'/> </g> </svg>");color-scheme:dark}html[data-tema="guz"] .leg-name,html[data-tema="guz"] .leg-sub,html[data-tema="guz"] .modal-head-left h2,html[data-tema="guz"] .modal-meta,html[data-tema="guz"] .mob-card-name,html[data-tema="guz"] .mob-card-teacher,html[data-tema="guz"] .live-lesson-name,html[data-tema="guz"] .live-lesson-sub,html[data-tema="guz"]{--navy:#9A3412;--navy2:#C2410C;--accent:#4F772D;--accent2:#77A32F;--brown:#4A5F1E;--bg:#FDF7EF;--white:#FFFDF8;--border:#EEDCC4;--text:#3B2317;--muted:#8A7259;--shadow-sm:0 1px 3px rgba(154,52,18,0.12),0 1px 2px rgba(194,65,12,0.06);--shadow-md:0 4px 16px rgba(194,65,12,0.12),0 2px 6px rgba(154,52,18,0.08);--shadow-lg:0 12px 40px rgba(58,32,14,0.14),0 4px 12px rgba(58,32,14,0.08);--bg-image:radial-gradient(ellipse at 85% 8%,rgba(224,165,38,0.24) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(226,113,29,0.18) 0%,transparent 50%),url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 34 Q15 24 30 34 T60 34' stroke='rgba(194,65,12,0.12)' stroke-width='1.6' fill='none'/%3E%3Cpath d='M0 46 Q15 39 30 46 T60 46' stroke='rgba(176,96,30,0.09)' stroke-width='1.2' fill='none'/%3E%3Cpath d='M0 20 Q15 13 30 20 T60 20' stroke='rgba(119,163,47,0.06)' stroke-width='1' fill='none'/%3E%3Ccircle cx='48' cy='10' r='1.3' fill='rgba(224,165,38,0.34)'/%3E%3Ccircle cx='10' cy='16' r='0.9' fill='rgba(226,113,29,0.24)'/%3E%3Ccircle cx='34' cy='6' r='0.6' fill='rgba(239,197,63,0.30)'/%3E%3Ccircle cx='55' cy='27' r='0.7' fill='rgba(255,255,255,0.38)'/%3E%3C/svg%3E")}html[data-tema="guz"].dark-pre body,html[data-tema="guz"] body.dark{--navy:#F0A868;--navy2:#F7C99B;--accent:#77A32F;--accent2:#9CC45A;--bg:#1A100A;--white:#241609;--border:#3E2718;--text:#F2E3D2;--muted:#A98C6B;--bg-image:radial-gradient(ellipse at 85% 8%,rgba(119,163,47,0.16) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(226,113,29,0.14) 0%,transparent 50%),url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 34 Q15 24 30 34 T60 34' stroke='rgba(240,168,104,0.10)' stroke-width='1.6' fill='none'/%3E%3Cpath d='M0 46 Q15 39 30 46 T60 46' stroke='rgba(119,163,47,0.05)' stroke-width='1.2' fill='none'/%3E%3Ccircle cx='48' cy='10' r='1.1' fill='rgba(239,197,63,0.18)'/%3E%3Ccircle cx='10' cy='16' r='0.8' fill='rgba(240,168,104,0.22)'/%3E%3Ccircle cx='34' cy='40' r='0.6' fill='rgba(247,201,155,0.20)'/%3E%3C/svg%3E")}html[data-tema="guz"] body.dark .header{background:linear-gradient(135deg,#2A1608 0%,#4A2410 100%)}html[data-tema="guz"] body.dark .cal-day:hover{background:#33200F}html[data-tema="guz"] body.dark .cal-day.empty{background:#170C05}html[data-tema="guz"] body.dark .td-gun{background:#170C05}html[data-tema="guz"] body.dark .nav-btn:hover{color:#1A100A}html[data-tema="guz"] body.dark .status-upcoming{background:#241609}html[data-tema="guz"] body.dark .modal{background:#241609;border:1px solid #3E2718}html[data-tema="guz"] body.dark .hafta-table th{background:#170C05}html[data-tema="guz"] body.dark .hafta-table tr:hover td{background:#33200F}html[data-tema="guz"] body.dark .mob-day-header{background:linear-gradient(135deg,#2A1608,#4A2410)}html[data-tema="guz"] body.dark .tooltip{background:#3E2718}html[data-tema="guz"] .page::before{background:radial-gradient(ellipse at 90% 10%,rgba(224,165,38,0.16) 0%,transparent 50%),radial-gradient(ellipse at 5% 90%,rgba(226,113,29,0.14) 0%,transparent 50%),repeating-linear-gradient(100deg,rgba(194,65,12,0.025) 0px,rgba(194,65,12,0.025) 1px,transparent 1px,transparent 40px)}html[data-tema="guz"] .header{--header-bg:linear-gradient(135deg,#9A3412 0%,#C2410C 50%,#E2711D 100%);box-shadow:0 8px 32px rgba(154,52,18,0.30)}html[data-tema="guz"] .header::after{background:radial-gradient(ellipse at 85% 15%,rgba(239,197,63,0.24) 0%,transparent 55%),radial-gradient(ellipse at 15% 85%,rgba(226,113,29,0.16) 0%,transparent 50%)}html[data-tema="guz"] .header-liquid-fill{background:linear-gradient(90deg,#9A3412,#E2711D,#F2C14E,#E2711D,#9A3412)}html[data-tema="guz"] .cal-dow{background:#9A3412}html[data-tema="guz"] .cal-day.today .day-num{background:#C2410C}html[data-tema="guz"] .cal-day:hover{background:#FCF1E2}html[data-tema="guz"] .cal-day.empty{background:#FFFDF8}html[data-tema="guz"] tr.today-row .td-gun,html[data-tema="guz"] tr.row-holiday .td-gun{background:linear-gradient(135deg,#9A3412,#C2410C)!important}html[data-tema="guz"] .mob-day-header.today-header{background:linear-gradient(135deg,#4F772D,#77A32F)!important}html[data-tema="guz"] .live-banner{background:linear-gradient(135deg,#9A3412,#C2410C)}html[data-tema="guz"] .holiday-week-banner{background:linear-gradient(135deg,#3E6323,#77A32F)}html[data-tema="guz"] .donem-progress-fill{background:linear-gradient(90deg,#9A3412 0%,#E2711D 55%,#F2C14E 100%)}html[data-tema="guz"] .donem-progress-kalan{background:rgba(226,113,29,0.15);color:#9A3412}html[data-tema="guz"] .quote-card,html[data-tema="guz"] .quote-inline{background:linear-gradient(135deg,#FDF6EA,#FBEEDC)}html[data-tema="guz"] .leg:hover,html[data-tema="guz"] .sidebar-card{border-color:#F7C99B}html[data-tema="guz"] .td-gun{background:#FDF6EA}html[data-tema="guz"] ::-webkit-scrollbar-thumb{background:#F0A868}html[data-tema="guz"] ::-webkit-scrollbar-track{background:#FBEEDC}html[data-tema="guz"] .sidebar-card,html[data-tema="guz"] .donem-progress-widget{border-top:2px solid #77A32F}html[data-tema="guz"] .main-tabs{border-color:#EEDCC4}html[data-tema="guz"] .header{box-shadow:0 8px 32px rgba(58,32,14,0.28),0 2px 8px rgba(58,32,14,0.15)}html[data-tema="guz"] .header::after{background:radial-gradient(ellipse at 20% 80%,rgba(150,110,60,0.10) 0%,transparent 50%)}html[data-tema="guz"] .mtab.active{box-shadow:0 3px 10px rgba(58,32,14,0.25)}html[data-tema="guz"] .stab.active{box-shadow:0 3px 10px rgba(58,32,14,0.22)}html[data-tema="guz"] .td-gun{background:#FDF6EA}html[data-tema="guz"] body.dark .hafta-table tr.grup-var td{color:#E0A526}html[data-tema="guz"] body.dark .hafta-table tr.grup-var td:first-child{color:#E0A526}html[data-tema="guz"] .status-upcoming{background:#F8EEDD}@media (max-width:660px){html[data-tema="guz"] .cal-grid::before{background:linear-gradient(90deg,rgba(58,32,14,0.06) 0%,transparent 100%)}html[data-tema="guz"] .cal-grid::after{background:linear-gradient(270deg,rgba(58,32,14,0.06) 0%,transparent 100%)}html[data-tema="guz"] .cal-grid.swiping-left::after{background:linear-gradient(270deg,rgba(58,32,14,0.18) 0%,transparent 100%)}html[data-tema="guz"] .cal-grid.swiping-right::before{background:linear-gradient(90deg,rgba(58,32,14,0.18) 0%,transparent 100%)}}html[data-tema="guz"] .cal-day:hover{background:#FCF1E2}html[data-tema="guz"] .cal-day.empty{background:#FDF8F0}html[data-tema="guz"] body.dark .band-popup{background:#3E2718}html[data-tema="guz"] .hafta-table tr:hover td{background:#FCF1E2}html[data-tema="guz"] .quote-card{background:linear-gradient(135deg,#F8EEDD 0%,#F3E4CC 100%)}html[data-tema="guz"] body.dark .quote-card{background:linear-gradient(135deg,#241609 0%,#2E1C0C 100%)}html[data-tema="guz"] .quote-inline{background:linear-gradient(135deg,#F8EEDD 0%,#F3E4CC 100%)}html[data-tema="guz"] body.dark .quote-inline{background:linear-gradient(135deg,#241609 0%,#2E1C0C 100%)}html[data-tema="guz"] tr.today-row td.td-cell{background:rgba(170,100,40,0.035)}html[data-tema="guz"] .mob-lesson-card.mob-current{background:rgba(170,100,40,0.05)!important}html[data-tema="guz"] .donem-progress-kalan{background:rgba(170,100,40,0.08)}@media (max-width:660px){html[data-tema="guz"] body.dark .mob-lesson-card{background:#241609;border-bottom-color:#3E2718}}html[data-tema="guz"] .dsb-fill{background:linear-gradient(90deg,#9A3412 0%,#E2711D 55%,#F2C14E 100%)}html[data-tema="guz"] .dsb-kalan{background:rgba(79,119,45,0.08)}html[data-tema="guz"] body.dark .dsb-kalan{background:rgba(119,163,47,0.15)}html[data-tema="guz"] .profil-theme-item.active{background:rgba(154,52,18,0.08)}html[data-tema="guz"] body.dark .profil-theme-item.active{background:rgba(240,168,104,0.1)}html[data-tema="guz"] .profil-donem-kalan{background:rgba(79,119,45,0.08)}html[data-tema="guz"] body.dark .profil-donem-kalan{background:rgba(119,163,47,0.15)}html[data-tema="guz"] .profil-quote-card{background:linear-gradient(135deg,#F8EEDD,#F3E4CC)}html[data-tema="guz"] body.dark .profil-quote-card{background:linear-gradient(135deg,#241609,#2E1C0C)}html[data-tema="guz"] .profil-donem-fill{background:linear-gradient(90deg,#9A3412 0%,#E2711D 55%,#F2C14E 100%)}html[data-tema="guz"] body.dark #splash{background:#1A100A}html[data-tema="guz"] #splash-icon{box-shadow:0 8px 32px rgba(154,52,18,0.18)}html[data-tema="guz"] #splash-name{color:#9A3412}html[data-tema="guz"] body.dark #splash-name{color:#EDB07A}html[data-tema="guz"] #splash-dot span{background:#9A3412}html[data-tema="guz"] body.dark .header{background:linear-gradient(135deg,#4A2410 0%,#9A3412 100%)!important}html[data-tema="guz"] body.dark .th-gun,html[data-tema="guz"] body.dark .th-p{background:linear-gradient(135deg,#4A2410,#9A3412)!important}html[data-tema="guz"] body.dark .cal-dow{background:#4A2410!important}html[data-tema="guz"] body.dark .mob-day-header{background:linear-gradient(135deg,#4A2410,#9A3412)!important}html[data-tema="guz"] body.dark .td-gun{background:#241609!important;color:#F0A868!important}html[data-tema="guz"] body.dark .cal-day:hover{background:#33200F!important}html[data-tema="guz"] body.dark .cal-day.empty{background:#170C05!important}html[data-tema="guz"] body.dark .cal-day.has-holiday{background:#3A2410!important}html[data-tema="guz"] body.dark .hafta-table th{background:#170C05!important}html[data-tema="guz"] body.dark .hafta-table tr:hover td{background:#33200F!important}html[data-tema="guz"] body.dark tr.today-row .td-gun{background:linear-gradient(135deg,#9A3412,#C2410C)!important}html[data-tema="guz"] body.dark tr.row-holiday .td-gun{background:linear-gradient(135deg,#4A2410,#9A3412)!important}html[data-tema="guz"] body.dark .quote-card,html[data-tema="guz"] body.dark .quote-inline{background:linear-gradient(135deg,#241609,#33200F)!important}html[data-tema="guz"] body.dark .band-tatil{background:#3A2410!important;color:#F0A868!important}html[data-tema="guz"] body.dark .band-ders{background:#241609!important;color:#F7C99B!important}html[data-tema="guz"] body.dark .holiday-week-banner{background:linear-gradient(135deg,#7C2D12,#3E6323)!important}html[data-tema="guz"] body.dark .donem-progress-fill{background:linear-gradient(90deg,#9A3412 0%,#F0A868 60%,#9CC45A 100%)!important}html[data-tema="guz"] body.dark .donem-progress-kalan{background:rgba(240,168,104,0.15)!important;color:#F0A868!important}html[data-tema="guz"] body.dark .modal{background:#241609!important}html[data-tema="guz"] body.dark .status-upcoming{background:#241609!important}html[data-tema="guz"] body.dark .ip-item:hover{background:#3E2718}@media (max-width:640px){html[data-tema="guz"] #session-pill-wrap-mob .session-pill{box-shadow:0 4px 20px rgba(58,32,14,0.18),0 1px 4px rgba(58,32,14,0.10)}html[data-tema="guz"] #session-pill-wrap-mob .session-pill.pill-live{box-shadow:0 4px 24px rgba(58,32,14,0.28),0 0 0 1px rgba(255,255,255,0.15) inset}html[data-tema="guz"] #session-pill-wrap-mob .session-pill.pill-break{box-shadow:0 4px 20px rgba(58,32,14,0.14),0 0 0 1px rgba(58,32,14,0.08) inset}html[data-tema="guz"] #session-pill-wrap-mob .session-pill.pill-done{box-shadow:0 2px 10px rgba(58,32,14,0.08)}html[data-tema="guz"] #mobile-bottom-nav{border:1px solid rgba(58,32,14,0.08);box-shadow:0 10px 34px rgba(58,32,14,0.18),0 2px 10px rgba(58,32,14,0.08)}html[data-tema="guz"] .mob-nav-btn:active{background:rgba(58,32,14,0.05)}}html[data-tema="guz"] .mob-nav-btn.active{color:#9A3412}html[data-tema="guz"] .mob-nav-btn.active::after{background:#9A3412}html[data-tema="guz"] .header{background:var(--header-bg,linear-gradient(135deg,#5C2A0E 0%,#8A3A12 50%,#6B3010 100%))}html[data-tema="guz"] .header::before{background:radial-gradient(ellipse at 15% 50%,rgba(170,120,60,0.18) 0%,transparent 55%),radial-gradient(ellipse at 85% 30%,rgba(150,110,60,0.13) 0%,transparent 50%)}html[data-tema="guz"] .header-logo span{color:#F2C14E}html[data-tema="guz"] #mob-sticky-day{background:linear-gradient(135deg,#2A1608,#4A2410)}html[data-tema="guz"] #mob-sticky-day{background:linear-gradient(135deg,#9A3412,#C2410C)}html[data-tema="guz"] #mob-sticky-day.today-style{background:linear-gradient(135deg,#C2410C,#E2711D);box-shadow:0 3px 14px rgba(194,65,12,0.4);border-bottom:2px solid rgba(240,168,104,0.5)}html[data-tema="guz"] body.dark .mob-day-header.today-header{box-shadow:0 3px 14px rgba(119,163,47,0.35)!important}html[data-tema="guz"] .cdown-card:hover{box-shadow:0 8px 24px rgba(58,32,14,0.15)}html[data-tema="guz"] .sidebar-card:hover{box-shadow:0 8px 28px rgba(58,32,14,0.12)}html[data-tema="guz"] .mtab.active{box-shadow:0 2px 8px rgba(58,32,14,0.22)}html[data-tema="guz"] .session-pill.pill-live{box-shadow:0 2px 8px rgba(58,32,14,0.22)}html[data-tema="guz"] .pill-dot.break{background:#C98A16}html[data-tema="guz"] body.dark .cdown-card{background:#241609}html[data-tema="guz"] body.dark .donem-progress-widget{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .sidebar-card{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .leg{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .live-no-class{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .main-tabs{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .mtab:not(.active):hover{background:#3E2718!important}html[data-tema="guz"] body.dark .quote-card{border-color:#3E2718}html[data-tema="guz"] body.dark .quote-inline{border-color:#3E2718}html[data-tema="guz"] body.dark .modal-tabs{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .deg-chip{background:#3E2718;border-color:#54341F}html[data-tema="guz"] body.dark .donem-progress-track{background:#3E2718;border-color:#54341F}html[data-tema="guz"] body.dark .countdown-bar .cdown-card{border-color:#3E2718}html[data-tema="guz"] body.dark .table-wrap{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark table.prog td{border-color:#3E2718}html[data-tema="guz"] body.dark .hafta-table td{border-color:#3E2718}html[data-tema="guz"] body.dark .cal-grid{border-color:#3E2718}html[data-tema="guz"] body.dark .cal-day{border-color:#3E2718}html[data-tema="guz"] body.dark .cal-days{background:#241609}html[data-tema="guz"] body.dark .modal-section h3{border-color:#3E2718}html[data-tema="guz"] body.dark .band-popup{background:#3E2718;border:1px solid #54341F}html[data-tema="guz"] .fc-deck-card.all{background:linear-gradient(135deg,rgba(170,100,40,0.22),rgba(150,110,60,0.18));border-color:rgba(170,120,60,0.30)}html[data-tema="guz"] .fc-deck-card.all:hover{background:linear-gradient(135deg,rgba(170,100,40,0.32),rgba(150,110,60,0.28))}html[data-tema="guz"] #widget-stack-panel{box-shadow:0 -8px 40px rgba(58,32,14,0.18)}html[data-tema="guz"] body.dark #widget-stack-panel{background:#241609}html[data-tema="guz"] body.dark #widget-stack-panel::before{background:#3E2718}html[data-tema="guz"] body.dark .ws-card{background:#20140A;border-color:#3E2718}html[data-tema="guz"] body.dark .ws-cdown{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .di-pill-break{border-color:rgba(224,165,38,0.26)}html[data-tema="guz"] body.dark .di-pill-break .dip-icon-wrap{background:rgba(224,165,38,0.16)}html[data-tema="guz"] body.dark .di-pill-break .dip-badge{background:rgba(224,165,38,0.16);color:#F0C24F;border-color:rgba(224,165,38,0.18)}html[data-tema="guz"] body.dark .di-pill-break .dip-timer{color:#E0A526}html[data-tema="guz"] body.dark .di-pill-break .dip-progress-track{background:rgba(224,165,38,0.13)}html[data-tema="guz"] .di-pill-break .dip-progress-fill{background:linear-gradient(90deg,#C98A16,#E0A526)}html[data-tema="guz"] .dip-dot.break{background:#C98A16}html[data-tema="guz"] body.dark .dip-dot.break{background:#E0A526}html[data-tema="guz"] .ram-title{color:#2F4A12}html[data-tema="guz"] .ram-body strong{color:#2F4A12}html[data-tema="guz"] body.dark .ram-title{color:#F2C14E!important}html[data-tema="guz"] body.dark .ram-body{color:#F0C24F!important}html[data-tema="guz"] body.dark .ram-body strong{color:#F2C14E!important}html[data-tema="guz"] body.dark .ram-kapsam{color:#E0A526!important}html[data-tema="guz"] .ram-notice-card{background:linear-gradient(135deg,#FEF3C7,#F2C14E);border:1.5px solid #C98A16}@media (min-width:769px){html[data-tema="guz"] .mtab-zamanlayici:hover{background:rgba(150,110,60,0.09)!important}html[data-tema="guz"] .mtab-cark:hover{background:rgba(79,119,45,0.09)!important;color:#4F772D!important}html[data-tema="guz"] .ci:hover{box-shadow:0 4px 14px rgba(58,32,14,0.12)}html[data-tema="guz"] table.prog tr:hover td{background:rgba(170,100,40,0.025)}html[data-tema="guz"] table.prog tr.today-row:hover td{background:rgba(170,100,40,0.06)}html[data-tema="guz"] .cal-day:hover{background:#FBF1E0}html[data-tema="guz"] body.dark .mob-past-header{background:linear-gradient(135deg,#2D1C0D,#3A2413) !important}html[data-tema="guz"] body.dark .mob-past-card{background:#190F07 !important}html[data-tema="guz"] .hafta-table tr:hover td{background:#FBF1E0}}html[data-tema="guz"] .d8-toast{box-shadow:0 8px 32px rgba(58,32,14,0.35)}html[data-tema="guz"] body.dark #d8-note-actionmenu{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .d8-note-am-item:hover,html[data-tema="guz"] body.dark .d8-note-am-item:active{background:#3E2718}html[data-tema="guz"] body.dark .d8-note-guest-banner{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark #d8np-header{border-color:#3E2718}html[data-tema="guz"] body.dark #d8np-compose{border-color:#3E2718;background:#180E06}html[data-tema="guz"] body.dark #d8np-input{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .d8-note-date-sep span{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .d8-note-check{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .d8np-select-cancel{background:#241609}html[data-tema="guz"] body.dark .d8np-back{background:#241609}html[data-tema="guz"] body.dark .d8np-back:hover{background:#3E2718}html[data-tema="guz"] .d8-cark-admin-btn{background:rgba(154,52,18,0.08);border-color:rgba(154,52,18,0.25)}html[data-tema="guz"] .d8-cark-chip.active{box-shadow:0 2px 8px rgba(58,32,14,0.22)}html[data-tema="guz"] .d8-cark-chip-yeni{background:rgba(154,52,18,0.08)}html[data-tema="guz"] body.dark .d8-act-code-big{background:#241609}html[data-tema="guz"] body.dark .d8-act-choice-btn{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .d8-act-sentence{background:#241609;border-color:#3E2718}html[data-tema="guz"] body.dark .d8-act-code-input,html[data-tema="guz"] body.dark .d8-act-text-input{background:#1B1007}html[data-tema="guz"] .header-liquid-fill{background:linear-gradient(90deg,#0EA5E9,#38BDF8,#E2711D,#38BDF8,#0EA5E9)}html[data-tema="guz"] #akbis-picker-dropdown{box-shadow:0 8px 32px rgba(58,32,14,0.18)}html[data-tema="guz"] body.dark #akbis-picker-dropdown{background:#241609;border-color:#3E2718}html[data-tema="guz"] #kaynaklar-picker-dropdown{box-shadow:0 8px 32px rgba(58,32,14,0.18)}html[data-tema="guz"] body.dark #kaynaklar-picker-dropdown{background:#241609;border-color:#3E2718}html[data-tema="guz"] #ss-bg{background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(58,32,14,0.9) 0%,transparent 65%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(26,58,143,0.7) 0%,transparent 60%),linear-gradient(160deg,#170D06 0%,#5C2A0E 40%,#1C1108 100%)}html[data-tema="guz"] .cal-day.past{background: #FBF2E2 !important}html[data-tema="guz"] .cal-day.past:hover{background: #F3E5CE !important}html[data-tema="guz"] body.dark .cal-day.past:hover{background: #170D06 !important}html[data-tema="guz"] [data-fam="program"]{--fam-bg:#EBE2D3}html[data-tema="guz"] [data-fam="kultur"]{--fam-bg:#F7E9D2;--fam-ac:#8A7A2A}html[data-tema="guz"] [data-fam="toplum"]{--fam-bg:#F6E7D4;--fam-tx:#4A2A10;--fam-ac:#7A4A1E}html[data-tema="guz"] [data-fam="uygulama"]{--fam-bg:#EDE3D4}html[data-tema="guz"] body.dark [data-fam="kultur"]{--fam-tx:#DCBE72;--fam-ac:#A99450}html[data-tema="guz"] body.dark [data-fam="toplum"]{--fam-bg:#2E1A0B;--fam-tx:#E0B183;--fam-ac:#B98A55}html[data-tema="guz"] body.dark [data-fam="ingilizce"]{--fam-bg:#26170B}html[data-tema="guz"] #sbg stop:nth-child(1){stop-color:#7C2D12!important}html[data-tema="guz"] #sbg stop:nth-child(2){stop-color:#C2410C!important}html[data-tema="guz"] #sdg stop:nth-child(1){stop-color:#FDF3E4!important}html[data-tema="guz"] #sdg stop:nth-child(2){stop-color:#F2C14E!important}html[data-tema="guz"] #sgl stop:nth-child(1){stop-color:#E0A526!important}html[data-tema="kis"] .leg-name,html[data-tema="kis"] .leg-sub,html[data-tema="kis"] .modal-head-left h2,html[data-tema="kis"] .modal-meta,html[data-tema="kis"] .mob-card-name,html[data-tema="kis"] .mob-card-teacher,html[data-tema="kis"] .live-lesson-name,html[data-tema="kis"] .live-lesson-sub,html[data-tema="kis"]{--navy:#1E3A8A;--navy2:#2563EB;--accent:#B9822F;--accent2:#D2A04A;--brown:#6B4A12;--bg:#F4F7FC;--white:#FFFFFF;--border:#DDE5F1;--text:#101B33;--muted:#64748B;--shadow-sm:0 1px 3px rgba(30,58,138,0.12),0 1px 2px rgba(37,99,235,0.06);--shadow-md:0 4px 16px rgba(37,99,235,0.12),0 2px 6px rgba(30,58,138,0.08);--shadow-lg:0 12px 40px rgba(12,24,62,0.14),0 4px 12px rgba(12,24,62,0.08);--bg-image:radial-gradient(ellipse at 85% 8%,rgba(216,168,63,0.24) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(96,165,250,0.18) 0%,transparent 50%),url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 34 Q15 24 30 34 T60 34' stroke='rgba(37,99,235,0.12)' stroke-width='1.6' fill='none'/%3E%3Cpath d='M0 46 Q15 39 30 46 T60 46' stroke='rgba(60,110,200,0.09)' stroke-width='1.2' fill='none'/%3E%3Cpath d='M0 20 Q15 13 30 20 T60 20' stroke='rgba(210,160,74,0.06)' stroke-width='1' fill='none'/%3E%3Ccircle cx='48' cy='10' r='1.3' fill='rgba(216,168,63,0.34)'/%3E%3Ccircle cx='10' cy='16' r='0.9' fill='rgba(96,165,250,0.24)'/%3E%3Ccircle cx='34' cy='6' r='0.6' fill='rgba(217,180,74,0.30)'/%3E%3Ccircle cx='55' cy='27' r='0.7' fill='rgba(255,255,255,0.38)'/%3E%3C/svg%3E")}html[data-tema="kis"].dark-pre body,html[data-tema="kis"] body.dark{--navy:#93C5FD;--navy2:#BFDBFE;--accent:#D2A04A;--accent2:#E3BC79;--bg:#070C1A;--white:#0D1426;--border:#1C2742;--text:#DCE6F8;--muted:#7E8EAC;--bg-image:radial-gradient(ellipse at 85% 8%,rgba(210,160,74,0.16) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(96,165,250,0.14) 0%,transparent 50%),url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 34 Q15 24 30 34 T60 34' stroke='rgba(147,197,253,0.10)' stroke-width='1.6' fill='none'/%3E%3Cpath d='M0 46 Q15 39 30 46 T60 46' stroke='rgba(210,160,74,0.05)' stroke-width='1.2' fill='none'/%3E%3Ccircle cx='48' cy='10' r='1.1' fill='rgba(217,180,74,0.18)'/%3E%3Ccircle cx='10' cy='16' r='0.8' fill='rgba(147,197,253,0.22)'/%3E%3Ccircle cx='34' cy='40' r='0.6' fill='rgba(191,219,254,0.20)'/%3E%3C/svg%3E")}html[data-tema="kis"] body.dark .header{background:linear-gradient(135deg,#0B1636 0%,#1A2C60 100%)}html[data-tema="kis"] body.dark .cal-day:hover{background:#151F38}html[data-tema="kis"] body.dark .cal-day.empty{background:#080E1C}html[data-tema="kis"] body.dark .td-gun{background:#080E1C}html[data-tema="kis"] body.dark .nav-btn:hover{color:#070C1A}html[data-tema="kis"] body.dark .status-upcoming{background:#0D1426}html[data-tema="kis"] body.dark .modal{background:#0D1426;border:1px solid #1C2742}html[data-tema="kis"] body.dark .hafta-table th{background:#080E1C}html[data-tema="kis"] body.dark .hafta-table tr:hover td{background:#151F38}html[data-tema="kis"] body.dark .mob-day-header{background:linear-gradient(135deg,#0B1636,#1A2C60)}html[data-tema="kis"] body.dark .tooltip{background:#1C2742}html[data-tema="kis"] .page::before{background:radial-gradient(ellipse at 90% 10%,rgba(216,168,63,0.16) 0%,transparent 50%),radial-gradient(ellipse at 5% 90%,rgba(96,165,250,0.14) 0%,transparent 50%),repeating-linear-gradient(100deg,rgba(37,99,235,0.025) 0px,rgba(37,99,235,0.025) 1px,transparent 1px,transparent 40px)}html[data-tema="kis"] .header{--header-bg:linear-gradient(135deg,#1E3A8A 0%,#2563EB 50%,#60A5FA 100%);box-shadow:0 8px 32px rgba(30,58,138,0.30)}html[data-tema="kis"] .header::after{background:radial-gradient(ellipse at 85% 15%,rgba(217,180,74,0.24) 0%,transparent 55%),radial-gradient(ellipse at 15% 85%,rgba(96,165,250,0.16) 0%,transparent 50%)}html[data-tema="kis"] .header-liquid-fill{background:linear-gradient(90deg,#1E3A8A,#60A5FA,#DCE9FB,#60A5FA,#1E3A8A)}html[data-tema="kis"] .cal-dow{background:#1E3A8A}html[data-tema="kis"] .cal-day.today .day-num{background:#2563EB}html[data-tema="kis"] .cal-day:hover{background:#EAF1FC}html[data-tema="kis"] .cal-day.empty{background:#FFFFFF}html[data-tema="kis"] tr.today-row .td-gun,html[data-tema="kis"] tr.row-holiday .td-gun{background:linear-gradient(135deg,#1E3A8A,#2563EB)!important}html[data-tema="kis"] .mob-day-header.today-header{background:linear-gradient(135deg,#B9822F,#D2A04A)!important}html[data-tema="kis"] .live-banner{background:linear-gradient(135deg,#1E3A8A,#2563EB)}html[data-tema="kis"] .holiday-week-banner{background:linear-gradient(135deg,#A06E22,#D2A04A)}html[data-tema="kis"] .donem-progress-fill{background:linear-gradient(90deg,#1E3A8A 0%,#60A5FA 55%,#DCE9FB 100%)}html[data-tema="kis"] .donem-progress-kalan{background:rgba(96,165,250,0.15);color:#1E3A8A}html[data-tema="kis"] .quote-card,html[data-tema="kis"] .quote-inline{background:linear-gradient(135deg,#F2F6FD,#E4EDFB)}html[data-tema="kis"] .leg:hover,html[data-tema="kis"] .sidebar-card{border-color:#BFDBFE}html[data-tema="kis"] .td-gun{background:#F2F6FD}html[data-tema="kis"] ::-webkit-scrollbar-thumb{background:#93C5FD}html[data-tema="kis"] ::-webkit-scrollbar-track{background:#E4EDFB}html[data-tema="kis"] .sidebar-card,html[data-tema="kis"] .donem-progress-widget{border-top:2px solid #D2A04A}html[data-tema="kis"] .main-tabs{border-color:#DDE5F1}html[data-tema="kis"] .header{box-shadow:0 8px 32px rgba(12,24,62,0.28),0 2px 8px rgba(12,24,62,0.15)}html[data-tema="kis"] .header::after{background:radial-gradient(ellipse at 20% 80%,rgba(110,130,230,0.10) 0%,transparent 50%)}html[data-tema="kis"] .mtab.active{box-shadow:0 3px 10px rgba(12,24,62,0.25)}html[data-tema="kis"] .stab.active{box-shadow:0 3px 10px rgba(12,24,62,0.22)}html[data-tema="kis"] .td-gun{background:#F2F6FD}html[data-tema="kis"] body.dark .hafta-table tr.grup-var td{color:#D8A83F}html[data-tema="kis"] body.dark .hafta-table tr.grup-var td:first-child{color:#D8A83F}html[data-tema="kis"] .status-upcoming{background:#EDF2FA}@media (max-width:660px){html[data-tema="kis"] .cal-grid::before{background:linear-gradient(90deg,rgba(12,24,62,0.06) 0%,transparent 100%)}html[data-tema="kis"] .cal-grid::after{background:linear-gradient(270deg,rgba(12,24,62,0.06) 0%,transparent 100%)}html[data-tema="kis"] .cal-grid.swiping-left::after{background:linear-gradient(270deg,rgba(12,24,62,0.18) 0%,transparent 100%)}html[data-tema="kis"] .cal-grid.swiping-right::before{background:linear-gradient(90deg,rgba(12,24,62,0.18) 0%,transparent 100%)}}html[data-tema="kis"] .cal-day:hover{background:#EAF1FC}html[data-tema="kis"] .cal-day.empty{background:#F7FAFE}html[data-tema="kis"] body.dark .band-popup{background:#1C2742}html[data-tema="kis"] .hafta-table tr:hover td{background:#EAF1FC}html[data-tema="kis"] .quote-card{background:linear-gradient(135deg,#EDF2FA 0%,#DFE8F7 100%)}html[data-tema="kis"] body.dark .quote-card{background:linear-gradient(135deg,#0D1426 0%,#141C32 100%)}html[data-tema="kis"] .quote-inline{background:linear-gradient(135deg,#EDF2FA 0%,#DFE8F7 100%)}html[data-tema="kis"] body.dark .quote-inline{background:linear-gradient(135deg,#0D1426 0%,#141C32 100%)}html[data-tema="kis"] tr.today-row td.td-cell{background:rgba(59,130,246,0.035)}html[data-tema="kis"] .mob-lesson-card.mob-current{background:rgba(59,130,246,0.05)!important}html[data-tema="kis"] .donem-progress-kalan{background:rgba(59,130,246,0.08)}@media (max-width:660px){html[data-tema="kis"] body.dark .mob-lesson-card{background:#0D1426;border-bottom-color:#1C2742}}html[data-tema="kis"] .dsb-fill{background:linear-gradient(90deg,#1E3A8A 0%,#60A5FA 55%,#DCE9FB 100%)}html[data-tema="kis"] .dsb-kalan{background:rgba(185,130,47,0.08)}html[data-tema="kis"] body.dark .dsb-kalan{background:rgba(210,160,74,0.15)}html[data-tema="kis"] .profil-theme-item.active{background:rgba(30,58,138,0.08)}html[data-tema="kis"] body.dark .profil-theme-item.active{background:rgba(147,197,253,0.1)}html[data-tema="kis"] .profil-donem-kalan{background:rgba(185,130,47,0.08)}html[data-tema="kis"] body.dark .profil-donem-kalan{background:rgba(210,160,74,0.15)}html[data-tema="kis"] .profil-quote-card{background:linear-gradient(135deg,#EDF2FA,#DFE8F7)}html[data-tema="kis"] body.dark .profil-quote-card{background:linear-gradient(135deg,#0D1426,#141C32)}html[data-tema="kis"] .profil-donem-fill{background:linear-gradient(90deg,#1E3A8A 0%,#60A5FA 55%,#DCE9FB 100%)}html[data-tema="kis"] body.dark #splash{background:#070C1A}html[data-tema="kis"] #splash-icon{box-shadow:0 8px 32px rgba(30,58,138,0.18)}html[data-tema="kis"] #splash-name{color:#1E3A8A}html[data-tema="kis"] body.dark #splash-name{color:#A8C6F5}html[data-tema="kis"] #splash-dot span{background:#1E3A8A}html[data-tema="kis"] body.dark .header{background:linear-gradient(135deg,#14275C 0%,#1E3A8A 100%)!important}html[data-tema="kis"] body.dark .th-gun,html[data-tema="kis"] body.dark .th-p{background:linear-gradient(135deg,#14275C,#1E3A8A)!important}html[data-tema="kis"] body.dark .cal-dow{background:#14275C!important}html[data-tema="kis"] body.dark .mob-day-header{background:linear-gradient(135deg,#14275C,#1E3A8A)!important}html[data-tema="kis"] body.dark .td-gun{background:#0D1426!important;color:#93C5FD!important}html[data-tema="kis"] body.dark .cal-day:hover{background:#151F38!important}html[data-tema="kis"] body.dark .cal-day.empty{background:#050913!important}html[data-tema="kis"] body.dark .cal-day.has-holiday{background:#182A50!important}html[data-tema="kis"] body.dark .hafta-table th{background:#050913!important}html[data-tema="kis"] body.dark .hafta-table tr:hover td{background:#151F38!important}html[data-tema="kis"] body.dark tr.today-row .td-gun{background:linear-gradient(135deg,#1E3A8A,#2563EB)!important}html[data-tema="kis"] body.dark tr.row-holiday .td-gun{background:linear-gradient(135deg,#14275C,#1E3A8A)!important}html[data-tema="kis"] body.dark .quote-card,html[data-tema="kis"] body.dark .quote-inline{background:linear-gradient(135deg,#0D1426,#151F38)!important}html[data-tema="kis"] body.dark .band-tatil{background:#182A50!important;color:#93C5FD!important}html[data-tema="kis"] body.dark .band-ders{background:#0D1426!important;color:#BFDBFE!important}html[data-tema="kis"] body.dark .holiday-week-banner{background:linear-gradient(135deg,#7C2D12,#A06E22)!important}html[data-tema="kis"] body.dark .donem-progress-fill{background:linear-gradient(90deg,#1E3A8A 0%,#93C5FD 60%,#E3BC79 100%)!important}html[data-tema="kis"] body.dark .donem-progress-kalan{background:rgba(147,197,253,0.15)!important;color:#93C5FD!important}html[data-tema="kis"] body.dark .modal{background:#0D1426!important}html[data-tema="kis"] body.dark .status-upcoming{background:#0D1426!important}html[data-tema="kis"] body.dark .ip-item:hover{background:#1C2742}@media (max-width:640px){html[data-tema="kis"] #session-pill-wrap-mob .session-pill{box-shadow:0 4px 20px rgba(12,24,62,0.18),0 1px 4px rgba(12,24,62,0.10)}html[data-tema="kis"] #session-pill-wrap-mob .session-pill.pill-live{box-shadow:0 4px 24px rgba(12,24,62,0.28),0 0 0 1px rgba(255,255,255,0.15) inset}html[data-tema="kis"] #session-pill-wrap-mob .session-pill.pill-break{box-shadow:0 4px 20px rgba(12,24,62,0.14),0 0 0 1px rgba(12,24,62,0.08) inset}html[data-tema="kis"] #session-pill-wrap-mob .session-pill.pill-done{box-shadow:0 2px 10px rgba(12,24,62,0.08)}html[data-tema="kis"] #mobile-bottom-nav{border:1px solid rgba(12,24,62,0.08);box-shadow:0 10px 34px rgba(12,24,62,0.18),0 2px 10px rgba(12,24,62,0.08)}html[data-tema="kis"] .mob-nav-btn:active{background:rgba(12,24,62,0.05)}}html[data-tema="kis"] .mob-nav-btn.active{color:#1E3A8A}html[data-tema="kis"] .mob-nav-btn.active::after{background:#1E3A8A}html[data-tema="kis"] .header{background:var(--header-bg,linear-gradient(135deg,#16275A 0%,#22408C 50%,#153564 100%))}html[data-tema="kis"] .header::before{background:radial-gradient(ellipse at 15% 50%,rgba(110,150,240,0.18) 0%,transparent 55%),radial-gradient(ellipse at 85% 30%,rgba(110,130,230,0.13) 0%,transparent 50%)}html[data-tema="kis"] .header-logo span{color:#E9C68A}html[data-tema="kis"] #mob-sticky-day{background:linear-gradient(135deg,#0B1636,#1A2C60)}html[data-tema="kis"] #mob-sticky-day{background:linear-gradient(135deg,#1E3A8A,#2563EB)}html[data-tema="kis"] #mob-sticky-day.today-style{background:linear-gradient(135deg,#2563EB,#60A5FA);box-shadow:0 3px 14px rgba(37,99,235,0.4);border-bottom:2px solid rgba(147,197,253,0.5)}html[data-tema="kis"] body.dark .mob-day-header.today-header{box-shadow:0 3px 14px rgba(210,160,74,0.35)!important}html[data-tema="kis"] .cdown-card:hover{box-shadow:0 8px 24px rgba(12,24,62,0.15)}html[data-tema="kis"] .sidebar-card:hover{box-shadow:0 8px 28px rgba(12,24,62,0.12)}html[data-tema="kis"] .mtab.active{box-shadow:0 2px 8px rgba(12,24,62,0.22)}html[data-tema="kis"] .session-pill.pill-live{box-shadow:0 2px 8px rgba(12,24,62,0.22)}html[data-tema="kis"] .pill-dot.break{background:#B9822F}html[data-tema="kis"] body.dark .cdown-card{background:#0D1426}html[data-tema="kis"] body.dark .donem-progress-widget{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .sidebar-card{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .leg{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .live-no-class{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .main-tabs{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .mtab:not(.active):hover{background:#1C2742!important}html[data-tema="kis"] body.dark .quote-card{border-color:#1C2742}html[data-tema="kis"] body.dark .quote-inline{border-color:#1C2742}html[data-tema="kis"] body.dark .modal-tabs{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .deg-chip{background:#1C2742;border-color:#2A3A64}html[data-tema="kis"] body.dark .donem-progress-track{background:#1C2742;border-color:#2A3A64}html[data-tema="kis"] body.dark .countdown-bar .cdown-card{border-color:#1C2742}html[data-tema="kis"] body.dark .table-wrap{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark table.prog td{border-color:#1C2742}html[data-tema="kis"] body.dark .hafta-table td{border-color:#1C2742}html[data-tema="kis"] body.dark .cal-grid{border-color:#1C2742}html[data-tema="kis"] body.dark .cal-day{border-color:#1C2742}html[data-tema="kis"] body.dark .cal-days{background:#0D1426}html[data-tema="kis"] body.dark .modal-section h3{border-color:#1C2742}html[data-tema="kis"] body.dark .band-popup{background:#1C2742;border:1px solid #2A3A64}html[data-tema="kis"] .fc-deck-card.all{background:linear-gradient(135deg,rgba(59,130,246,0.22),rgba(110,130,230,0.18));border-color:rgba(110,150,240,0.30)}html[data-tema="kis"] .fc-deck-card.all:hover{background:linear-gradient(135deg,rgba(59,130,246,0.32),rgba(110,130,230,0.28))}html[data-tema="kis"] #widget-stack-panel{box-shadow:0 -8px 40px rgba(12,24,62,0.18)}html[data-tema="kis"] body.dark #widget-stack-panel{background:#0D1426}html[data-tema="kis"] body.dark #widget-stack-panel::before{background:#1C2742}html[data-tema="kis"] body.dark .ws-card{background:#0C1428;border-color:#1C2742}html[data-tema="kis"] body.dark .ws-cdown{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .di-pill-break{border-color:rgba(216,168,63,0.26)}html[data-tema="kis"] body.dark .di-pill-break .dip-icon-wrap{background:rgba(216,168,63,0.16)}html[data-tema="kis"] body.dark .di-pill-break .dip-badge{background:rgba(216,168,63,0.16);color:#DDB157;border-color:rgba(216,168,63,0.18)}html[data-tema="kis"] body.dark .di-pill-break .dip-timer{color:#D8A83F}html[data-tema="kis"] body.dark .di-pill-break .dip-progress-track{background:rgba(216,168,63,0.13)}html[data-tema="kis"] .di-pill-break .dip-progress-fill{background:linear-gradient(90deg,#B9822F,#D8A83F)}html[data-tema="kis"] .dip-dot.break{background:#B9822F}html[data-tema="kis"] body.dark .dip-dot.break{background:#D8A83F}html[data-tema="kis"] .ram-title{color:#5A3F10}html[data-tema="kis"] .ram-body strong{color:#5A3F10}html[data-tema="kis"] body.dark .ram-title{color:#DCE9FB!important}html[data-tema="kis"] body.dark .ram-body{color:#DDB157!important}html[data-tema="kis"] body.dark .ram-body strong{color:#DCE9FB!important}html[data-tema="kis"] body.dark .ram-kapsam{color:#D8A83F!important}html[data-tema="kis"] .ram-notice-card{background:linear-gradient(135deg,#FEF3C7,#DCE9FB);border:1.5px solid #B9822F}@media (min-width:769px){html[data-tema="kis"] .mtab-zamanlayici:hover{background:rgba(110,130,230,0.09)!important}html[data-tema="kis"] .mtab-cark:hover{background:rgba(185,130,47,0.09)!important;color:#B9822F!important}html[data-tema="kis"] .ci:hover{box-shadow:0 4px 14px rgba(12,24,62,0.12)}html[data-tema="kis"] table.prog tr:hover td{background:rgba(59,130,246,0.025)}html[data-tema="kis"] table.prog tr.today-row:hover td{background:rgba(59,130,246,0.06)}html[data-tema="kis"] .cal-day:hover{background:#EEF3FC}html[data-tema="kis"] body.dark .mob-past-header{background:linear-gradient(135deg,#161F44,#212E58) !important}html[data-tema="kis"] body.dark .mob-past-card{background:#080D1E !important}html[data-tema="kis"] .hafta-table tr:hover td{background:#EEF3FC}}html[data-tema="kis"] .d8-toast{box-shadow:0 8px 32px rgba(12,24,62,0.35)}html[data-tema="kis"] body.dark #d8-note-actionmenu{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .d8-note-am-item:hover,html[data-tema="kis"] body.dark .d8-note-am-item:active{background:#1C2742}html[data-tema="kis"] body.dark .d8-note-guest-banner{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark #d8np-header{border-color:#1C2742}html[data-tema="kis"] body.dark #d8np-compose{border-color:#1C2742;background:#070C1A}html[data-tema="kis"] body.dark #d8np-input{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .d8-note-date-sep span{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .d8-note-check{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .d8np-select-cancel{background:#0D1426}html[data-tema="kis"] body.dark .d8np-back{background:#0D1426}html[data-tema="kis"] body.dark .d8np-back:hover{background:#1C2742}html[data-tema="kis"] .d8-cark-admin-btn{background:rgba(30,58,138,0.08);border-color:rgba(30,58,138,0.25)}html[data-tema="kis"] .d8-cark-chip.active{box-shadow:0 2px 8px rgba(12,24,62,0.22)}html[data-tema="kis"] .d8-cark-chip-yeni{background:rgba(30,58,138,0.08)}html[data-tema="kis"] body.dark .d8-act-code-big{background:#0D1426}html[data-tema="kis"] body.dark .d8-act-choice-btn{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .d8-act-sentence{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] body.dark .d8-act-code-input,html[data-tema="kis"] body.dark .d8-act-text-input{background:#090F22}html[data-tema="kis"] .header-liquid-fill{background:linear-gradient(90deg,#0EA5E9,#38BDF8,#60A5FA,#38BDF8,#0EA5E9)}html[data-tema="kis"] #akbis-picker-dropdown{box-shadow:0 8px 32px rgba(12,24,62,0.18)}html[data-tema="kis"] body.dark #akbis-picker-dropdown{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] #kaynaklar-picker-dropdown{box-shadow:0 8px 32px rgba(12,24,62,0.18)}html[data-tema="kis"] body.dark #kaynaklar-picker-dropdown{background:#0D1426;border-color:#1C2742}html[data-tema="kis"] #ss-bg{background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(12,24,62,0.9) 0%,transparent 65%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(26,58,143,0.7) 0%,transparent 60%),linear-gradient(160deg,#060B1C 0%,#16275A 40%,#070F28 100%)}html[data-tema="kis"] .cal-day.past{background: #F1F5FC !important}html[data-tema="kis"] .cal-day.past:hover{background: #E0E9F7 !important}html[data-tema="kis"] body.dark .cal-day.past:hover{background: #060B18 !important}html[data-tema="kis"] [data-fam="program"]{--fam-bg:#E2E8F2}html[data-tema="kis"] [data-fam="kultur"]{--fam-bg:#E9F0FA;--fam-ac:#8E7B36}html[data-tema="kis"] [data-fam="toplum"]{--fam-bg:#E2EAF7;--fam-tx:#152C5E;--fam-ac:#2F4C86}html[data-tema="kis"] [data-fam="uygulama"]{--fam-bg:#E4EAF3}html[data-tema="kis"] body.dark [data-fam="kultur"]{--fam-tx:#D9C393;--fam-ac:#A89468}html[data-tema="kis"] body.dark [data-fam="toplum"]{--fam-bg:#0F1C3C;--fam-tx:#9FB8DE;--fam-ac:#6E88B4}html[data-tema="kis"] body.dark [data-fam="ingilizce"]{--fam-bg:#101B33}html[data-tema="kis"] #sbg stop:nth-child(1){stop-color:#16275A!important}html[data-tema="kis"] #sbg stop:nth-child(2){stop-color:#2563EB!important}html[data-tema="kis"] #sdg stop:nth-child(1){stop-color:#FFFFFF!important}html[data-tema="kis"] #sdg stop:nth-child(2){stop-color:#BFDBFE!important}html[data-tema="kis"] #sgl stop:nth-child(1){stop-color:#93C5FD!important}html[data-tema="guz"]{--tema-hafta1:#C98A16;--tema-hafta2:#E0A526;--tema-sec:rgba(194,65,12,0.22);--bg-image:radial-gradient(ellipse at 85% 8%,rgba(224,165,38,0.22) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(154,52,18,0.13) 0%,transparent 50%),url("data:image/svg+xml,<svg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'> <g fill='none' stroke='rgba%28154%2C52%2C18%2C0.17%29' stroke-width='1.3' stroke-linecap='round'> <path d='M14 9 C20 14 20 24 14 29 C8 24 8 14 14 9Z'/> <path d='M50 38 C56 43 56 53 50 58 C44 53 44 43 50 38Z'/> </g> <g fill='none' stroke='rgba%28194%2C65%2C12%2C0.12%29' stroke-width='0.9' stroke-linecap='round'> <path d='M14 10 L14 28 M14 16 L10 13 M14 16 L18 13 M14 21 L10 18 M14 21 L18 18'/> <path d='M50 39 L50 57 M50 45 L46 42 M50 45 L54 42 M50 50 L46 47 M50 50 L54 47'/> </g> <g fill='rgba%28224%2C165%2C38%2C0.26%29'> <circle cx='58' cy='13' r='1.7'/><circle cx='30' cy='50' r='1.2'/><circle cx='63' cy='28' r='0.9'/> </g> <path d='M0 66 Q17 60 35 66 T70 66' stroke='rgba%2879%2C119%2C45%2C0.11%29' stroke-width='1.2' fill='none'/> </svg>");color-scheme:light}html[data-tema="guz"] body.dark,html[data-tema="guz"].dark-pre body{--bg-image:radial-gradient(ellipse at 85% 8%,rgba(194,65,12,0.17) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(224,165,38,0.10) 0%,transparent 50%),url("data:image/svg+xml,<svg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'> <g fill='none' stroke='rgba%28240%2C168%2C104%2C0.13%29' stroke-width='1.3' stroke-linecap='round'> <path d='M14 9 C20 14 20 24 14 29 C8 24 8 14 14 9Z'/> <path d='M50 38 C56 43 56 53 50 58 C44 53 44 43 50 38Z'/> </g> <g fill='none' stroke='rgba%28226%2C113%2C29%2C0.10%29' stroke-width='0.9' stroke-linecap='round'> <path d='M14 10 L14 28 M14 16 L10 13 M14 16 L18 13 M14 21 L10 18 M14 21 L18 18'/> <path d='M50 39 L50 57 M50 45 L46 42 M50 45 L54 42 M50 50 L46 47 M50 50 L54 47'/> </g> <g fill='rgba%28224%2C165%2C38%2C0.18%29'> <circle cx='58' cy='13' r='1.7'/><circle cx='30' cy='50' r='1.2'/><circle cx='63' cy='28' r='0.9'/> </g> <path d='M0 66 Q17 60 35 66 T70 66' stroke='rgba%28156%2C196%2C90%2C0.08%29' stroke-width='1.2' fill='none'/> </svg>");color-scheme:dark}html[data-tema="kis"]{--tema-hafta1:#B9822F;--tema-hafta2:#D8A83F;--tema-sec:rgba(37,99,235,0.22);--bg-image:radial-gradient(ellipse at 85% 8%,rgba(147,197,253,0.26) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(30,58,138,0.10) 0%,transparent 50%),url("data:image/svg+xml,<svg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'> <g stroke='rgba%2830%2C58%2C138%2C0.15%29' stroke-width='1.15' stroke-linecap='round' fill='none'> <g transform='translate%2816%2C18%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> <g transform='translate%2852%2C48%29 scale%280.78%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> </g> <g stroke='rgba%2896%2C165%2C250%2C0.16%29' stroke-width='0.85' stroke-linecap='round' fill='none'> <g transform='translate%2854%2C14%29 scale%280.5%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> <g transform='translate%2814%2C54%29 scale%280.45%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> </g> <g fill='rgba%28147%2C197%2C253%2C0.34%29'> <circle cx='36' cy='8' r='1.5'/><circle cx='66' cy='32' r='1.1'/><circle cx='33' cy='36' r='0.9'/> </g> </svg>");color-scheme:light}html[data-tema="kis"] body.dark,html[data-tema="kis"].dark-pre body{--bg-image:radial-gradient(ellipse at 85% 8%,rgba(96,165,250,0.15) 0%,transparent 45%),radial-gradient(ellipse at 8% 92%,rgba(191,219,254,0.08) 0%,transparent 50%),url("data:image/svg+xml,<svg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'> <g stroke='rgba%28147%2C197%2C253%2C0.13%29' stroke-width='1.15' stroke-linecap='round' fill='none'> <g transform='translate%2816%2C18%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> <g transform='translate%2852%2C48%29 scale%280.78%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> </g> <g stroke='rgba%2896%2C165%2C250%2C0.11%29' stroke-width='0.85' stroke-linecap='round' fill='none'> <g transform='translate%2854%2C14%29 scale%280.5%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> <g transform='translate%2814%2C54%29 scale%280.45%29'><path d='M0 -8 L0 8 M-6.9 -4 L6.9 4 M-6.9 4 L6.9 -4 M0 -8 l-2 2.4 M0 -8 l2 2.4 M0 8 l-2 -2.4 M0 8 l2 -2.4'/></g> </g> <g fill='rgba%28191%2C219%2C254%2C0.18%29'> <circle cx='36' cy='8' r='1.5'/><circle cx='66' cy='32' r='1.1'/><circle cx='33' cy='36' r='0.9'/> </g> </svg>");color-scheme:dark}</style>
 <style id="d8-tema-bar">html[data-tema="guz"] .header-liquid-fill{background:linear-gradient(90deg,#9A3412,#E2711D,#F2C14E,#E2711D,#9A3412);background-size:300% 100%;animation:hpFlow 9s linear infinite}html[data-tema="guz"] .header-liquid-fill::before{top:0;bottom:0;background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='54' height='40' viewBox='0 0 54 40'> <g fill='rgba%28255%2C236%2C196%2C0.85%29'> <path d='M10 6 C14 9 14 15 10 18 C6 15 6 9 10 6Z' transform='rotate%28-35 10 12%29'/> <path d='M38 22 C41.5 24.5 41.5 29.5 38 32 C34.5 29.5 34.5 24.5 38 22Z' transform='rotate%2840 38 27%29'/> </g> <g fill='rgba%28255%2C210%2C120%2C0.75%29'><circle cx='27' cy='9' r='1.3'/><circle cx='49' cy='36' r='1'/><circle cx='20' cy='33' r='0.9'/></g> </svg>");background-size:54px 40px;animation:hpYaprak 7s linear infinite;opacity:.75;transform:none}html[data-tema="guz"] .header-liquid-fill::after{width:10px;background:rgba(255,214,150,.85);filter:blur(4px)}html[data-tema="kis"] .header-liquid-fill{background:linear-gradient(90deg,#1E3A8A,#60A5FA,#DCE9FB,#60A5FA,#1E3A8A);background-size:300% 100%;animation:hpFlow 11s linear infinite}html[data-tema="kis"] .header-liquid-fill::before{top:0;bottom:0;background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='46' height='46' viewBox='0 0 46 46'> <g fill='rgba%28255%2C255%2C255%2C0.95%29'> <circle cx='6' cy='8' r='1.6'/><circle cx='24' cy='3' r='1'/><circle cx='38' cy='14' r='1.9'/> <circle cx='15' cy='24' r='1.2'/><circle cx='31' cy='31' r='1.5'/><circle cx='8' cy='40' r='1'/><circle cx='42' cy='42' r='1.2'/> </g> <g stroke='rgba%28255%2C255%2C255%2C0.85%29' stroke-width='0.9' stroke-linecap='round'> <path d='M22 16 v5 M19.8 17.2 l4.4 2.6 M19.8 19.8 l4.4 -2.6'/> </g> </svg>");background-size:46px 46px;animation:hpKar 6s linear infinite;opacity:.8;transform:none}html[data-tema="kis"] .header-liquid-fill::after{width:10px;background:rgba(230,242,255,.95);filter:blur(4px)}@keyframes hpYaprak{from{background-position:0 0}to{background-position:54px 40px}}@keyframes hpKar{from{background-position:0 0}to{background-position:-8px 46px}}@media(prefers-reduced-motion:reduce){html[data-tema] .header-liquid-fill,html[data-tema] .header-liquid-fill::before,html[data-tema] .header-liquid-fill::after{animation:none!important}}</style>
+<script id="d8-tzod">
+/* ==========================================================================
+   D8 — III. DÖNEM: TAM ZAMANLI ÖĞRETMENLİK DENEYİMİ PLANI VE YÖNERGESİ
+   --------------------------------------------------------------------------
+   Kaynak: Millî Eğitim Akademisi, III. Dönem-Genel — Plan (s.13), Yönerge
+   (s.15-19), Uygulamada Dikkat Edilecek Hususlar (s.20).
+
+   1. ve 8. hafta sabit; diğer sekiz haftanın görevini kişi kendisi seçer
+   (uygulama öğretmeniyle yaptığı plana göre). Her hafta: temel görev ders
+   anlatımı ve uygulama (8. hafta hariç), seçilen görevin yönerge çalışmaları
+   ve haftalık yansıtıcı gözlem formu (8. haftada özel form). Değerlendirme
+   formları (s.26-37) da buradan gösterilir.
+   Seçimler staj verisinde (gorevler, form, isaret) saklanır; giriş
+   yapılmışsa cihazlar arasında eşitlenir.
+
+   III. Dönem panelinde d8-donem34 → d3Panel() içinden çağrılır.
+   ========================================================================== */
+(function () {
+  'use strict';
+  var D8 = (window.D8 = window.D8 || {});
+
+  /* ------------------------------------------------------------ 1. Görevler */
+  var SINIF = {
+    ad: 'Sınıf İçi Uygulama / Ders Anlatımı',
+    aciklama: 'Öğretmen adayı 2. haftadan itibaren uygulama öğretmeni rehberliğinde sınıf içi uygulama/ders anlatımı yapar. Eğitim personeli uygun zaman dilimlerinde bunu gözlemler ve değerlendirir.'
+  };
+
+  var GOREV = {
+    egitim: {
+      ad: 'Eğitim Ortamını Tanıma', ikon: '🏫',
+      aciklama: 'Öğretmen adayı, okulun günlük işleyişine ilişkin uygulamaları inceler. Bu incelemesini sınıf kuralları, sınıfın fiziksel düzeni, öğrenci özellikleri, dersin işlenişi, günlük ve yıllık ders planları, sınıf defteri doldurmayı ve öğretim sürecini eğitim personeli/uygulama öğretmeni rehberliğinde gözlemler.',
+      calismalar: [
+        'Okul yöneticilerinin bir gün içinde yaptığı iş ve işlemleri takip eder.',
+        'Okulun fiziksel düzenini (derslik, kütüphane, laboratuvar, atölye, kantin, spor alanları vb.) inceler.',
+        'Günlük ve yıllık ders planlarını inceler.',
+        'Okuldaki yönetici, öğretmen, öğrenci ve diğer personelin görev ve sorumluluklarının yerine getirilmesini gözlemler.',
+        'Okulda zaman yönetimini (ders ve teneffüs süreçleri, bayrak töreni vb.) izler.',
+        'Erişilebilirlik ve kapsayıcı öğrenme ortamlarını gözlemler.',
+        'Sınıf, nöbet defterinin doldurulması ve diğer resmî evrakların hazırlanmasını inceler.'
+      ]
+    },
+    izleme: {
+      ad: 'Öğrenci İzleme ve Değerlendirme', ikon: '🔍',
+      aciklama: 'Öğretmen adayı; bir veya birden fazla öğrencinin sosyal gelişimi, duygusal gelişimi, bilişsel özellikleri, dil ve iletişim, okuma, yazma, dinleme, konuşma becerileri, derse katılım ve öğrenme davranışları, ödev ve çalışma alışkanlıkları, ilgi, yetenek ve güçlü yönleri, öğrenme güçlükleri ve destek ihtiyaçları gibi çeşitli özelliklerine odaklanarak inceleme yapar.',
+      calismalar: [
+        'Öğrencinin genel özelliklerini ve bireysel farklılıklarını gözlemler.',
+        'Öğrencinin derse katılımını takip eder.',
+        'Öğrencinin dikkat, motivasyon ve derse yönelik tutumunu izler.',
+        'Öğrencinin sorumluluk alma ve görevlerini yerine getirme davranışlarını izler.',
+        'Öğrencinin sınıf içi ilişkilerini ve okuldaki akranları arasındaki etkileşim sürecini takip eder.',
+        'Öğrencinin grup çalışmasındaki faaliyetlerini değerlendirir.',
+        'Öğrencinin sınıf kurallarına uyumunu ve sınıf içindeki davranışlarını izler.',
+        'Öğrencinin öğretmenle iletişimini izler.',
+        'Öğrencinin ödev yapma faaliyetlerini değerlendirir.',
+        'Öğrencinin öğrenme davranışlarını ve öğrenme biçimini gözlemler.',
+        'Öğrencinin teneffüs ve ortak alanlardaki davranışlarını izler.'
+      ]
+    },
+    nobet: {
+      ad: 'Nöbet', ikon: '🛡️',
+      aciklama: 'Öğretmen adayı, Millî Eğitim Bakanlığı Okul Öncesi Eğitim ve İlköğretim Kurumları Yönetmeliği ile Millî Eğitim Bakanlığı Ortaöğretim Kurumları Yönetmeliği gereğince okul yönetiminin hazırladığı yazılı Nöbetçi Öğretmen Görev Talimatnamesini dikkate alarak nöbet görevini yerine getiren <strong>uygulama öğretmenine eşlik eder</strong>. Okul idaresinin belirlediği nöbet alanlarında okul imkânları doğrultusunda okul müdürünün talimat ve yönlendirmesi ile aktif rol alır.',
+      calismalar: [
+        'Nöbetçi Öğretmen Görev Talimatnamesini inceler.',
+        'Nöbet görev alanlarını ve bu kapsamda yerine getirilen iş ve işlemleri inceler.',
+        'Nöbet sırasında öğrencilerin güvenliğinin nasıl sağlandığını izler.',
+        'Okul bahçesi, koridor, merdiven ve diğer ortak alanları kontrol eder.',
+        'Kaza, yaralanma ve risk oluşturabilecek durumları fark eder ve olası durumlarda yapılan işlemleri inceler.',
+        'Acil ve olağan dışı durumlarda izlenecek aşamaları takip eder.',
+        'Okul ve ders giriş çıkışları ile öğrenci hareketliliğini takip eder.',
+        'Öğrenciler arasında yaşanabilecek uyuşmazlık ve davranış sorunlarına yönelik yapılan müdahaleleri gözlemler.',
+        'Nöbet sırasında öğrenci ihtiyaç ve taleplerinin karşılanmasına yönelik süreci inceler.',
+        'Okul yönetimi ve öğretmenlerle iş birliği içinde uygulama öğretmenine nöbet görevini yaparken eşlik eder ve bu süreçte gözlemlerde bulunur.',
+        'Okulda olması hâlinde öğrenci servislerinin geliş gidiş sürecinin işleyişini takip eder.',
+        'Okulda olması hâlinde yemekhanede öğrenci hareketliliğinin işleyişini takip eder.'
+      ]
+    },
+    olcme: {
+      ad: 'Ölçme Aracı (Sınav) Hazırlama ve Uygulama', ikon: '📝',
+      aciklama: 'Eğitim personelinin okul idaresi ile görüşüp belirlediği sınıfta (uygulama öğretmeninin sınıfının dışındaki) okuldaki başka şube/sınıf vb. için ölçme aracı hazırlar ve uygular. Uygulama yapacağı sınıf düzeyini, dersi ve öğrenme çıktısını belirler, belirlenen öğrenme çıktısının kapsam ve bilişsel düzeyini dikkate alarak bir belirtke tablosu hazırlar. Açık uçlu, çoktan seçmeli, eşleştirmeli, doğru-yanlış ve kısa cevaplı vb. soru türlerinden uygun olanlarını kullanarak geçerli, anlaşılır ve sınıf düzeyine uygun bir ölçme aracı geliştirir. Ölçme aracına ilişkin cevap anahtarı ile puanlama ölçütlerini veya dereceli puanlama anahtarını hazırlar. Hazırladığı ölçme aracını ilgili sınıfta uygular ve öğrenci cevaplarını değerlendirir; uygulama sonuçlarına dayanarak öğrencilerin öğrenme düzeylerini, güçlü oldukları alanları ve öğrenme eksikliklerini belirler. Elde ettiği bulgular doğrultusunda ölçme aracının işlevselliğini değerlendirir ve gerekli gördüğü maddeleri yeniden düzenler.',
+      calismalar: [
+        'Sınıf düzeyi, ders ve öğrenme çıktılarını belirler.',
+        'Açık uçlu, eşleştirmeli, doğru-yanlış ve kısa cevaplı soru vb. maddelerini hazırlar.',
+        'Ölçme aracına ilişkin cevap anahtarını hazırlar.',
+        'Geliştirilen ölçme aracını uygular.',
+        'Ölçme aracını geçerli, anlaşılır ve sınıf düzeyine uygun biçimde hazırlar.'
+      ]
+    },
+    kurul: {
+      ad: 'Kurul ve Komisyonların İşleyişi', ikon: '🏛️',
+      aciklama: 'Öğretmen adayı; uygulama yaptığı okulda oluşturulan kurul, komisyon veya ekiplerden (Öğretmenler Kurulu, Şube Öğretmenler Kurulu, Zümre Öğretmenler Kurulu, Muayene Kabul Komisyonu vb.) birini belirleyerek kuruluş amacını, hukuki dayanağını, görevlerini, üyelerinin belirlenme biçimi ve çalışma esaslarını ilgili mevzuat çerçevesinde inceler. Okul yönetiminin uygun görmesi hâlinde, kişisel verilerin korunması ve gizlilik ilkelerine uyarak ilgili kurul veya komisyonların toplantı ve karar alma süreçlerine katılır. Gündemin hazırlanması, görev dağılımı, kararların tutanağa geçirilmesi, ilgililere duyurulması, uygulanması ve izlenmesi aşamalarını gözlemler.',
+      calismalar: [
+        'Kurul ve komisyonların kuruluş amacını inceler.',
+        'Kurul ve komisyonlarla ilgili mevzuatı inceler.',
+        'Kurul ve komisyonların görev ve sorumluluklarını inceler.',
+        'Kurul ve komisyonların okulun eğitim öğretim ve yönetim süreçlerine katkısını gözlemler.',
+        'Kurul ve komisyonların görev dağılımını inceler.',
+        'Kurul ve komisyonlarda alınan kararların tutanağa geçirilme usulünü inceler.',
+        'Kurul ve komisyonlarda alınan kararların uygulamaya aktarılma sürecini inceler.',
+        'Toplantılarda gündemin hazırlanması, ilgililere duyurulması ve görüşülmesi sürecini gözlemler.',
+        'Kurul veya komisyonların üyeleri arasındaki iletişim ve iş birliğini inceler.',
+        'Okul idaresinin uygun gördüğü kurul veya komisyonlardan birinin toplantısına izleyici olarak katılarak gözlem yapar.'
+      ]
+    },
+    sosyal: {
+      ad: 'Sosyal Etkinlikler ve Projeler', ikon: '🎭',
+      aciklama: 'Öğretmen adayı; Millî Eğitim Bakanlığı Eğitim Kurumları Sosyal Etkinlikler Yönetmeliği çerçevesinde öğrenci kulübü çalışması, kültürel veya sanatsal etkinlik, sportif faaliyet, gezi gözlem, okul dışı öğrenme etkinliği, toplum hizmeti çalışması ile belirli gün ve haftalara yönelik etkinliklerden birini veya birkaçını eğitim personeli/uygulama öğretmeni rehberliğinde planlar, düzenler ve uygular. Okuldaki Destekleme ve Yetiştirme Kursları (DYK), İlkokullarda Yetiştirme Programı (İYEP) çalışmalarını izler. Etkinliğin amaç ve öğrenme çıktılarını belirler; hedef kitle, çalışma takvimi, görev dağılımı, kullanılacak ortam ve materyal ile ihtiyaç duyulan kaynakları planlar. TEKNOFEST, TÜBİTAK, eTwinning, ERASMUS+, AB projeleri ile il/ilçe millî eğitim müdürlüklerinin yürüttükleri projeler için de aynı süreci yürütür. Gerekli izin, onay, güvenlik ve bilgilendirme süreçlerinin yürütülmesine katkı sağlar. Okuldaki öğrencilerin etkinlik hazırlığı ve uygulama aşamalarına aktif katılımını destekler. Etkinlik sonrasında katılımcı görüşleri ve gözlem sonuçları doğrultusunda uygulamanın etkililiğini değerlendirir.',
+      calismalar: [
+        'Sosyal etkinlik ve proje türlerini inceler ve birine yönelik bir örnek plan hazırlar.',
+        'Okul idaresinin uygun gördüğü belirli sosyal etkinlik veya projelerden birine yönelik uygulamalara katılır.',
+        'Toplum hizmeti çalışmalarından birine yönelik örnek bir plan hazırlar.',
+        'Okul idaresinin uygun gördüğü belirli gün ve haftalara yönelik etkinliklerin planlanması ve uygulanması faaliyetine katılır.',
+        'Gezi, gözlem ve okul dışı öğrenme etkinliklerinin birine yönelik örnek bir plan hazırlar.',
+        'AB ve il/ilçe millî eğitim müdürlüklerinin yürüttüğü projeler ile TEKNOFEST, TÜBİTAK, eTwinning ve Erasmus+ gibi projelere ilişkin iş ve işlemleri inceler.',
+        'Etkinlik ve projeler için gerekli izin ve onay süreçlerine ilişkin iş ve işlemleri inceler.',
+        'Okuldaki DYK ve İYEP çalışmalarına öğrenci katılım süreçlerini izler.',
+        'Öğrenci kulübü çalışmalarının planlanması ve yürütülmesi aşamalarını inceler.',
+        'Kültürel, sanatsal ve sportif faaliyetlerin planlanması ile uygulanması aşamalarını inceler.',
+        'Okul idaresinin uygun gördüğü kültürel, sanatsal veya sportif faaliyetlerin birinde görev alır.'
+      ]
+    },
+    aile: {
+      ad: 'Aile Katılımı ve İş Birliği Uygulaması', ikon: '👨‍👩‍👧',
+      aciklama: 'Öğretmen adayı, öğrencilerin gelişim ve öğrenme ihtiyaçları doğrultusunda belirleyeceği bir amaç kapsamında, okul yönetimi ve eğitim personeli/uygulama öğretmeni rehberliğinde aile katılımına yönelik bir uygulama planlar ve gerçekleştirir. Uygulama; bireysel veli görüşmesi, grup veli çalışması, veli toplantısı, aile eğitim etkinliği, veli atölyesi, okul içi veya okul dışı aile katılım etkinliği ya da gerekli izinlerin alınması koşuluyla ev ziyareti biçiminde de düzenlenebilir. Öğretmen adayı uygulamanın amacını, hedef kitlesini, içeriğini, yöntemini, çalışma takvimini, kullanılacak materyalleri ve değerlendirme biçimini inceler. Süreçte velilerle etkili iletişim kurar. Bu uygulamaları yaparken gönüllülük, tarafsızlık, mesleki etik, kişisel verilerin korunması ve gizlilik ilkelerine uyar. Bu süreçte velinin açık rızası, okul yönetiminin onayı ve eğitim personeli/uygulama öğretmeninin katılımı veya doğrudan gözetimi altında yürütülen planlı bir eğitim uygulaması olması hususlarına dikkat eder.',
+      calismalar: [
+        'Aile katılımı uygulamasının amacını belirler.',
+        'Bireysel veli görüşmesi, grup veli çalışması, veli toplantısı, aile eğitim etkinliği ve veli atölyesi etkinliklerinden birinin içerik ve kapsamını belirler.',
+        'Okul idaresinin uygun gördüğü okul içi veya okul dışı aile katılım etkinliklerinden birini planlar.',
+        'Okul idaresinin uygun görmesi hâlinde eğitim personeli/uygulama öğretmeni ile ev ziyareti gerçekleştirir.',
+        'Okul aile birliğinin görev ve sorumluluklarını inceler.',
+        'Okul aile birliği ile diğer paydaşlar arasındaki iş birliğini inceler.',
+        'Aile katılımı ile ilgili uygulamalarda kullanılacak iletişim yöntemlerini belirler.',
+        'Yapılacak iş birlikleri ve toplantılar için okul yönetimi izin ve onaylarının alınma sürecini inceler.'
+      ]
+    },
+    iyi: {
+      ad: 'İyi Uygulama Örnekleri Paylaşımı', ikon: '💡',
+      /* Çalışmalar örnek niteliğinde: biri veya birkaçı seçilip yapılır */
+      secmeli: true,
+      aciklama: 'Öğretmen adayı; eğitim öğretim süreçlerinde uygulanmış ve başarılı sonuçlar elde edilmiş iyi uygulama örneklerini araştırır, inceler, karşılaştırır ve değerlendirir. Kendi deneyimleri veya Türkiye\'den ve farklı ülkelerden iyi uygulama örneklerini belirleyerek bu uygulamaların amaçlarını, kullanılan yöntem ve teknikleri, uygulama süreçlerini, öğretmen tutum ve davranışlarını, liderlik yaklaşımlarını ve eğitim sistemine katkılarını analiz eder. Öğretmen adayları belirledikleri bir iyi uygulama örneğini seçerek <strong>eğitim ve uygulama merkezinde</strong> sunar ve uygulama örneği üzerinde müzakere eder.',
+      calismalar: [
+        'Öğretmen adayları deneyimledikleri iyi uygulama örneklerini paylaşır.',
+        'Türkiye\'deki iyi uygulama örneklerini inceler.',
+        'Farklı ülkelerdeki iyi uygulama örneklerini araştırır ve karşılaştırır.',
+        'İyi uygulamalarda kullanılan yöntem ve tekniklerini analiz eder.',
+        'İyi uygulamalardaki liderlik davranışları ve problem çözme şekillerini inceler.',
+        'Uygulama sürecindeki örnek öğretmen tutum ve davranışlarını belirler ve değerlendirir.',
+        'Türk eğitim tarihindeki iyi uygulama örneklerini araştırır ve değerlendirir.',
+        'Belirlediği bir iyi uygulama örneğini eğitim ve uygulama merkezinde müzakere eder.'
+      ]
+    },
+    bilisim: {
+      ad: 'Bilişim Sistemleri ve MEBBİS Modülleri', ikon: '💻',
+      aciklama: 'Öğretmen adayı; MEBBİS modülünün amacı, kapsamı ve kullanım alanlarını inceler. Hizmet içi eğitim ve başvuru modüllerini inceler, uygulama öğretmeni ile birlikte eğitim öğretim süreçlerine ilişkin modüllerin (E-Okul, ÖBA, EBA, EBYS vb.) birinden veya birkaçından örnek uygulama ve e-okul sisteminden sınav tarihi ile not girişi yapar.',
+      calismalar: [
+        'MEBBİS modüllerinin amacı, kapsamı ve kullanım alanlarını inceler.',
+        'Hizmet içi eğitim ve başvuru modülünü inceler.',
+        'Öğretmenlerin mesleki gelişim ve eğitim süreçlerinde bilişim sistemlerinin kullanımını inceler.',
+        'Eğitim öğretim süreçlerinde kullanılan e-okul sisteminde uygulama yapar.',
+        'EBA\'nın eğitim öğretim süreçlerindeki etkisini inceler.',
+        'ÖBA\'nın öğretmenlerin mesleki gelişimindeki etkisini inceler.',
+        'EBYS\'nin elektronik belge ve resmî yazışma süreçlerindeki kullanımını inceler.',
+        'Uygulama öğretmeni rehberliğinde ilgili bilişim sistemlerine giriş ve temel kullanım işlemlerini gerçekleştirir.',
+        'Okul müdürü rehberliğinde MEBBİS ve diğer bilişim sistemlerine giriş ve temel kullanım işlemlerini gerçekleştirir.',
+        'Uygulama öğretmeni rehberliğinde örnek not girişini sistem üzerinden gerçekleştirir.'
+      ]
+    },
+    brans: {
+      ad: 'Branşa Özgü Atölye ve Uygulamalar', ikon: '🔬',
+      aciklama: 'Öğretmen adayı; branşının özelliklerine göre laboratuvar, atölye, işlik, kütüphane, müzik sınıfı, spor salonu, sanat atölyesi, uygulama sınıfı veya benzeri bir öğrenme ortamının fiziksel yapısı, donanımı, kullanım esasları ve işleyişini inceler. Belirlediği öğrenme çıktısına uygun olarak bu ortamın imkânları ve branşa özgü öğretim yöntemlerinden yararlanarak uygulamalı bir öğrenme etkinliği planlar ve gerçekleştirir. Uygulama öncesinde ortamın hazırlanması, araç gereçlerin seçilmesi, zamanın düzenlenmesi, öğrenci görevlerinin belirlenmesi ile gerekli sağlık ve güvenlik tedbirlerinin alınmasına yönelik planlama yapar. Öğretmen adayı; uygulama öğretmeni rehberliğinde sınıftaki öğrencilerin deney, gözlem, araştırma, üretim, tasarım ve uygulama etkinliklerine katılır. Etkinlik sonunda öğrencilerin ortaya koydukları ürün veya performanslarını belirlenen ölçütler doğrultusunda değerlendirir.',
+      calismalar: [
+        'Uygulama öğretmeniyle ders öncesinde planlama ve hazırlık görüşmesini yapar.',
+        'Uygulama yapılacak dersin sınıf düzeyi, ders konusu ve öğrenme çıktısını belirler.',
+        'Uygulama ortamında bulunan araç gereç, materyal ve teknolojik donanımını inceler.',
+        'Branşa özgü ortamın kullanım esasları ve işleyişini inceler.',
+        'Uygulama ortamının iş sağlığı ve güvenliği kurallarını inceler.',
+        'Öğrenme çıktısına uygun branşa özgü öğretim yöntem ve tekniklerini belirler.',
+        'Dersin öğretim sürecine ilişkin ders planını hazırlar.',
+        'Uygulama için teknolojik kaynakları, araç gereç ve materyali belirler.',
+        'Hazırlanan plan doğrultusunda uygulama öğretmen rehberliğinde dersi/uygulamalı etkinliği yürütür.',
+        'Branşa özgü öğretim yöntem ve tekniklerini kullanır.',
+        'Öğrencilerin deney, gözlem, araştırma, üretim, tasarım ve uygulama çalışmalarına aktif katılımını sağlar.',
+        'Uygulamanın sonunda öğrencilerin öğrenme çıktılarına ulaşma düzeyini ölçme ve değerlendirme yoluyla belirler.'
+      ]
+    }
+  };
+
+  /* ----------------------------------------------- 2. Haftalar ve formlar
+     1. ve 8. hafta herkes için sabit. Diğer sekiz haftaya sekiz görev,
+     uygulama öğretmeniyle yapılan plana göre kişinin kendisi tarafından
+     yerleştirilir (her görev bir kez). 8. hafta dışında her haftanın temel
+     görevi ders anlatımı ve uygulamadır; her hafta bir yansıtıcı gözlem formu,
+     8. hafta ise ona özel form doldurulur.                                   */
+  var SABIT = { 1: 'egitim', 8: 'iyi' };
+  var YER = { 8: 'Eğitim ve Uygulama Merkezinde' };
+  var SECMELI = ['izleme', 'nobet', 'olcme', 'kurul', 'sosyal', 'aile', 'bilisim', 'brans'];
+  var TEMEL = 'Uygulama öğretmeni rehberliğinde sınıf içi uygulama ve ders anlatımı yapılır; eğitim personeli uygun zaman dilimlerinde gözlemler ve değerlendirir.';
+
+  /* Değerlendirme formları — III. Dönem-Genel s.26-37. Madde numaraları
+     bölümlerden sırayla türetilir. */
+  var FORMLAR = [
+    { kim: 'Uygulama öğretmeni', ad: 'Uygulama Öğretmeni İçin Öğretmen Adayını Değerlendirme Formu', renk: '#1E8A9A', bolumler: [
+      ['Öğretimi Planlama ve Alan Bilgisini Öğretime Yansıtma', [
+        'Dersin amacına ve öğrenme çıktılarına uygun bir öğretim planı hazırlar.',
+        'Alanına ilişkin temel kavram ve ilkeleri doğru kullanır.',
+        'Alan bilgisini öğrencinin düzeyine uygun örnek ve açıklamalarla öğretime yansıtır.',
+        'Öğrencilerin hazırbulunuşluklarını ve ön öğrenmelerini dikkate alır.',
+        'Öğrencilerin bireysel farklılıklarını ve öğrenme ihtiyaçlarını dikkate alır.',
+        'Dersin amaçlarına uygun öğretim materyali, araç-gereç ve dijital kaynakları kullanır.']],
+      ['Öğretme-Öğrenme Sürecini Yürütme', [
+        'Öğrenme çıktılarına ve öğrenci özelliklerine uygun yöntem ve teknikleri kullanır.',
+        'Dersin başlangıcında öğrencilerin dikkatini ve ilgisini öğrenilecek konuya yöneltir.',
+        'Öğrencilerin derse etkin katılımını sağlar.',
+        'Öğrencilerin düşünmesini, sorgulamasını ve üretmesini teşvik eder.',
+        'Öğretimi öğrencilerin günlük yaşamları ve ön öğrenmeleriyle ilişkilendirir.',
+        'Öğretim sürecinde ortaya çıkan ihtiyaçlara göre gerekli uyarlamaları yapar.',
+        'Öğretim sürecinde zamanı etkili ve verimli kullanır.',
+        'Öğrencilerin derse yönelik ilgi ve motivasyonlarının devamını sağlar.']],
+      ['Sınıf Yönetimi ve Güvenli Öğrenme Ortamı', [
+        'Öğrenmeyi destekleyen düzenli ve güvenli bir sınıf ortamı oluşturur.',
+        'Sınıf kurallarını tutarlı biçimde uygular.',
+        'Dersin akışını bozan durumlara uygun ve ölçülü biçimde müdahale eder.',
+        'Sınıf içinde ortaya çıkan beklenmedik durumları soğukkanlı ve çözüm odaklı biçimde yönetir.']],
+      ['Öğrenciyle Etkileşim, İletişim ve Öğrenmenin İzlenmesi', [
+        'Öğrencilerle saygı ve güvene dayalı iletişim kurar.',
+        'Açıklama ve yönergelerini açık, anlaşılır ve öğrenci düzeyine uygun biçimde ifade eder.',
+        'Öğrencileri dikkatle dinler ve kendilerini ifade etmelerine imkân verir.',
+        'Türkçeyi etkili ve güzel kullanır.']],
+      ['Ölçme, Değerlendirme ve Geri Bildirim', [
+        'Dersin amacı ve öğrenme çıktılarına uygun ölçme ve değerlendirme yöntemleri kullanır.',
+        'Öğrencilerin öğrenme düzeylerini öğretim süreci boyunca izler.',
+        'Öğrencilerin öğrenme eksikliklerini belirler.',
+        'Öğrencilere zamanında, açık ve geliştirici geri bildirim verir.',
+        'Değerlendirme sonuçlarını öğretim sürecine yansıtır.']],
+      ['Mesleki Katılım ve İş Birliği', [
+        'Okulun çalışma düzenine, kurallarına ve işleyişine uyum sağlar.',
+        'Ders dışındaki eğitim, sosyal ve kültürel okul faaliyetlerine sorumluluk bilinciyle katılır.',
+        'Öğretmen, yönetici ve diğer okul çalışanlarıyla mesleki iş birliği yapar.']],
+      ['Mesleki Tutum ve Değerler', [
+        'Görev ve sorumluluklarını zamanında ve özenle yerine getirir.',
+        'Öğrencilere ve okul çalışanlarına karşı saygılı, adil ve ölçülü davranır.',
+        'Öğretmenlik mesleğinin gerektirdiği ahlaki ilkelere uygun davranır.',
+        'Tutum ve davranışlarıyla öğrencilere olumlu örnek olur.',
+        'Kendisine verilen geri bildirimleri dikkate alır ve sonraki uygulamalarına yansıtır.']],
+      /* Basılı formda bu bölümün başlığı yanlışlıkla "Mesleki Katılım ve İş
+         Birliği" yazılmış; maddeler diğer formlardaki bu bölümle aynı. */
+      ['Mesleki Temsil, Nezaket ve Kılık Kıyafet', [
+        'Kılık ve kıyafetinde öğretmenlik mesleğinin saygınlığına ve eğitim ortamının gerektirdiği ölçülülüğe özen gösterir.',
+        'Konuşma, hitap ve davranışlarında nezaket, saygı ve edep ölçülerini gözetir.',
+        'Öğrencilerle ve okul çalışanlarıyla ilişkilerinde öğretmenlik mesleğinin gerektirdiği sınır ve mesafeyi korur.']]
+    ] },
+    { kim: 'Eğitim personeli', ad: 'Eğitim Personeli İçin Öğretmen Adayını Değerlendirme Formu', renk: '#5E9468', bolumler: [
+      ['Öğretimi Planlama ve Alan Bilgisini Öğretime Yansıtma', [
+        'Dersin amacına ve öğrenme çıktılarına uygun bir öğretim planı hazırlar.',
+        'Alanına ilişkin temel kavram ve ilkeleri doğru kullanır.',
+        'Alan bilgisini öğrencinin düzeyine uygun örnek ve açıklamalarla öğretime yansıtır.',
+        'Öğrencilerin hazırbulunuşluklarını ve ön öğrenmelerini dikkate alır.',
+        'Öğrencilerin bireysel farklılıklarını ve öğrenme ihtiyaçlarını dikkate alır.']],
+      ['Öğretme-Öğrenme Sürecini Yürütme', [
+        'Öğrenme çıktılarına ve öğrenci özelliklerine uygun yöntem ve teknikleri kullanır.',
+        'Öğrencilerin derse etkin katılımını sağlar.',
+        'Öğrencilerin düşünmesini, sorgulamasını ve üretmesini teşvik eder.',
+        'Öğretimi öğrencilerin günlük yaşamları ve önceki öğrenmeleriyle ilişkilendirir.',
+        'Öğretim sürecinde ortaya çıkan ihtiyaçlara göre gerekli uyarlamaları yapar.']],
+      ['Öğrenciyle Etkileşim, İletişim ve Öğrenmenin İzlenmesi', [
+        'Öğrencilerle saygı ve güvene dayalı iletişim kurar.',
+        'Açıklama ve yönergelerini açık, anlaşılır ve öğrenci düzeyine uygun biçimde ifade eder.',
+        'Öğrencileri dikkatle dinler ve kendilerini ifade etmelerine imkân verir.',
+        'Türkçeyi etkili ve güzel kullanır.']],
+      ['Mesleki Gelişim ve Yansıtıcı Uygulama', [
+        'Geri bildirimleri dikkate alır ve sonraki uygulamalarına yansıtır.',
+        'Kendi öğretim uygulamalarının güçlü ve geliştirilmesi gereken yönlerini fark eder.',
+        'Önceki uygulamalarına göre mesleki gelişim gösterir.',
+        'Karşılaştığı mesleki sorunları analiz ederek uygun çözüm yolları geliştirir.',
+        'Mesleki gelişimi için öğrenmeye, araştırmaya ve kendini yenilemeye isteklidir.']],
+      ['Akademi Eğitiminin Uygulamaya Yansıması', [
+        'Akademide edindiği teorik bilgileri sınıf içi uygulamalarına yansıtır.',
+        'Akademide öğrendiği öğretim yöntem ve yaklaşımları uygun durumlarda kullanır.',
+        'Akademide kazandığı mesleki tutum ve değerleri okul ortamındaki davranışlarına yansıtır.']],
+      ['Mesleki Tutum ve Değerler', [
+        'Görev ve sorumluluklarını zamanında ve özenle yerine getirir.',
+        'Öğrencilere ve okul çalışanlarına karşı saygılı, adil ve ölçülü davranır.',
+        'Öğretmenlik mesleğinin gerektirdiği ahlaki ilkelere uygun davranır.',
+        'Tutum ve davranışlarıyla öğrencilere olumlu örnek olur.']],
+      ['Mesleki Temsil, Nezaket ve Kılık Kıyafet', [
+        'Kılık ve kıyafetinde öğretmenlik mesleğinin saygınlığına ve eğitim ortamının gerektirdiği ölçülülüğe özen gösterir.',
+        'Konuşma, hitap ve davranışlarında nezaket, saygı ve edep ölçülerini gözetir.',
+        'Öğrencilerle ve okul çalışanlarıyla ilişkilerinde öğretmenlik mesleğinin gerektirdiği sınır ve mesafeyi korur.']]
+    ] },
+    { kim: 'Okul müdürü', ad: 'Okul Müdürü İçin Öğretmen Adayını Değerlendirme Formu', renk: '#D9674A', bolumler: [
+      ['Okula Uyum, Görev ve Sorumluluk', [
+        'Görev ve sorumluluklarını zamanında ve özenle yerine getirir.',
+        'Okulun çalışma düzenine, kurallarına ve işleyişine uyum sağlar.',
+        'Okula ve uygulama görevlerine zamanında gelir.',
+        'Öğretmenlik uygulamasına devam ve katılım konusunda sorumluluk gösterir.']],
+      ['Mesleki Katılım ve İş Birliği', [
+        'Ders dışındaki eğitim, sosyal ve kültürel okul faaliyetlerine sorumluluk bilinciyle katılır.',
+        'Öğretmen, yönetici ve diğer okul çalışanlarıyla mesleki iş birliği yapar.',
+        'Okulda yapılan zümre, kurul, toplantı ve diğer mesleki çalışmalara katılır.',
+        'Okulun eğitim öğretim faaliyetlerine katkı sağlayan bir tutum sergiler.']],
+      ['Öğrenciyle İlişkiler ve Öğretmenlik Rolü', [
+        'Öğrencilere ve okul çalışanlarına karşı saygılı, adil ve ölçülü davranır.',
+        'Tutum ve davranışlarıyla öğrencilere olumlu örnek olur.',
+        'Öğrencilerin kişilik haklarını ve mahremiyetini gözetir.',
+        'Öğrencilerle kurduğu ilişkilerde güven veren bir öğretmen profili sergiler.']],
+      ['Mesleki Tutum ve Değerler', [
+        'Öğretmenlik mesleğinin gerektirdiği ahlaki ilkelere uygun davranır.',
+        'Geri bildirimleri dikkate alır ve sonraki uygulamalarına yansıtır.',
+        'Millî, manevi, ahlaki ve kültürel değerleri gözeten bir öğretmenlik anlayışı sergiler.',
+        'Mesleğin saygınlığına uygun tutum ve davranış sergiler.',
+        'Okul ortamına ve öğretmenlik rolüne uyum konusunda gelişim gösterir.']],
+      ['Mesleki Temsil, Nezaket ve Kılık Kıyafet', [
+        'Kılık ve kıyafetinde öğretmenlik mesleğinin saygınlığına ve eğitim ortamının gerektirdiği ölçülülüğe özen gösterir.',
+        'Konuşma, hitap ve davranışlarında nezaket, saygı ve edep ölçülerini gözetir.',
+        'Öğrencilerle ve okul çalışanlarıyla ilişkilerinde öğretmenlik mesleğinin gerektirdiği sınır ve mesafeyi korur.']]
+    ] }
+  ];
+  var HARFLER = ['A', 'B', 'C', 'Ç', 'D', 'E', 'F', 'G', 'Ğ', 'H'];
+  var OLCEK = ['Yetersiz', 'Geliştirilmeli', 'İyi', 'Çok İyi'];
+
+  var HUSUSLAR = [
+    'Uygulama öncesinde okul yöneticileri ve uygulama öğretmenleri ile hazırlık toplantısı yapılır, paydaşlar bilgilendirilir ve gerekli destek sağlanır.',
+    'Uygulama süreçleri, uygulama öğretmeni/eğitim personeli danışmanlığında planlanır; öğretim programı ve çalışma takvimi ile uyumlu şekilde yürütülerek öğrenme kaybı yaşanmaması için gerekli tedbirler alınır.',
+    'Öğretmen adaylarının 10 hafta boyunca günlük 6 saat olmak üzere haftada 30 saat uygulama yapmaları ve programda yer alan tüm konuları tamamlamaları esastır.',
+    'Eğitim personeli, öğretmen adayına 8. haftada yapılacak İyi Uygulama Örnekleri Paylaşımı çalışmalarına yönelik hazırlık yapmaları için 1. haftada bilgi verir.',
+    'Uygulama öğretmeninin dersinin bulunmadığı saatlerde öğretmen adayı, okul idaresinin uygun gördüğü ve eğitim personelinin planlaması doğrultusunda diğer öğretmenlerle haftalık konularını tamamlar.',
+    'Öğretmen adayları; uygulama öğretmeninin planlaması ve okul idaresinin uygun görmesi hâlinde farklı öğretmen, sınıf ve şubelerde de uygulamalara katılabilir.',
+    'Eğitim personeli, öğretmen adaylarını uygulamalı eğitim süresince düzenli olarak takip edecek ve derslerine fiilen katılarak gözlemleyecektir.',
+    'Okul müdürü, eğitim personeli ve uygulama öğretmeni değerlendirmelerini objektif, ölçülebilir ve tutarlı şekilde gerçekleştirecektir.',
+    'Tam zamanlı öğretmenlik deneyimi uygulamaları esnasında elde edilen her türlü veri, belge ve kayıt; sosyal medya, dijital platformlar, bulut sistemleri veya üçüncü kişilerle hiçbir şekilde paylaşılmamalı; yalnızca eğitim öğretim ve bilimsel amaçlarla yetkili mercilerin belirlediği sınırlar içinde kullanılmalıdır.',
+    'Tam zamanlı öğretmenlik deneyimi uygulamalarında Kişisel Verilerin Korunması Kanunu (KVKK) hükümlerine uygun davranılacaktır.'
+  ];
+
+  D8.TZOD = { GOREV: GOREV, SABIT: SABIT, SECMELI: SECMELI, FORMLAR: FORMLAR };
+
+  /* ------------------------------------------------------------ 3. Durum
+     Asıl kaynak staj verisi (buluta eşitlenir). Staj modülü yoksa yerel. */
+  var YEDEK = 'd8TzodYedek';
+  function temiz(v) { return { gorevler: (v && v.gorevler) || {}, form: (v && v.form) || {}, isaret: (v && v.isaret) || {} }; }
+  function durum() {
+    var v = null;
+    try { if (typeof D8.stajVeri === 'function') v = D8.stajVeri(); } catch (e) {}
+    if (v) return temiz(v);
+    try { var y = JSON.parse(localStorage.getItem(YEDEK) || 'null'); if (y) return temiz(y); } catch (e) {}
+    return temiz(null);
+  }
+  function guncelle(fn) {
+    if (typeof D8.stajGuncelle === 'function') { D8.stajGuncelle(fn); return; }
+    var d = durum(); fn(d);
+    try { localStorage.setItem(YEDEK, JSON.stringify(d)); } catch (e) {}
+    try { if (typeof D8.d34Tazele === 'function') D8.d34Tazele(); } catch (e) {}
+  }
+
+  /* Yeniden çizimde korunan arayüz durumu */
+  var acik = null;          /* açık haftalar; ilk açılışta içinde bulunulan hafta */
+  var formSecili = 0;       /* değerlendirme formlarında seçili sekme */
+
+  /* ------------------------------------------------------ 4. Yardımcılar */
+  var AY = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+  function pIso(s) { var p = String(s).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function pazartesi(d) { var x = new Date(d); x.setHours(0, 0, 0, 0); var g = x.getDay(); x.setDate(x.getDate() - (g === 0 ? 6 : g - 1)); return x; }
+  function kisa(d) { return d.getDate() + ' ' + AY[d.getMonth()]; }
+
+  /** 10 uygulama haftasının pazartesileri — tam tatil haftaları atlanır (D8.hafta ile hizalı) */
+  function haftalar() {
+    var d3 = (D8.DONEMLER || {}).d3; if (!d3) return [];
+    var cur = pazartesi(pIso(d3.bas)), out = [], g = 0;
+    while (out.length < 10 && g++ < 30) {
+      var tatil = false;
+      try { tatil = typeof D8.tatilHaftasiMi === 'function' && D8.tatilHaftasiMi(cur); } catch (e) {}
+      if (!tatil) out.push(new Date(cur));
+      cur = new Date(cur); cur.setDate(cur.getDate() + 7);
+    }
+    return out;
+  }
+  function simdikiHafta() {
+    try {
+      var h = D8.hafta(new Date(), 'd3');
+      if (!h || h.durum === 'once') return { no: 0, bitti: false };
+      if (h.durum === 'bitti') return { no: 0, bitti: true };
+      return { no: h.no, bitti: false };
+    } catch (e) { return { no: 0, bitti: false }; }
+  }
+  function gorevKodu(no, d) {
+    if (SABIT[no]) return SABIT[no];
+    var k = d.gorevler[no];
+    return GOREV[k] && SECMELI.indexOf(k) > -1 ? k : null;
+  }
+  function gorevHaftasi(kod, d) {
+    for (var w = 1; w <= 10; w++) if (!SABIT[w] && d.gorevler[w] === kod) return w;
+    return 0;
+  }
+  function isaretSayisi(d, kod) {
+    var g = GOREV[kod]; if (!g) return 0;
+    return (d.isaret[kod] || []).filter(function (i) { return i < g.calismalar.length; }).length;
+  }
+
+  /* -------------------------------------------------------- 5. Etkileşim */
+  /** Haftaya görev yerleştirir. Görev başka haftadaysa oradan alınır (her görev bir kez). */
+  window.d8TzodGorev = function (no, kod) {
+    no = Number(no);
+    if (SABIT[no]) return;
+    guncelle(function (v) {
+      v.gorevler = v.gorevler || {};
+      if (kod && SECMELI.indexOf(kod) > -1) {
+        Object.keys(v.gorevler).forEach(function (w) { if (v.gorevler[w] === kod) delete v.gorevler[w]; });
+        v.gorevler[no] = kod;
+      } else {
+        delete v.gorevler[no];
+      }
+    });
+  };
+  window.d8TzodForm = function (no, on) {
+    guncelle(function (v) { v.form = v.form || {}; if (on) v.form[no] = true; else delete v.form[no]; });
+  };
+  window.d8TzodIsaret = function (kod, i, on) {
+    guncelle(function (v) {
+      v.isaret = v.isaret || {};
+      var l = (v.isaret[kod] || []).filter(function (x) { return x !== i; });
+      if (on) l.push(i);
+      l.sort(function (a, b) { return a - b; });
+      v.isaret[kod] = l;
+    });
+  };
+  window.d8TzodAc = function (no, a) {
+    if (!acik) acik = {};
+    if (a) acik[no] = true; else delete acik[no];
+  };
+  /** Değerlendirme formu sekmesi — yeniden çizim yok, yalnız görünürlük */
+  window.d8TzodFormSec = function (btn, i) {
+    formSecili = i;
+    var kap = btn.closest('.tz-fm'); if (!kap) return;
+    kap.querySelectorAll('.tz-fm-sekme button').forEach(function (b, n) {
+      b.classList.toggle('on', n === i); b.setAttribute('aria-selected', n === i);
+    });
+    kap.querySelectorAll('.tz-fm-panel').forEach(function (p, n) { p.hidden = n !== i; });
+  };
+
+
+  /* ------------------------------------------ 6b. Yansıtıcı günlük formları
+     Kaynak: III. Dönem-Genel s.22-25. 8. hafta dışındaki dokuz hafta için
+     dört bölümlü form, 8. hafta için tek bölümlü (en az 500 kelime) form.
+
+     Metinler YALNIZCA bu cihazda (localStorage) tutulur, buluta gönderilmez:
+     yönerge uygulama sırasında elde edilen kayıtların bulut sistemlerinde
+     paylaşılmamasını istiyor. Buluta yalnızca "doldurdum" işareti gider.
+     Bitmiş form yazdırılır / PDF alınır ya da kopyalanıp resmî forma aktarılır. */
+  var GUNLUK_9 = {
+    ad: 'Tam Zamanlı Öğretmenlik Deneyimi Yansıtıcı Günlük Formu',
+    kunye: [['ad', 'Öğretmen adayı adı-soyadı'], ['okul', 'Uygulama yapılan okul', 1], ['sinif', 'Sınıf/Ders', 1], ['ogretmen', 'Uygulama öğretmeni adı-soyadı', 1], ['tarih', 'Tarih', 1]],
+    bolumler: [
+      { k: 'ozet', ad: 'Haftanın Özeti', min: 200,
+        soru: 'Eğitim personeli ve uygulama öğretmeni ile bu haftaki süreci nasıl planladınız? Planlarınızı hangi uygulama görevlerine göre oluşturdunuz? Planlarınız ne ölçüde gerçekleşti?' },
+      { k: 'yeni', ad: 'Yeni Öğrenmeler', min: 300,
+        soru: 'Planını yaptığınız uygulama görevleri öğretmenlik mesleği açısından size hangi yeni öğrenmeleri kazandırdı?' },
+      { k: 'sorgu', ad: 'Sorgulama', min: 200,
+        soru: 'Eğitim personeli ve uygulama öğretmeni ile bu haftaki süreci nasıl planladınız? Planlarınızı hangi uygulama görevlerine göre oluşturdunuz? Planlarınız ne ölçüde gerçekleşti?',
+        uyari: 'Basılı formda bu bölümün sorusu "Haftanın Özeti" ile aynı yazılmış. Neyin beklendiğini eğitim personeline teyit et.' },
+      { k: 'deger', ad: 'Değerlendirme', min: 300,
+        soru: 'Bu haftaki uygulamalardan edindiğiniz deneyimlerin mesleki gelişiminize katkısı nelerdir? Açıklayınız.' }
+    ]
+  };
+  var GUNLUK_8 = {
+    ad: 'Tam Zamanlı Öğretmenlik Deneyimi Yansıtıcı Günlük Formu (8. Hafta için)',
+    kunye: [['ad', 'Öğretmen adayı adı-soyadı'], ['yer', 'Uygulama yeri'], ['ep', 'Eğitim personeli adı-soyadı'], ['tarih', 'Tarih', 1]],
+    bolumler: [
+      { k: 'metin', ad: '8. Hafta', min: 500,
+        soru: 'Deneyimlerinizi kaydetmek ve yansıtma yapmak amacıyla bu formu doldurunuz. Düşüncelerinizi özgün ve yansıtıcı bir bakış açısıyla aktarmanız beklenmektedir.' }
+    ]
+  };
+  function gunlukFormu(no) { return no === 8 ? GUNLUK_8 : GUNLUK_9; }
+  function formAdi(no) { return no === 8 ? '8. hafta yansıtıcı günlük formu' : 'Yansıtıcı günlük formu'; }
+
+  var G_ANAHTAR = 'd8Gunluk';
+  function gOku() {
+    try { var v = JSON.parse(localStorage.getItem(G_ANAHTAR) || 'null'); if (v && typeof v === 'object') return { kunye: v.kunye || {}, hafta: v.hafta || {} }; } catch (e) {}
+    return { kunye: {}, hafta: {} };
+  }
+  function gYaz(v) { try { localStorage.setItem(G_ANAHTAR, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  function kelime(s) { return (String(s || '').match(/[\p{L}\p{N}]+(?:['’][\p{L}]+)*/gu) || []).length; }
+  function kac(x) {
+    return String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /** Haftanın günlük özeti: bölüm bazında kelime sayıları */
+  function gunlukDurum(no) {
+    var f = gunlukFormu(no), h = (gOku().hafta[no] || {}).metin || {};
+    var toplam = 0, yazildi = false, tamam = true;
+    var b = f.bolumler.map(function (x) {
+      var n = kelime(h[x.k]); toplam += n; if (n) yazildi = true; if (n < x.min) tamam = false;
+      return { ad: x.ad, n: n, min: x.min };
+    });
+    return { bolumler: b, toplam: toplam, yazildi: yazildi, tamam: tamam };
+  }
+
+  /* Künye: her hafta aynı kalan alanlar ortak, "yerel" (1) olanlar haftaya özel.
+     Okul ve uygulama öğretmeni staj çizelgesinden önerilir. */
+  function kunyeDegeri(no, alan, g) {
+    var hf = g.hafta[no] || {};
+    if (alan === 'tarih') {
+      if (hf.tarih) return hf.tarih;
+      var pz = haftalar()[no - 1]; if (!pz) return '';
+      var c = new Date(pz); c.setDate(c.getDate() + 4);
+      return c.getFullYear() + '-' + String(c.getMonth() + 1).padStart(2, '0') + '-' + String(c.getDate()).padStart(2, '0');
+    }
+    if (alan === 'sinif') {
+      if (hf.sinif != null) return hf.sinif;
+      for (var w = no - 1; w >= 1; w--) if (g.hafta[w] && g.hafta[w].sinif) return g.hafta[w].sinif;
+      return '';
+    }
+    if (PROGRAMDAN[alan]) {
+      /* Haftaya özel değişiklik varsa o; yoksa Uygulama Programım'daki değer */
+      if (hf[alan] != null) return hf[alan];
+      return programDegeri(alan) || g.kunye[alan] || '';
+    }
+    return g.kunye[alan] || '';
+  }
+
+  /* Uygulama Programım'dan varsayılan gelen künye alanları */
+  var PROGRAMDAN = { okul: 'okul', ogretmen: 'danisman' };
+  function programDegeri(alan) {
+    var s = null; try { s = typeof D8.stajVeri === 'function' ? D8.stajVeri() : null; } catch (e) {}
+    return s && PROGRAMDAN[alan] ? String(s[PROGRAMDAN[alan]] || '').trim() : '';
+  }
+  /** Alanın altındaki not: programdan mı geldi, değiştirildiyse geri alma */
+  function programNotu(alan, deger) {
+    var p = programDegeri(alan);
+    if (!p) return 'Uygulama Programım\'da girilmemiş';
+    if (String(deger).trim() === p) return '📌 Uygulama Programım\'dan';
+    return 'Bu formda değiştirildi · <button type="button" onclick="d8GunlukProgramaDon(\'' + alan + '\')">Programdakine dön</button>';
+  }
+  /* Sınıf/Ders önerileri: programdaki ders blokları */
+  function sinifOnerileri() {
+    var s = null, set = {}, out = [];
+    try { s = typeof D8.stajVeri === 'function' ? D8.stajVeri() : null; } catch (e) {}
+    if (!s || !s.gunler) return out;
+    for (var gg = 1; gg <= 5; gg++) {
+      (s.gunler[gg] || []).forEach(function (b) {
+        if (b.tur === 'bos' || !b.ad) return;
+        var v = b.yer && b.ad.indexOf(b.yer) < 0 ? b.yer + ' / ' + b.ad : b.ad;
+        if (!set[v]) { set[v] = 1; out.push(v); }
+      });
+    }
+    return out;
+  }
+
+  var gAcik = 0, gZaman = null;
+
+  window.d8GunlukAc = function (no) {
+    stil();
+    gAcik = no;
+    var f = gunlukFormu(no), g = gOku(), hf = g.hafta[no] || {}, metin = hf.metin || {};
+    var kod = gorevKodu(no, durum());
+    var ov = document.createElement('div');
+    ov.id = 'tz-gunluk'; ov.className = 'staj-ov tz-gov';
+    var h = '<div class="staj-ov-kutu tz-gkutu" role="dialog" aria-modal="true" aria-labelledby="tz-g-baslik">';
+    h += '<div class="staj-ov-bas"><span id="tz-g-baslik">✍️ ' + no + '. hafta · Yansıtıcı günlük</span>' +
+         '<button class="staj-ov-kapat" onclick="d8GunlukKapat()" aria-label="Kapat">✕</button></div>';
+    h += '<div class="staj-ov-govde tz-ggovde">';
+    h += '<div class="tz-g-form">' + f.ad + (kod ? '<br><span>Bu haftanın görevi: ' + GOREV[kod].ad + '</span>' : '') + '</div>';
+    h += '<div class="tz-g-kunye">';
+    f.kunye.forEach(function (k) {
+      var id = 'tz-gk-' + k[0], deger = kunyeDegeri(no, k[0], g);
+      var liste = k[0] === 'sinif' ? sinifOnerileri() : [];
+      h += '<label for="' + id + '"><span>' + k[1] + '</span><input id="' + id + '" type="' + (k[0] === 'tarih' ? 'date' : 'text') +
+           '" value="' + kac(deger) + '"' + (liste.length ? ' list="tz-gk-sinif-l"' : '') +
+           ' oninput="d8GunlukKunye(\'' + k[0] + '\',this.value,' + (k[2] ? 1 : 0) + ')">';
+      if (liste.length) h += '<datalist id="tz-gk-sinif-l">' + liste.map(function (v) { return '<option value="' + kac(v) + '">'; }).join('') + '</datalist>';
+      if (PROGRAMDAN[k[0]]) h += '<small class="tz-gk-not" id="tz-gk-not-' + k[0] + '">' + programNotu(k[0], deger) + '</small>';
+      h += '</label>';
+    });
+    h += '</div>';
+    f.bolumler.forEach(function (b) {
+      var n = kelime(metin[b.k]);
+      h += '<section class="tz-g-bol" data-k="' + b.k + '" data-min="' + b.min + '">';
+      h += '<div class="tz-g-bb"><h4>' + b.ad + '</h4><span class="tz-g-say' + (n >= b.min ? ' ok' : '') + '">' + n + ' / ' + b.min + ' kelime</span></div>';
+      h += '<p class="tz-g-soru">' + b.soru + ' <em>(En az ' + b.min + ' kelime)</em></p>';
+      if (b.uyari) h += '<p class="tz-g-uyari">' + b.uyari + '</p>';
+      h += '<div class="tz-g-bar"><i style="width:' + Math.min(100, Math.round(n / b.min * 100)) + '%"></i></div>';
+      h += '<textarea rows="' + (b.min >= 500 ? 16 : 8) + '" aria-label="' + b.ad + '" oninput="d8GunlukYaz(\'' + b.k + '\',this)">' + kac(metin[b.k] || '') + '</textarea>';
+      h += '</section>';
+    });
+    h += '<p class="tz-g-gizlilik">🔒 Bu metin yalnızca bu cihazda saklanır, buluta yüklenmez. Yönerge, uygulamada elde edilen kayıtların bulut sistemlerinde paylaşılmamasını istiyor. Öğrenci adı ya da kimliğini belli eden bilgi yazma. Bitirince yazdır veya kopyalayıp resmî forma aktar.</p>';
+    h += '</div>';
+    h += '<div class="staj-ov-alt tz-galt"><span class="tz-g-kayit" id="tz-g-kayit">Kaydedildi</span>' +
+         '<button class="staj-btn-sec" onclick="d8GunlukKopyala()">Kopyala</button>' +
+         '<button class="staj-btn-sec" onclick="d8GunlukYazdir()">Yazdır / PDF</button>' +
+         '<button class="staj-btn" onclick="d8GunlukKapat()">Bitti</button></div>';
+    h += '</div>';
+    ov.innerHTML = h;
+    ov.addEventListener('click', function (e) { if (e.target === ov) window.d8GunlukKapat(); });
+    document.body.appendChild(ov);
+    document.body.style.overflow = 'hidden';
+    var ilk = ov.querySelector('textarea'); if (ilk && !metin[f.bolumler[0].k]) setTimeout(function () { ilk.focus(); }, 60);
+  };
+
+  function kayitBildir(ok) {
+    var el = document.getElementById('tz-g-kayit'); if (!el) return;
+    el.textContent = ok ? 'Kaydedildi' : 'Kaydedilemedi: tarayıcı depolaması kapalı ya da dolu';
+    el.classList.toggle('hata', !ok);
+  }
+
+  window.d8GunlukYaz = function (alan, ta) {
+    var sec = ta.closest('.tz-g-bol'), min = Number(sec.getAttribute('data-min'));
+    var n = kelime(ta.value), say = sec.querySelector('.tz-g-say');
+    say.textContent = n + ' / ' + min + ' kelime'; say.classList.toggle('ok', n >= min);
+    sec.querySelector('.tz-g-bar i').style.width = Math.min(100, Math.round(n / min * 100)) + '%';
+    var no = gAcik, deger = ta.value;
+    var el = document.getElementById('tz-g-kayit'); if (el) { el.textContent = 'Yazılıyor…'; el.classList.remove('hata'); }
+    clearTimeout(gZaman);
+    gZaman = setTimeout(function () {
+      var g = gOku(); g.hafta[no] = g.hafta[no] || {}; g.hafta[no].metin = g.hafta[no].metin || {};
+      g.hafta[no].metin[alan] = deger; g.hafta[no].guncel = Date.now();
+      kayitBildir(gYaz(g));
+    }, 400);
+  };
+  window.d8GunlukKunye = function (alan, deger, yerel) {
+    var g = gOku(), no = gAcik;
+    if (yerel) {
+      g.hafta[no] = g.hafta[no] || {};
+      /* Programdaki değerle aynıysa ayrıca saklama: program değişirse form da izlesin */
+      if (PROGRAMDAN[alan] && String(deger).trim() === programDegeri(alan)) delete g.hafta[no][alan];
+      else g.hafta[no][alan] = deger;
+    } else g.kunye[alan] = deger;
+    kayitBildir(gYaz(g));
+    var not = document.getElementById('tz-gk-not-' + alan);
+    if (not) not.innerHTML = programNotu(alan, deger);
+  };
+  window.d8GunlukProgramaDon = function (alan) {
+    var g = gOku(), no = gAcik;
+    if (g.hafta[no]) delete g.hafta[no][alan];
+    kayitBildir(gYaz(g));
+    var el = document.getElementById('tz-gk-' + alan), p = programDegeri(alan);
+    if (el) el.value = p;
+    var not = document.getElementById('tz-gk-not-' + alan);
+    if (not) not.innerHTML = programNotu(alan, p);
+  };
+  window.d8GunlukKapat = function () {
+    /* Bekleyen yazımı hemen kaydet */
+    var ov = document.getElementById('tz-gunluk');
+    if (ov) {
+      clearTimeout(gZaman);
+      var g = gOku(), no = gAcik; g.hafta[no] = g.hafta[no] || {}; g.hafta[no].metin = g.hafta[no].metin || {};
+      ov.querySelectorAll('.tz-g-bol').forEach(function (s) { g.hafta[no].metin[s.getAttribute('data-k')] = s.querySelector('textarea').value; });
+      gYaz(g);
+      ov.parentNode.removeChild(ov);
+    }
+    document.body.style.overflow = '';
+    try { if (typeof D8.d34Tazele === 'function') D8.d34Tazele(); } catch (e) {}
+  };
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && document.getElementById('tz-gunluk')) { e.preventDefault(); e.stopPropagation(); window.d8GunlukKapat(); }
+  }, true);
+
+  /** Formun güncel içeriği (açık editörden) — yazdırma ve kopyalama için */
+  function formIcerik() {
+    var no = gAcik, f = gunlukFormu(no), ov = document.getElementById('tz-gunluk');
+    var k = f.kunye.map(function (x) {
+      var el = ov && ov.querySelector('#tz-gk-' + x[0]);
+      var v = el ? el.value : '';
+      if (x[0] === 'tarih' && v) { var p = v.split('-'); v = p[2] + '.' + p[1] + '.' + p[0]; }
+      return [x[1], v];
+    });
+    var b = f.bolumler.map(function (x) {
+      var el = ov && ov.querySelector('.tz-g-bol[data-k="' + x.k + '"] textarea');
+      return { ad: x.ad, soru: x.soru, min: x.min, metin: el ? el.value : '' };
+    });
+    return { ad: f.ad, no: no, kunye: k, bolumler: b };
+  }
+
+  window.d8GunlukKopyala = function () {
+    var c = formIcerik(), t = c.ad + '\n\n';
+    c.kunye.forEach(function (k) { t += k[0] + ': ' + k[1] + '\n'; });
+    c.bolumler.forEach(function (b) { t += '\n' + b.ad.toLocaleUpperCase('tr-TR') + '\n' + b.soru + '\n\n' + b.metin.trim() + '\n'; });
+    var bitti = function (ok) { try { if (typeof window.d8ShowToast === 'function') window.d8ShowToast(ok ? '📋 Form metni kopyalandı' : 'Kopyalanamadı'); } catch (e) {} };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { bitti(true); }, function () { bitti(false); });
+    else {
+      var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} ta.remove(); bitti(ok);
+    }
+  };
+
+  window.d8GunlukYazdir = function () {
+    var c = formIcerik();
+    var h = '<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>' + kac(c.ad) + ' – ' + c.no + '. Hafta</title><style>' +
+      '@page{size:A4;margin:18mm 16mm}body{font-family:Arial,Helvetica,sans-serif;color:#111;font-size:11pt;line-height:1.5}' +
+      'h1{font-size:14pt;margin:0 0 4pt}h1 small{display:block;font-size:10pt;font-weight:normal;color:#444}' +
+      'table{border-collapse:collapse;width:100%;margin:10pt 0 14pt}td{border:1px solid #999;padding:4pt 7pt;font-size:10pt}td:first-child{width:38%;font-weight:bold;background:#f2f2f2}' +
+      'h2{font-size:12pt;margin:14pt 0 2pt;border-bottom:1.5pt solid #1f4e79;color:#1f4e79}.soru{font-size:9.5pt;color:#333;margin:0 0 6pt}' +
+      '.metin{white-space:pre-wrap;border:1px solid #999;padding:7pt 9pt;min-height:60pt}.say{font-size:8.5pt;color:#555;text-align:right;margin-top:2pt}' +
+      '</style></head><body>';
+    h += '<h1>' + kac(c.ad) + '<small>III. Dönem · ' + c.no + '. Hafta</small></h1><table>';
+    c.kunye.forEach(function (k) { h += '<tr><td>' + kac(k[0]) + '</td><td>' + kac(k[1]) + '</td></tr>'; });
+    h += '</table>';
+    c.bolumler.forEach(function (b) {
+      h += '<h2>' + kac(b.ad) + '</h2><p class="soru">' + kac(b.soru) + ' (En az ' + b.min + ' kelime ile anlatınız.)</p>' +
+           '<div class="metin">' + kac(b.metin.trim()) + '</div><div class="say">' + kelime(b.metin) + ' kelime</div>';
+    });
+    h += '</body></html>';
+    var fr = document.createElement('iframe');
+    fr.setAttribute('aria-hidden', 'true');
+    fr.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+    document.body.appendChild(fr);
+    var dok = fr.contentWindow.document; dok.open(); dok.write(h); dok.close();
+    setTimeout(function () {
+      try { fr.contentWindow.focus(); fr.contentWindow.print(); } catch (e) {}
+      setTimeout(function () { fr.remove(); }, 1500);
+    }, 250);
+  };
+
+  /** Hafta gövdesindeki günlük kartı */
+  function gunlukKarti(no, d) {
+    var gd = gunlukDurum(no), formOk = !!d.form[no], fid = 'tz-form-' + no;
+    var h = '<div class="tz-gunluk' + (formOk ? ' ok' : '') + '">';
+    h += '<div class="tz-gunluk-ust"><div><strong>✍️ ' + (no === 8 ? '8. hafta yansıtıcı günlük formu' : 'Yansıtıcı günlük formu') + '</strong>' +
+         '<span>' + (no === 8 ? 'Tek bölüm, en az 500 kelime.' : 'Dört bölüm, toplam en az 1000 kelime.') + '</span></div>' +
+         '<button type="button" class="staj-btn-mini" onclick="d8GunlukAc(' + no + ')">' + (gd.yazildi ? 'Devam et' : 'Formu doldur') + '</button></div>';
+    if (gd.yazildi) {
+      h += '<div class="tz-gunluk-b">';
+      gd.bolumler.forEach(function (b) {
+        h += '<span class="' + (b.n >= b.min ? 'ok' : '') + '">' + b.ad + ' <b>' + b.n + '/' + b.min + '</b></span>';
+      });
+      h += '</div>';
+    }
+    h += '<label class="tz-gunluk-t" for="' + fid + '"><input type="checkbox" id="' + fid + '"' + (formOk ? ' checked' : '') +
+         ' onchange="d8TzodForm(' + no + ',this.checked)">Formu doldurup teslim ettim' +
+         (gd.tamam && !formOk ? ' <em>· tüm bölümler en az kelime sayısına ulaştı</em>' : '') + '</label>';
+    return h + '</div>';
+  }
+
+  /* --------------------------------------------------------------- 6. HTML */
+  function gorevGovdesi(kod, d, no) {
+    var g = GOREV[kod]; if (!g) return '';
+    var isr = d.isaret[kod] || [];
+    var h = '<p class="tz-aciklama">' + g.aciklama + '</p>';
+    h += g.secmeli
+      ? '<div class="tz-alt-bas">Örnek çalışmalar</div><p class="tz-secmeli-not">Bunlar örnek; birini veya birkaçını seçip yapman yeterli. Yaptıklarını işaretle.</p><ul class="tz-cal tz-cal-secmeli">'
+      : '<div class="tz-alt-bas">Çalışmalar</div><ul class="tz-cal">';
+    g.calismalar.forEach(function (c, i) {
+      var id = 'tz-' + no + '-' + kod + '-' + i;
+      h += '<li><input type="checkbox" id="' + id + '"' + (isr.indexOf(i) > -1 ? ' checked' : '') +
+           ' onchange="d8TzodIsaret(\'' + kod + '\',' + i + ',this.checked)">' +
+           '<label for="' + id + '">' + c + '</label></li>';
+    });
+    return h + '</ul>';
+  }
+
+  function seciciHtml(no, d) {
+    var sec = d.gorevler[no] || '';
+    var h = '<label class="tz-secim"><span>Bu haftanın görevi</span>' +
+            '<select onchange="d8TzodGorev(' + no + ',this.value)">' +
+            '<option value="">Görev seç…</option>';
+    SECMELI.forEach(function (k) {
+      var w = gorevHaftasi(k, d);
+      var ek = (w && w !== no) ? ' (' + w + '. haftadan taşı)' : '';
+      h += '<option value="' + k + '"' + (k === sec ? ' selected' : '') + '>' + GOREV[k].ikon + ' ' + GOREV[k].ad + ek + '</option>';
+    });
+    return h + '</select></label>';
+  }
+
+  function haftaHtml(no, pzt, d, sh) {
+    var kod = gorevKodu(no, d);
+    var cuma = new Date(pzt); cuma.setDate(cuma.getDate() + 4);
+    var gecti = sh.bitti || (sh.no && no < sh.no);
+    var simdi = sh.no === no;
+    var acikMi = acik ? !!acik[no] : simdi;
+    var formOk = !!d.form[no];
+    var cls = 'tz-hafta' + (simdi ? ' tz-simdi' : '') + (gecti ? ' tz-gecti' : '');
+
+    var sag = '';
+    if (simdi) sag += '<span class="tz-rozet">Bu hafta</span>';
+    if (kod) {
+      var n = isaretSayisi(d, kod), top = GOREV[kod].calismalar.length;
+      if (GOREV[kod].secmeli) {
+        sag += '<span class="tz-sayi' + (n ? ' tz-tamam' : '') + '" title="Örnek çalışmalardan seçilenler">' +
+               (n ? '✓ ' + n + ' çalışma' : 'Seçmeli') + '</span>';
+      } else {
+        sag += '<span class="tz-sayi' + (n === top ? ' tz-tamam' : '') + '" title="İşaretlenen çalışmalar">' + n + '/' + top + '</span>';
+      }
+    }
+    var taslak = !formOk && gunlukDurum(no).yazildi;
+    sag += '<span class="tz-form-i' + (formOk ? ' ok' : (taslak ? ' taslak' : '')) + '" title="' + formAdi(no) +
+           (formOk ? ' teslim edildi' : (taslak ? ': taslak var' : ' bekliyor')) + '">' +
+           (formOk ? '✓ Günlük' : (taslak ? '✍️ Taslak' : 'Günlük')) + '</span>';
+
+    var baslik = kod ? GOREV[kod].ikon + ' ' + GOREV[kod].ad
+                     : '<span class="tz-soluk">Görev seçilmedi</span>';
+    var alt = kisa(pzt) + ' – ' + kisa(cuma) + (YER[no] ? ' · ' + YER[no] : (no !== 8 ? ' · Ders anlatımı ve uygulama' : ''));
+
+    var h = '<details class="' + cls + '"' + (acikMi ? ' open' : '') + ' ontoggle="d8TzodAc(' + no + ',this.open)">';
+    h += '<summary><span class="tz-no">' + no + '</span><span class="tz-ozet">' +
+         '<span class="tz-tarih">' + alt + '</span><span class="tz-gorev">' + baslik + '</span></span>' +
+         '<span class="tz-sag">' + sag + '</span></summary>';
+    h += '<div class="tz-govde">';
+    if (no !== 8) h += '<div class="tz-temel"><strong>Temel görev: ders anlatımı ve uygulama.</strong> ' + TEMEL + '</div>';
+    if (!SABIT[no]) h += seciciHtml(no, d);
+    if (kod) h += gorevGovdesi(kod, d, no);
+    else h += '<div class="tz-ipucu">Uygulama öğretmeninle planladığınız görevi yukarıdan seç; açıklaması ve çalışma listesi burada açılır.</div>';
+    h += gunlukKarti(no, d);
+    return h + '</div></details>';
+  }
+
+  function formlarHtml() {
+    var h = '<div class="tz-fm">';
+    h += '<p class="tz-fm-giris">Ders notunun tamamı bu üç formdan gelir. Her biri seni dönem boyunca <strong>üçer kez</strong> değerlendirir; her madde gözlenen performansa göre 1–4 arası puanlanır.</p>';
+    h += '<div class="tz-olcek">' + OLCEK.map(function (o, i) { return '<span><b>' + (i + 1) + '</b>' + o + '</span>'; }).join('') + '</div>';
+    h += '<div class="tz-fm-sekme" role="tablist">';
+    FORMLAR.forEach(function (f, i) {
+      var n = 0; f.bolumler.forEach(function (b) { n += b[1].length; });
+      h += '<button type="button" role="tab" aria-selected="' + (i === formSecili) + '" class="' + (i === formSecili ? 'on' : '') +
+           '" style="--fr:' + f.renk + '" onclick="d8TzodFormSec(this,' + i + ')">' + f.kim + '<small>' + n + ' madde</small></button>';
+    });
+    h += '</div>';
+    FORMLAR.forEach(function (f, i) {
+      var sira = 1;
+      h += '<div class="tz-fm-panel" role="tabpanel" style="--fr:' + f.renk + '"' + (i === formSecili ? '' : ' hidden') + '>';
+      h += '<div class="tz-fm-ad">' + f.ad + '</div>';
+      f.bolumler.forEach(function (b, bi) {
+        h += '<div class="tz-fm-bol"><div class="tz-fm-bb"><span class="tz-harf">' + HARFLER[bi] + '</span>' + b[0] + '</div><ol>';
+        b[1].forEach(function (m) { h += '<li value="' + sira + '">' + m + '</li>'; sira++; });
+        h += '</ol></div>';
+      });
+      h += '<div class="tz-fm-son">Formun sonunda isteğe bağlı açıklama/gözlem notu ve değerlendirenin onayı bulunur.</div></div>';
+    });
+    return h + '</div>';
+  }
+  window.d8TzodFormlar = function () { stil(); return formlarHtml(); };
+
+  window.d8TzodBolumu = function () {
+    stil();
+    var d = durum(), sh = simdikiHafta(), pz = haftalar();
+    if (!pz.length) return '';
+    if (!acik && sh.no) { acik = {}; acik[sh.no] = true; }
+
+    var yerlesen = SECMELI.filter(function (k) { return gorevHaftasi(k, d); });
+    var kalan = SECMELI.filter(function (k) { return !gorevHaftasi(k, d); });
+    var formSay = 0; for (var w = 1; w <= 10; w++) if (d.form[w]) formSay++;
+    var yap = 0, top = 0;
+    /* Seçmeli görev (8. hafta) en az bir çalışmayla tamamlanmış sayılır */
+    Object.keys(GOREV).forEach(function (k) {
+      if (GOREV[k].secmeli) { top += 1; yap += Math.min(1, isaretSayisi(d, k)); }
+      else { top += GOREV[k].calismalar.length; yap += isaretSayisi(d, k); }
+    });
+
+    var h = '<div class="tz-blok">';
+    h += '<div class="tz-bas"><div><div class="tz-baslik">🧭 Haftalık Görev Planı</div>' +
+         '<div class="tz-alt">Görevleri uygulama öğretmeninle yaptığınız plana göre haftalara yerleştir. 1. ve 8. hafta herkes için sabit.</div></div>' +
+         '<button class="staj-btn-mini" onclick="openModal(\'301\')">📄 Ders tanımı</button></div>';
+
+    h += '<div class="tz-durum">';
+    h += '<div class="tz-d"><b>' + yerlesen.length + '/8</b><span>görev yerleşti</span></div>';
+    h += '<div class="tz-d"><b>' + formSay + '/10</b><span>günlük teslim edildi</span></div>';
+    h += '<div class="tz-d"><b>' + yap + '/' + top + '</b><span>çalışma işaretlendi</span></div>';
+    if (kalan.length && kalan.length < 8) {
+      h += '<div class="tz-kalan">Henüz yerleşmeyen: ' + kalan.map(function (k) { return '<span>' + GOREV[k].ikon + ' ' + GOREV[k].ad + '</span>'; }).join('') + '</div>';
+    }
+    h += '</div>';
+
+    h += '<div class="tz-liste">';
+    pz.forEach(function (pzt, i) { h += haftaHtml(i + 1, pzt, d, sh); });
+    h += '</div>';
+    h += '<p class="tz-not">10 hafta sonunda sekiz görevin hepsinin tamamlanmış olması gerekir. Görev seçerken başka haftadaki bir görevi seçersen o haftadan buraya taşınır.</p>';
+
+    h += '<details class="tz-ek"><summary>📋 Değerlendirme formları</summary><div class="tz-ek-govde">' + formlarHtml() + '</div></details>';
+    h += '<details class="tz-ek"><summary>⚠️ Uygulamada dikkat edilecek hususlar</summary><div class="tz-ek-govde"><ul class="tz-husus">';
+    HUSUSLAR.forEach(function (x) { h += '<li>' + x + '</li>'; });
+    h += '</ul></div></details>';
+    return h + '</div>';
+  };
+
+  /* --------------------------------------------------------------- 7. Stil */
+  function stil() {
+    if (document.getElementById('tz-stil')) return;
+    var s = document.createElement('style');
+    s.id = 'tz-stil';
+    s.textContent = [
+      '.tz-blok{margin-top:18px}',
+      '.tz-bas{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;padding-left:2px}',
+      '.tz-bas .staj-btn-mini{white-space:nowrap;flex-shrink:0}',
+      '.tz-baslik{font-size:13px;font-weight:700;color:var(--navy)}',
+      '.tz-alt{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.45;max-width:62ch}',
+      '.tz-durum{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;background:var(--white);border:1px solid var(--border);border-radius:13px;padding:10px 14px;box-shadow:var(--shadow-sm)}',
+      '.tz-d{display:flex;align-items:baseline;gap:5px;font-size:11px;color:var(--muted)}',
+      '.tz-d b{font-size:14px;color:var(--text);font-variant-numeric:tabular-nums}',
+      '.tz-kalan{flex-basis:100%;display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:10.5px;color:var(--muted);padding-top:7px;border-top:1px dashed var(--border)}',
+      '.tz-kalan span{background:var(--bg);border:1px solid var(--border);border-radius:99px;padding:2px 8px;color:var(--text)}',
+      '.tz-liste{margin-top:10px;background:var(--white);border:1px solid var(--border);border-radius:13px;overflow:hidden;box-shadow:var(--shadow-sm)}',
+      '.tz-hafta{border-bottom:1px solid var(--border)}',
+      '.tz-hafta:last-child{border-bottom:0}',
+      '.tz-hafta>summary{display:flex;align-items:center;gap:11px;padding:10px 13px;cursor:pointer;list-style:none}',
+      '.tz-hafta>summary::-webkit-details-marker{display:none}',
+      '.tz-hafta>summary:hover{background:var(--bg)}',
+      '.tz-no{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;background:var(--bg);color:var(--muted);border:1px solid var(--border)}',
+      '.tz-ozet{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}',
+      '.tz-tarih{font-size:10.5px;color:var(--muted)}',
+      '.tz-gorev{font-size:12.5px;font-weight:700;color:var(--text);line-height:1.35}',
+      '.tz-soluk{font-weight:500;color:var(--muted);font-style:italic}',
+      '.tz-sag{display:flex;align-items:center;gap:6px;flex-shrink:0}',
+      '.tz-sayi{font-size:10.5px;font-weight:700;color:var(--muted);white-space:nowrap}',
+      '.tz-tamam{color:var(--green,#059669)}',
+      '.tz-form-i{font-size:10px;font-weight:700;color:var(--muted);border:1px dashed var(--border);border-radius:6px;padding:2px 6px;white-space:nowrap}',
+      '.tz-form-i.taslak{color:var(--navy);border-style:solid}',
+      /* Yansıtıcı günlük kartı ve düzenleyici */
+      '.tz-gunluk{margin-top:12px;padding:11px 12px;border:1px dashed var(--border);border-radius:11px}',
+      '.tz-gunluk.ok{border-style:solid;border-color:var(--green,#059669)}',
+      '.tz-gunluk-ust{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}',
+      '.tz-gunluk-ust strong{display:block;font-size:12px}',
+      '.tz-gunluk-ust span{font-size:11px;color:var(--muted)}',
+      '.tz-gunluk-ust .staj-btn-mini{white-space:nowrap;flex-shrink:0}',
+      '.tz-gunluk-b{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}',
+      '.tz-gunluk-b span{font-size:10.5px;color:var(--muted);background:var(--bg);border-radius:99px;padding:2px 8px}',
+      '.tz-gunluk-b span b{color:var(--text);font-variant-numeric:tabular-nums}',
+      '.tz-gunluk-b span.ok b{color:var(--green,#059669)}',
+      '.tz-gunluk-t{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:11.5px;cursor:pointer}',
+      '.tz-gunluk-t input{width:16px;height:16px;margin:0;accent-color:var(--navy);cursor:pointer}',
+      '.tz-gunluk-t em{font-style:normal;color:var(--green,#059669);font-size:10.5px}',
+      '.tz-gkutu{max-width:760px;width:100%}',
+      '.tz-ggovde{font-size:12.5px;line-height:1.6;color:var(--text)}',
+      '.tz-g-form{font-size:11.5px;font-weight:700;color:var(--navy);margin-bottom:10px}',
+      '.tz-g-form span{font-weight:500;color:var(--muted)}',
+      '.tz-g-kunye{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;padding:10px 12px;background:var(--bg);border-radius:11px;margin-bottom:14px}',
+      '.tz-g-kunye label{display:flex;flex-direction:column;gap:3px;font-size:10.5px;font-weight:700;color:var(--muted)}',
+      '.tz-g-kunye input,.tz-g-bol textarea{font-family:inherit;font-size:12.5px;color:var(--text);background:var(--white);border:1px solid var(--border);border-radius:8px;padding:7px 9px;box-sizing:border-box;width:100%}',
+      '.tz-g-bol{margin-bottom:16px}',
+      '.tz-g-bb{display:flex;align-items:baseline;justify-content:space-between;gap:10px}',
+      '.tz-g-bb h4{margin:0;font-size:13.5px;color:var(--text)}',
+      '.tz-gk-not{font-size:10px;font-weight:500;color:var(--muted)}',
+      '.tz-gk-not button{font:inherit;font-weight:700;color:var(--navy);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}',
+      '.tz-g-say{font-size:11px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}',
+      '.tz-g-say.ok{color:var(--green,#059669)}',
+      '.tz-g-soru{margin:3px 0 6px;font-size:11.5px;color:var(--muted)}',
+      '.tz-g-soru em{font-style:normal;white-space:nowrap}',
+      '.tz-g-uyari{margin:0 0 6px;font-size:11px;color:var(--amber,#B45309);background:rgba(217,119,6,.09);border-radius:7px;padding:5px 8px}',
+      '.tz-g-bar{height:3px;border-radius:99px;background:var(--border);overflow:hidden;margin-bottom:6px}',
+      '.tz-g-bar i{display:block;height:100%;background:var(--navy);transition:width .2s}',
+      '.tz-g-bol textarea{resize:vertical;line-height:1.6;min-height:120px}',
+      '.tz-g-kunye input:focus-visible,.tz-g-bol textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}',
+      '.tz-g-gizlilik{font-size:11px;color:var(--muted);background:var(--bg);border-radius:9px;padding:8px 10px;margin:4px 0 0}',
+      '.tz-galt{align-items:center;flex-wrap:wrap}',
+      '.tz-g-kayit{margin-right:auto;font-size:11px;color:var(--muted)}',
+      '.tz-g-kayit.hata{color:var(--red,#DC2626);font-weight:700}',
+      '@media(max-width:600px){.tz-g-kunye{grid-template-columns:1fr}}',
+      '@media(prefers-reduced-motion:reduce){.tz-g-bar i{transition:none}}',
+      '.tz-form-i.ok{color:var(--green,#059669);border-style:solid;border-color:currentColor}',
+      '.tz-rozet{font-size:10px;font-weight:700;color:var(--white);background:var(--navy);border-radius:99px;padding:3px 8px;white-space:nowrap}',
+      '.tz-simdi{box-shadow:inset 3px 0 0 var(--navy)}',
+      '.tz-simdi .tz-no{background:var(--navy);color:var(--white);border-color:transparent}',
+      '.tz-gecti>summary{opacity:.62}',
+      '.tz-gecti[open]>summary{opacity:1}',
+      '.tz-govde{padding:2px 14px 14px 50px;font-size:12px;line-height:1.6;color:var(--text)}',
+      '.tz-temel{font-size:11.5px;color:var(--muted);background:var(--bg);border-radius:9px;padding:8px 10px;margin-bottom:10px}',
+      '.tz-temel strong{color:var(--text)}',
+      '.tz-secim{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font-size:11px;font-weight:700;color:var(--navy)}',
+      '.tz-secim select{font-family:inherit;font-size:12.5px;color:var(--text);background:var(--white);border:1px solid var(--border);border-radius:9px;padding:8px 10px;width:100%;max-width:440px;cursor:pointer}',
+      '.tz-secim select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}',
+      '.tz-aciklama{margin:0 0 10px}',
+      '.tz-secmeli-not{margin:0 0 4px;font-size:11px;color:var(--muted)}',
+      '.tz-cal.tz-cal-secmeli input:checked+label{text-decoration:none;color:var(--text);font-weight:600}',
+      '.tz-alt-bas{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:4px}',
+      '.tz-cal{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}',
+      '.tz-cal li{display:flex;align-items:flex-start;gap:9px;padding:4px 6px;border-radius:7px}',
+      '.tz-cal li:hover{background:var(--bg)}',
+      '.tz-cal input,.tz-form input{width:16px;height:16px;margin:2px 0 0;flex-shrink:0;cursor:pointer;accent-color:var(--navy)}',
+      '.tz-cal label{cursor:pointer;flex:1}',
+      '.tz-cal input:checked+label{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border)}',
+      '.tz-ipucu{font-size:11.5px;color:var(--muted)}',
+      '.tz-form{display:flex;align-items:flex-start;gap:9px;margin-top:12px;padding:10px 12px;border:1px dashed var(--border);border-radius:10px}',
+      '.tz-form label{cursor:pointer;display:flex;flex-direction:column}',
+      '.tz-form label span{font-size:11px;color:var(--muted)}',
+      '.tz-form:has(input:checked){border-style:solid;border-color:var(--green,#059669)}',
+      '.tz-not{font-size:11px;color:var(--muted);line-height:1.55;margin:9px 2px 0}',
+      '.tz-ek{margin-top:10px;background:var(--white);border:1px solid var(--border);border-radius:13px;box-shadow:var(--shadow-sm)}',
+      '.tz-ek>summary{padding:11px 14px;font-size:12.5px;font-weight:700;color:var(--navy);cursor:pointer}',
+      '.tz-ek-govde{padding:0 16px 14px;font-size:12px;line-height:1.6;color:var(--text)}',
+      '.tz-husus{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}',
+      /* Değerlendirme formları */
+      '.tz-fm-kap{margin-top:16px;background:var(--white);border:1px solid var(--border);border-radius:13px;padding:14px 16px;box-shadow:var(--shadow-sm)}',
+      '.tz-fm{font-size:12px;line-height:1.55;color:var(--text)}',
+      '.tz-fm-giris{margin:0 0 8px}',
+      '.tz-olcek{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}',
+      '.tz-olcek span{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}',
+      '.tz-olcek b{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10.5px;background:var(--bg);border:1px solid var(--border);color:var(--text)}',
+      '.tz-fm-sekme{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}',
+      '.tz-fm-sekme button{font-family:inherit;text-align:left;font-size:12px;font-weight:700;color:var(--text);background:var(--bg);border:1px solid var(--border);border-top:3px solid var(--fr);border-radius:10px;padding:8px 10px;cursor:pointer}',
+      '.tz-fm-sekme button small{display:block;font-size:10.5px;font-weight:500;color:var(--muted)}',
+      '.tz-fm-sekme button.on{background:var(--white);border-color:var(--fr);box-shadow:var(--shadow-sm)}',
+      '.tz-fm-sekme button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}',
+      '.tz-fm-ad{font-size:11px;color:var(--muted);margin-bottom:8px}',
+      '.tz-fm-bol{margin-bottom:12px}',
+      '.tz-fm-bb{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}',
+      '.tz-harf{width:21px;height:21px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;background:var(--fr);flex-shrink:0}',
+      '.tz-fm-bol ol{margin:0;padding-left:29px;display:flex;flex-direction:column;gap:3px}',
+      '.tz-fm-bol li{padding-left:3px}',
+      '.tz-fm-bol li::marker{font-size:10.5px;font-weight:700;color:var(--muted)}',
+      '.tz-fm-son{font-size:11px;color:var(--muted);border-top:1px dashed var(--border);padding-top:8px}',
+      '.tz-blok summary:focus-visible,.tz-blok button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}',
+      '@media(max-width:600px){.tz-govde{padding:2px 12px 13px 13px}.tz-hafta>summary{padding:10px 11px;gap:9px}.tz-fm-sekme{grid-template-columns:1fr}.tz-form-i{display:none}.tz-form-i.ok,.tz-form-i.taslak{display:inline}}'
+    ].join('\n');
+    document.head.appendChild(s);
+  }
+
+  /* Modül d34'ten sonra yüklendiği için panel bir kez tazelenir */
+  function baslat() { try { if (typeof D8.d34Tazele === 'function') D8.d34Tazele(); } catch (e) {} }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', baslat);
+  else baslat();
+})();
+</script>
+
 <script id="d8-tema-js">
 /* ==========================================================================
    D8 — MEVSİMSEL TEMA MODÜLÜ
@@ -8606,7 +9888,8 @@ html body .header-logo{background:rgba(255,255,255,.1)}
 
   function parcaciklar(tema) {
     var dar = window.innerWidth <= 700;
-    var adet = tema === 'kis' ? (dar ? 40 : 60) : (dar ? 24 : 34);
+    /* Masaüstünde sayı azaltıldı: geniş ekranda sahne kalabalık görünüyordu */
+    var adet = tema === 'kis' ? (dar ? 40 : 22) : (dar ? 24 : 12);
     var koyu = document.body && document.body.classList.contains('dark');
     var h = '';
     for (var i = 0; i < adet; i++) {
