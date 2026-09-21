@@ -9102,7 +9102,15 @@ td.td-full[data-fam="uygulama"] {
       if (hf[alan] != null) return hf[alan];
       return programDegeri(alan) || g.kunye[alan] || '';
     }
+    if (alan === 'ad' && !g.kunye.ad) return hesapAdi();
     return g.kunye[alan] || '';
+  }
+  /** Google ile girişteki ad (tam ada benziyorsa) — yalnız öneri, kaydedilmez */
+  function hesapAdi() {
+    try {
+      var u = window._d8AuthUser, a = u && u.displayName ? String(u.displayName).trim() : '';
+      return /\S+\s+\S+/.test(a) ? a : '';
+    } catch (e) { return ''; }
   }
 
   /* Uygulama Programım'dan varsayılan gelen künye alanları */
@@ -9156,6 +9164,7 @@ td.td-full[data-fam="uygulama"] {
            ' oninput="d8GunlukKunye(\'' + k[0] + '\',this.value,' + (k[2] ? 1 : 0) + ')">';
       if (liste.length) h += '<datalist id="tz-gk-sinif-l">' + liste.map(function (v) { return '<option value="' + kac(v) + '">'; }).join('') + '</datalist>';
       if (PROGRAMDAN[k[0]]) h += '<small class="tz-gk-not" id="tz-gk-not-' + k[0] + '">' + programNotu(k[0], deger) + '</small>';
+      if (k[0] === 'ad') h += '<small class="tz-gk-not">Bir kez yazman yeter; bütün haftaların formlarında aynı görünür.</small>';
       h += '</label>';
     });
     h += '</div>';
@@ -9269,9 +9278,19 @@ td.td-full[data-fam="uygulama"] {
     }
   };
 
+  /** Yazdırma/PDF dosya adı: hafta, aday adı-soyadı, form adı */
+  function dosyaAdi(c) {
+    var ad = '';
+    c.kunye.forEach(function (k, i) { if (gunlukFormu(c.no).kunye[i][0] === 'ad') ad = String(k[1] || '').trim(); });
+    var parca = [c.no + '. Hafta'];
+    if (ad) parca.push(ad);
+    parca.push('Yansıtıcı Günlük Formu');
+    return parca.join(' - ').replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
   window.d8GunlukYazdir = function () {
-    var c = formIcerik();
-    var h = '<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>' + kac(c.ad) + ' – ' + c.no + '. Hafta</title><style>' +
+    var c = formIcerik(), ad = dosyaAdi(c);
+    var h = '<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>' + kac(ad) + '</title><style>' +
       '@page{size:A4;margin:18mm 16mm}body{font-family:Arial,Helvetica,sans-serif;color:#111;font-size:11pt;line-height:1.5}' +
       'h1{font-size:14pt;margin:0 0 4pt}h1 small{display:block;font-size:10pt;font-weight:normal;color:#444}' +
       'table{border-collapse:collapse;width:100%;margin:10pt 0 14pt}td{border:1px solid #999;padding:4pt 7pt;font-size:10pt}td:first-child{width:38%;font-weight:bold;background:#f2f2f2}' +
@@ -9291,9 +9310,20 @@ td.td-full[data-fam="uygulama"] {
     fr.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
     document.body.appendChild(fr);
     var dok = fr.contentWindow.document; dok.open(); dok.write(h); dok.close();
+    /* Tarayıcılar PDF adını sayfa başlığından alır; bazıları iframe yerine üst
+       belgenin başlığını kullandığı için o da yazdırma süresince değiştirilir. */
+    var eskiBaslik = document.title, bitti = false;
+    function temizle() {
+      if (bitti) return; bitti = true;
+      document.title = eskiBaslik;
+      setTimeout(function () { fr.remove(); }, 300);
+    }
+    document.title = ad;
+    try { fr.contentWindow.addEventListener('afterprint', temizle); } catch (e) {}
+    window.addEventListener('afterprint', temizle, { once: true });
     setTimeout(function () {
-      try { fr.contentWindow.focus(); fr.contentWindow.print(); } catch (e) {}
-      setTimeout(function () { fr.remove(); }, 1500);
+      try { fr.contentWindow.focus(); fr.contentWindow.print(); } catch (e) { temizle(); }
+      setTimeout(temizle, 60000);      /* afterprint gelmezse güvenlik ağı */
     }, 250);
   };
 
