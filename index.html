@@ -3319,7 +3319,7 @@ function buildDesktopSidebar(){var el=document.getElementById('desktop-sidebar')
 var today=new Date();today.setHours(0,0,0,0);var TR_M=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];var TR_MS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];var fmtD=function(d){return d.getDate()+' '+TR_M[d.getMonth()];};var html='';var RAMtarih=new Date(2026,4,18,23,59,59);if(new Date()<=RAMtarih){var ramDiff=Math.ceil((new Date(2026,4,18)-today)/86400000);var ramStr=ramDiff===0?'Bugün!':ramDiff===1?'Yarın':ramDiff+' gün sonra';html+='<div class="dsb-card dsb-ram">';html+='<div class="dsb-title">🏥 Önemli Bildirim</div>';html+='<div class="dsb-ram-row">';html+='<div class="dsb-ram-icon">🏥</div>';html+='<div><div class="dsb-ram-name">Kocasinan RAM Ziyareti <span class="dsb-ram-badge">'+ramStr+'</span></div>';html+='<div class="dsb-ram-meta">18 Mayıs 2026, Pzt · 10:00<br>D8\'in Tamamı · Prof. Dr. M. K. Özgen</div></div>';html+='</div></div>';}
 var _ip=D8.ilerleme();var start=_ip.bas,end=_ip.bit;var total=Math.round((end-start)/86400000);var elapsed=Math.min(Math.max(Math.round((today-start)/86400000),0),total);var pct=Math.round(elapsed/total*100);var kalan=Math.max(Math.ceil((end-today)/86400000),0);var statusEmoji=pct<30?'🌱':pct<60?'📈':pct<85?'🔥':'🏁';html+='<div class="dsb-card">';html+='<div class="dsb-title">'+statusEmoji+' Dönem İlerlemesi</div>';html+='<div class="dsb-donem-pct">%'+pct+'</div>';html+='<div class="dsb-track"><div class="dsb-fill" id="dsb-fill" style="width:0%"></div></div>';html+='<div class="dsb-meta"><span>'+fmtD(start)+' – '+fmtD(end)+'</span>';html+='<span class="dsb-kalan">'+(kalan>0?kalan+' gün':'✅ Bitti')+'</span></div>';html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">📅 İzlence Haftası</span><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:var(--navy);">'+ (function(){var s=D8.ilerleme().bas,t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})() +' / 10</span></div><div style="width:100%;height:6px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--border);"><div style="height:100%;width:'+((function(){var s=D8.ilerleme().bas,t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()*10)+'%;border-radius:99px;background:linear-gradient(90deg,var(--tema-hafta1),var(--tema-hafta2));"></div></div><div style="font-size:9.5px;color:var(--muted);margin-top:4px;">Şu an <strong style=\"color:var(--text);\">'+(function(){var s=D8.ilerleme().bas,t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()+'. Hafta</strong></div></div>';html+='</div>';var cdItems=d8GeriSayimOgeleri();var cdValid=cdItems.filter(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);return Math.ceil((t-today)/86400000)>=0;});if(cdValid.length){html+='<div class="dsb-card">';html+='<div class="dsb-title">⏳ Geri Sayım</div>';cdValid.forEach(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);var diff=Math.ceil((t-today)/86400000);var diffStr=diff===0?'Bugün':''+diff+'g';var dtFmt=t.getDate()+' '+TR_MS[t.getMonth()];html+='<div class="dsb-cd-row">';html+='<div class="dsb-cd-icon">'+it.icon+'</div>';html+='<div class="dsb-cd-body"><div class="dsb-cd-label">'+it.label+'</div><div class="dsb-cd-date">'+dtFmt+'</div></div>';html+='<div class="dsb-cd-badge'+(diff===0?' today':'')+'">'+diffStr+'</div>';html+='</div>';});html+='</div>';}
 html+='<div class="dsb-card" style="text-align:center;">';html+='<div class="dsb-title">📱 QR Kod</div>';html+='<div style="display:flex;justify-content:center;padding:4px 0;">';html+='<img src="'+d8QRImg()+'" alt="QR Kod" style="width:170px;height:170px;border-radius:8px;background:#fff;padding:4px;border:1px solid var(--border);" />';html+='</div>';html+='<div style="font-size:10px;color:var(--muted);margin-top:6px;line-height:1.4;">Sayfayı telefona paylaşmak için okutun</div>';html+='</div>';el.innerHTML=html;requestAnimationFrame(function(){setTimeout(function(){var f=document.getElementById('dsb-fill');if(f)f.style.width=pct+'%';},80);});}
-function buildProfilPage(){var el=document.getElementById('profil-content');if(!el)return;var today=new Date();today.setHours(0,0,0,0);var TR_M=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];var TR_MS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];var fmtD=function(d){return d.getDate()+' '+TR_M[d.getMonth()];};var html='';var authUser=window._d8AuthUser||null;html+='<div class="profil-section">';html+='<div class="profil-section-title">👤 Hesap</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="handleAuthClick()" style="cursor:pointer;">';html+='<div class="profil-setting-icon" style="position:relative;">'+(authUser?(authUser.photoURL?'<img src=\''+authUser.photoURL+'\' referrerpolicy="no-referrer" onerror="this.replaceWith(document.createTextNode(\'\\u2705\'))" style=\'width:26px;height:26px;border-radius:50%;display:block;\'>':'✅'):'👤')+(authUser?'<span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:#4ADE80;border:2px solid var(--white);box-sizing:content-box;"></span>':'')+'</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">'+(authUser?'✓ '+(authUser.displayName||authUser.email||'Hesabım'):'Google ile Giriş Yap')+'</div><div class="profil-setting-sub">'+(authUser?'Giriş yapıldı · Ayarların bulutta senkron · Çıkış için dokun':'Ayarların (tema, mod, dönem) tüm cihazlarında senkronize olsun')+'</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div></div></div>';html+='<div id="profil-admin-anchor"></div>';var RAMtarih=new Date(2026,4,18,23,59,59);if(new Date()<=RAMtarih){var ramDiff=Math.ceil((new Date(2026,4,18)-today)/86400000);var ramStr=ramDiff===0?'Bugün!':ramDiff===1?'Yarın':ramDiff+' gün sonra';html+='<div class="profil-section">';html+='<div class="profil-section-title">🏥 Önemli Bildirim</div>';html+='<div class="profil-ram-card">';html+='<div class="profil-ram-icon">🏥</div>';html+='<div>';html+='<div class="profil-ram-title">Kocasinan RAM Ziyareti <span class="profil-ram-badge">'+ramStr+'</span></div>';html+='<div class="profil-ram-meta">18 Mayıs 2026, Pazartesi · Saat 10:00<br>Kapsam: D8\'in Tamamı · Prof. Dr. M. K. Özgen</div>';html+='</div></div></div>';}
+function buildProfilPage(){var el=document.getElementById('profil-content');if(!el)return;var today=new Date();today.setHours(0,0,0,0);var TR_M=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];var TR_MS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];var fmtD=function(d){return d.getDate()+' '+TR_M[d.getMonth()];};var html='';var authUser=window._d8AuthUser||null;html+='<div class="profil-section">';html+='<div class="profil-section-title">👤 Hesap</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="handleAuthClick()" style="cursor:pointer;border-bottom:none;">';html+='<div class="profil-setting-icon" style="position:relative;">'+(authUser?(authUser.photoURL?'<img src=\''+authUser.photoURL+'\' referrerpolicy="no-referrer" onerror="this.replaceWith(document.createTextNode(\'\\u2705\'))" style=\'width:26px;height:26px;border-radius:50%;display:block;\'>':'✅'):'👤')+(authUser?'<span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:#4ADE80;border:2px solid var(--white);box-sizing:content-box;"></span>':'')+'</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">'+(authUser?'✓ '+(authUser.displayName||authUser.email||'Hesabım'):'Google ile Giriş Yap')+'</div><div class="profil-setting-sub">'+(authUser?'Giriş yapıldı · Notların, uygulama programın ve ayarların hesabında · Çıkış için dokun':'Ders notların, uygulama okulu programın, karanlık mod ve dönem seçimin tüm cihazlarında aynı kalsın')+'</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div id="profil-admin-anchor"></div></div></div>';var RAMtarih=new Date(2026,4,18,23,59,59);if(new Date()<=RAMtarih){var ramDiff=Math.ceil((new Date(2026,4,18)-today)/86400000);var ramStr=ramDiff===0?'Bugün!':ramDiff===1?'Yarın':ramDiff+' gün sonra';html+='<div class="profil-section">';html+='<div class="profil-section-title">🏥 Önemli Bildirim</div>';html+='<div class="profil-ram-card">';html+='<div class="profil-ram-icon">🏥</div>';html+='<div>';html+='<div class="profil-ram-title">Kocasinan RAM Ziyareti <span class="profil-ram-badge">'+ramStr+'</span></div>';html+='<div class="profil-ram-meta">18 Mayıs 2026, Pazartesi · Saat 10:00<br>Kapsam: D8\'in Tamamı · Prof. Dr. M. K. Özgen</div>';html+='</div></div></div>';}
 try{var weekStart=new Date(today);weekStart.setDate(today.getDate()-(today.getDay()===0?6:today.getDay()-1));var weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);if(typeof ranges!=='undefined'){var weekTatils=ranges.filter(function(r){if(r.type!=='tatil')return false;var rs=new Date(r.start);rs.setHours(0,0,0,0);var re=new Date(r.end);re.setHours(23,59,59,999);return rs<=weekEnd&&re>=weekStart&&re>=today;});if(weekTatils.length){html+='<div class="profil-section">';html+='<div class="profil-section-title">🎉 Tatil</div>';weekTatils.forEach(function(r){var icon=getTatilIcon(r.label);var rs=new Date(r.start);rs.setHours(0,0,0,0);var tDiff=Math.ceil((rs-today)/86400000);var tStr=tDiff<=0?'Bu hafta · ders yok':tDiff===1?'Yarın':''+tDiff+' gün sonra';var badge=tDiff<=0?'Aktif':tDiff+' gün';html+='<div class="profil-tatil-card">';html+='<div class="profil-tatil-icon">'+icon+'</div>';html+='<div><div class="profil-tatil-title">'+r.label+'</div><div class="profil-tatil-sub">'+tStr+'</div></div>';html+='<div class="profil-tatil-badge">'+badge+'</div>';html+='</div>';});html+='</div>';}}}catch(e){}
 var _ip=D8.ilerleme();var start=_ip.bas,end=_ip.bit;var total=Math.round((end-start)/86400000);var elapsed=Math.min(Math.max(Math.round((today-start)/86400000),0),total);var pct=Math.round(elapsed/total*100);var kalan=Math.max(Math.ceil((end-today)/86400000),0);var statusEmoji=pct<30?'🌱':pct<60?'📈':pct<85?'🔥':'🏁';html+='<div class="profil-section">';html+='<div class="profil-section-title">'+statusEmoji+' Dönem İlerlemesi</div>';html+='<div class="profil-card">';html+='<div class="profil-donem-header">';html+='<div class="profil-donem-title">'+D8.ilerleme().ad+'</div>';html+='<div class="profil-donem-pct">%'+pct+'</div>';html+='</div>';html+='<div class="profil-donem-track"><div class="profil-donem-fill" id="profil-donem-fill" style="width:0%"></div></div>';html+='<div class="profil-donem-footer">';html+='<div class="profil-donem-dates">'+fmtD(start)+' – '+fmtD(end)+'&nbsp;&nbsp;·&nbsp;&nbsp;'+elapsed+'/'+total+' gün</div>';html+='<div class="profil-donem-kalan">'+(kalan>0?kalan+' gün kaldı':'✅ Tamamlandı')+'</div>';html+='</div>';html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">📅 İzlence Haftası</span><span style="font-family:\'JetBrains Mono\',monospace;font-size:12px;font-weight:700;color:var(--navy);">'+ (function(){var s=D8.ilerleme().bas,t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})() +' / 10</span></div><div style="width:100%;height:8px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--border);"><div style="height:100%;width:'+((function(){var s=D8.ilerleme().bas,t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()*10)+'%;border-radius:99px;background:linear-gradient(90deg,var(--tema-hafta1),var(--tema-hafta2));"></div></div><div style="font-size:9.5px;color:var(--muted);margin-top:4px;">Şu an <strong style=\"color:var(--text);\">'+(function(){var s=D8.ilerleme().bas,t=new Date(today);t.setHours(0,0,0,0);var tatil=[];var cur=new Date(s),w=0;while(cur<=t){var we=new Date(cur);we.setDate(cur.getDate()+6);var isT=false;for(var _i=0;_i<tatil.length;_i++){if(cur<=tatil[_i][1]&&we>=tatil[_i][0]){var ovS=cur>tatil[_i][0]?cur:tatil[_i][0];var ovE=we<tatil[_i][1]?we:tatil[_i][1];if((ovE-ovS)/86400000+1>=3){isT=true;break;}}}if(!isT)w++;cur.setDate(cur.getDate()+7);}return Math.min(Math.max(w,1),10);})()+'. Hafta</strong></div></div>';html+='</div></div>';var cdItems=d8GeriSayimOgeleri();var cdValid=cdItems.filter(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);return Math.ceil((t-today)/86400000)>=0;});if(cdValid.length){html+='<div class="profil-section">';html+='<div class="profil-section-title">⏳ Geri Sayım</div>';html+='<div class="profil-card">';cdValid.forEach(function(it){var t=new Date(it.date);t.setHours(0,0,0,0);var diff=Math.ceil((t-today)/86400000);var diffStr=diff===0?'Bugün! 🎯':diff+'g kaldı';var dtFmt=t.getDate()+' '+TR_MS[t.getMonth()]+' '+t.getFullYear();html+='<div class="profil-cd-row">';html+='<div class="profil-cd-icon">'+it.icon+'</div>';html+='<div class="profil-cd-body"><div class="profil-cd-label">'+it.label+'</div><div class="profil-cd-date">'+dtFmt+'</div></div>';html+='<div class="profil-cd-badge'+(diff===0?' today':'')+'">'+diffStr+'</div>';html+='</div>';});html+='</div></div>';}
 html+='<div class="profil-section">';html+='<div class="profil-section-title">🛠️ Araçlar</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="installToHomeScreen()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">📲</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Ana Ekrana Ekle</div><div class="profil-setting-sub">'+(window._pwaAlreadyInstalled?'✓ Zaten yüklü':'Uygulama gibi kullan, çevrimdışı çalışır')+'</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="openScreensaver()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">⏱️</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Sınıf Zamanlayıcısı</div><div class="profil-setting-sub">Tam ekran ders/sınav geri sayımını aç</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="d8ActOpenOverlay()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">🎤</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">Sınıf Etkinliği</div><div class="profil-setting-sub">Herkesin telefondan yazdığı cümleyi tahtada canlı göster</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div><div class="profil-setting-row" onclick="d8CarkOpenOverlay()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">🎡</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">İsim Çarkı</div><div class="profil-setting-sub">Rastgele öğrenci seç, bir tur boyunca isimler tekrar çıkmaz</div></div>';html+='<div style="font-size:18px;color:var(--muted);opacity:0.45;flex-shrink:0;">›</div>';html+='</div></div></div>';var isDark=document.body.classList.contains('dark');html+='<div class="profil-section">';html+='<div class="profil-section-title">⚙️ Görünüm</div>';html+='<div class="profil-card profil-settings-card">';html+='<div class="profil-setting-row" onclick="toggleDark();buildProfilPage()" style="cursor:pointer;">';html+='<div class="profil-setting-icon">'+(isDark?'☀️':'🌙')+'</div>';html+='<div class="profil-setting-body"><div class="profil-setting-label">'+(isDark?'Aydınlık Mod':'Karanlık Mod')+'</div>';html+='<div class="profil-setting-sub">Şu an: '+(isDark?'🌙 Karanlık':'☀️ Aydınlık')+'</div></div>';html+='<div class="profil-setting-toggle '+(isDark?'on':'off')+'"><div class="profil-toggle-knob"></div></div>';html+='</div>';html+='</div>';html+='</div>';el.innerHTML=html;if(typeof window.d8PlaceAdminControls==='function'){try{window.d8PlaceAdminControls();}catch(e){}}requestAnimationFrame(function(){setTimeout(function(){var f=document.getElementById('profil-donem-fill');if(f)f.style.width=pct+'%';},120);});}
@@ -4975,8 +4975,8 @@ window.d8DismissAnnouncement = function(){
 };
 // ---- Admin'e özel duyuru yazma kutusu + varsayılan sekme seçici ----
 // Bu kontroller TEK bir DOM bloğu (#d8-admin-controls) olarak var; masaüstünde
-// Admin sekmesinin içinde, mobilde ise Profil sayfasında "Hesap" bölümünün
-// hemen altında görünür. d8PlaceAdminControls bu bloğu ekran genişliğine göre
+// Admin sekmesinin içinde, mobilde ise Profil sayfasında "Hesap" kartının
+// içinde, Google giriş satırının hemen altında görünür. d8PlaceAdminControls bu bloğu ekran genişliğine göre
 // doğru yere TAŞIR (yok edip yeniden oluşturmaz — içindeki metin kutusu ve
 // odak durumu korunur).
 window._d8AdminControlsNode = document.getElementById('d8-admin-controls');
@@ -5032,6 +5032,15 @@ function d8AdminAcilirStil(){
     '.d8-admin-acilir[open]>summary .d8aa-ok{transform:rotate(90deg)}' +
     '.d8-admin-acilir[open]>summary{border-bottom:1px solid var(--border)}' +
     '.d8aa-govde{padding:12px 12px 2px}' +
+    '#profil-admin-anchor .d8-admin-acilir{background:transparent;border:none;border-top:1px solid var(--border);border-radius:0;margin:0;box-shadow:none}' +
+    '#profil-admin-anchor .d8-admin-acilir>summary{gap:12px;padding:14px 16px}' +
+    '#profil-admin-anchor .d8-admin-acilir>summary:focus-visible{border-radius:0}' +
+    '#profil-admin-anchor .d8aa-ikon{width:auto;height:auto;background:none;border-radius:0;font-size:22px}' +
+    '#profil-admin-anchor .d8aa-metin b{font-weight:600}' +
+    '#profil-admin-anchor .d8aa-metin small{font-size:10.5px;margin-top:2px}' +
+    '#profil-admin-anchor .d8aa-ok{font-size:18px;opacity:.45}' +
+    '#profil-admin-anchor .d8aa-govde{padding:12px 14px 4px}' +
+    'html[data-sekme="profil"] #panel-profil #profil-admin-anchor .profil-section-title{color:var(--muted);text-shadow:none;border-bottom-color:var(--border)}' +
     '@media(prefers-reduced-motion:reduce){.d8aa-ok{transition:none}}';
   document.head.appendChild(s);
 }
@@ -10597,17 +10606,17 @@ body.dark #d8-sahne.sahne-guz .sp{filter:brightness(.92)}
    ipek görünümünü verir). ~30 kare/sn, sekme görünmezken tamamen durur.
    Gren ve kararma katmanları sabittir; hiçbir filtre/blur canlı çalışmaz.
    ========================================================================== */
-#d8-sivi{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#2E140A;
+#d8-sivi{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#7A3418;
   opacity:0;visibility:hidden;transition:opacity 1s ease,visibility 0s linear 1s}
 html[data-sekme="profil"] #d8-sivi{opacity:1;visibility:visible;transition:opacity 1s ease,visibility 0s}
-html[data-tema="kis"] #d8-sivi{background:#0C1634}
-html[data-tema="deniz"] #d8-sivi{background:#062B29}
+html[data-tema="kis"] #d8-sivi{background:#2A4A8E}
+html[data-tema="deniz"] #d8-sivi{background:#126A70}
 #d8-sivi canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 #d8-sivi .ip-gren{position:absolute;inset:0;background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'> <filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/> <feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.1 -0.35'/></filter> <rect width='180' height='180' filter='url%28%23g%29'/></svg>");background-size:180px 180px;opacity:.16}
 #d8-sivi .ip-karart{position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.04) 50%,rgba(0,0,0,.26) 100%),
-             radial-gradient(ellipse 120% 80% at 50% 30%,transparent 60%,rgba(0,0,0,.16) 100%)}
-body:not(.dark) #d8-sivi .ip-karart{opacity:.5}
+  background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0) 55%,rgba(0,0,0,.12) 100%),
+             radial-gradient(ellipse 120% 80% at 50% 30%,transparent 65%,rgba(0,0,0,.07) 100%)}
+body:not(.dark) #d8-sivi .ip-karart{opacity:.35}
 
 /* İpeğin üstünde: başlıklar beyaz, kartlar buğulu koyu/açık cam */
 html[data-sekme="profil"] #panel-profil .profil-section-title{color:rgba(255,255,255,.92);border-bottom-color:rgba(255,255,255,.18);text-shadow:0 1px 4px rgba(0,0,0,.45)}
@@ -10619,7 +10628,7 @@ html[data-tema="deniz"] body.dark #panel-profil,html[data-tema="deniz"].dark-pre
 html[data-sekme="profil"] .header{box-shadow:0 10px 30px rgba(0,0,0,.3)}
 /* Profil'de de alt menü cam kalır; hareketli dokunun üstünde bulanıklık
    yarıçapı biraz küçültülür (maliyet yarıçapla büyür). */
-html[data-sekme="profil"] #mobile-bottom-nav{-webkit-backdrop-filter:blur(14px) saturate(1.7)!important;backdrop-filter:blur(14px) saturate(1.7)!important}
+html[data-sekme="profil"] #mobile-bottom-nav{-webkit-backdrop-filter:blur(8px) saturate(1.5)!important;backdrop-filter:blur(8px) saturate(1.5)!important}
 
 @keyframes d8Belir{from{opacity:0}to{opacity:1}}
 @keyframes d8Yuksel{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -10760,7 +10769,7 @@ html body .header-logo{background:rgba(255,255,255,.1)}
       sivi.setAttribute('aria-hidden', 'true');
       sivi.innerHTML = '<canvas></canvas><div class="ip-karart"></div><div class="ip-gren"></div>';
       ipek.cv = sivi.querySelector('canvas');
-      ipek.ctx = ipek.cv.getContext('2d', { alpha: false });
+      if (!glKur(ipek.cv)) ipek.ctx = ipek.cv.getContext('2d', { alpha: false });
       lutKur();
       ipekBoyut();
       document.body.insertBefore(sivi, document.body.firstChild);
@@ -10774,11 +10783,83 @@ html body .header-logo{background:rgba(255,255,255,.1)}
      çevrilir. Çözünürlük düşük tutulur; tarayıcı büyütürken yumuşatır. */
   var RAMPA = {
     /* En koyu uç saf siyah değil, mevsim renginin derin tonu: gölgeler renkli kalır */
-    guz:   [[0, '#2E140A'], [.2, '#4C1F0D'], [.42, '#7E3014'], [.62, '#BA4612'], [.82, '#EE9139'], [1, '#FDE4B0']],
-    kis:   [[0, '#0C1634'], [.2, '#152A60'], [.42, '#264A94'], [.62, '#3876D8'], [.82, '#90C2F8'], [1, '#EAF3FF']],
-    deniz: [[0, '#062B29'], [.2, '#0A4644'], [.42, '#0F6F7C'], [.62, '#18A0B8'], [.82, '#74E1EC'], [1, '#E6FDFF']]
+    guz:   [[0, '#5A2A16'], [.2, '#7A3519'], [.42, '#A5441A'], [.62, '#D0601F'], [.82, '#F2A04C'], [1, '#FDE8BC']],
+    kis:   [[0, '#1F3469'], [.2, '#2A4A90'], [.42, '#3A67B8'], [.62, '#4E8EE2'], [.82, '#9CCBF8'], [1, '#EEF5FF']],
+    deniz: [[0, '#0E4A47'], [.2, '#136462'], [.42, '#198896'], [.62, '#24AEC4'], [.82, '#80E4EE'], [1, '#E8FDFF']]
   };
   var ipek = { cv: null, ctx: null, img: null, W: 0, H: 0, lut: null, anim: 0, son: 0, t0: 0, yuk: 0 };
+
+  /* ---------------------------------------------- GPU (WebGL) ipek motoru
+     Aynı desen bir fragment shader'da hesaplanır: işlemci boşta kalır, kaydırma
+     sırasında da akış durmaz ve çözünürlük çok daha yüksek tutulabilir (daha az
+     bulanık). WebGL yoksa aşağıdaki 2D motor devreye girer. */
+  var gl = null, glP = null, glU = null, glTex = null;
+  var GL_VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+  var GL_FS = [
+    '#ifdef GL_FRAGMENT_PRECISION_HIGH', 'precision highp float;', '#else', 'precision mediump float;', '#endif',
+    'uniform vec2 uR;uniform float uT;uniform float uY;uniform sampler2D uL;',
+    'void main(){',
+    ' float o=2.6/min(uR.x,uR.y);',
+    ' float x=gl_FragCoord.x*o, y=(uR.y-gl_FragCoord.y)*o, t=uT;',
+    ' float u=x*0.8525245-y*(-0.5226872), w=x*(-0.5226872)+y*0.8525245;',
+    ' float q=0.9*sin(1.4*u+t*0.7)+0.7*sin(1.1*w-t*0.5);',
+    ' float r=sin(1.7*w+1.3*q+t*0.45);',
+    ' float f=sin(2.2*u+1.4*r+0.8*q-t*0.4);',
+    ' float f2=sin(3.1*w-0.9*u+1.2*f+t*0.3);',
+    ' float v=0.5+0.5*(0.78*f+0.22*f2);',
+    ' float p=v*v*v;',
+    ' float i=0.5+0.5*sin(1.2*x-0.9*y+t*0.5+0.6*r);',
+    ' float d=(0.1+0.48*v+0.34*p)*(0.4+0.7*i);',
+    ' d=clamp(uY+(1.0-uY)*d,0.0,1.0);',
+    ' gl_FragColor=vec4(texture2D(uL,vec2(d*0.99609375+0.001953125,0.5)).rgb,1.0);',
+    '}'].join('\n');
+  function glDerle(tip, kaynak) {
+    var sh = gl.createShader(tip); gl.shaderSource(sh, kaynak); gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh));
+    return sh;
+  }
+  function glKaynaklar() {
+    glP = gl.createProgram();
+    gl.attachShader(glP, glDerle(gl.VERTEX_SHADER, GL_VS));
+    gl.attachShader(glP, glDerle(gl.FRAGMENT_SHADER, GL_FS));
+    gl.linkProgram(glP);
+    if (!gl.getProgramParameter(glP, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(glP));
+    gl.useProgram(glP);
+    var b = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    var a = gl.getAttribLocation(glP, 'a');
+    gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0);
+    glU = { R: gl.getUniformLocation(glP, 'uR'), T: gl.getUniformLocation(glP, 'uT'),
+            Y: gl.getUniformLocation(glP, 'uY'), L: gl.getUniformLocation(glP, 'uL') };
+    glTex = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, glTex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(glU.L, 0);
+  }
+  function glKur(cv) {
+    try {
+      var sec = { alpha: false, antialias: false, depth: false, stencil: false,
+                  preserveDrawingBuffer: false, powerPreference: 'low-power' };
+      gl = cv.getContext('webgl', sec) || cv.getContext('experimental-webgl', sec);
+      if (!gl) return false;
+      glKaynaklar();
+      cv.addEventListener('webglcontextlost', function (e) { e.preventDefault(); ipekDurdur(); glP = null; }, false);
+      cv.addEventListener('webglcontextrestored', function () {
+        try { glKaynaklar(); glLutYukle(); ipek.W = 0; ipekBoyut(); if (sivi && sivi.classList.contains('calisiyor')) ipekBaslat(); } catch (e) {}
+      }, false);
+      return true;
+    } catch (e) { gl = null; glP = null; return false; }
+  }
+  function glLutYukle() {
+    if (!gl || !glP || !ipek.lut) return;
+    gl.bindTexture(gl.TEXTURE_2D, glTex);
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 256, 1, 0, gl.RGB, gl.UNSIGNED_BYTE, ipek.lut);
+  }
 
   function hex2rgb(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
   function lutKur() {
@@ -10786,7 +10867,7 @@ html body .header-logo{background:rgba(255,255,255,.1)}
     var r = RAMPA[tema] || RAMPA.guz, lut = new Uint8Array(256 * 3);
     /* Açık modda gölgeler biraz kaldırılır; koyu modda referanstaki gibi derin */
     var koyu = document.body && document.body.classList.contains('dark');
-    ipek.yuk = koyu ? .06 : .2;
+    ipek.yuk = koyu ? .16 : .3;
     for (var i = 0; i < 256; i++) {
       var v = i / 255, k = 1;
       while (k < r.length - 1 && v > r[k][0]) k++;
@@ -10797,9 +10878,24 @@ html body .header-logo{background:rgba(255,255,255,.1)}
       lut[i * 3 + 2] = ca[2] + (cb[2] - ca[2]) * f;
     }
     ipek.lut = lut;
+    glLutYukle();
   }
   function ipekBoyut() {
     if (!ipek.cv) return;
+    if (gl) {
+      /* GPU'da piksel başı maliyet önemsiz: ekrana yakın çözünürlük (en fazla
+         ~1,1 MP). Eski 2D motor ekranın 1/7'sinde çizip büyütüyordu; bulanıklığın
+         asıl kaynağı oydu. */
+      var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      var olc = dpr * (window.innerWidth <= 700 ? 0.8 : 0.65);
+      var gW = Math.max(64, Math.round(window.innerWidth * olc));
+      var gH = Math.max(64, Math.round(window.innerHeight * olc));
+      if (gW * gH > 1100000) { var gk = Math.sqrt(1100000 / (gW * gH)); gW = Math.round(gW * gk); gH = Math.round(gH * gk); }
+      if (gW === ipek.W && gH === ipek.H) return;
+      ipek.W = ipek.cv.width = gW; ipek.H = ipek.cv.height = gH;
+      gl.viewport(0, 0, gW, gH);
+      return;
+    }
     /* Efekt zaten yumuşak ve bulanık: düşük çözünürlükte hesaplanıp CSS ile
        büyütülür. Piksel sınırı 42000'den 12000'e indi (işlemci yükü ~3,5 kat az). */
     var olcek = window.innerWidth <= 700 ? 7 : 10;
@@ -10812,6 +10908,14 @@ html body .header-logo{background:rgba(255,255,255,.1)}
   }
   var ACI = -0.55, CA = Math.cos(ACI), SA = Math.sin(ACI);
   function ipekCiz(zaman) {
+    if (gl) {
+      if (!glP || !ipek.W) return;
+      gl.uniform2f(glU.R, ipek.W, ipek.H);
+      gl.uniform1f(glU.T, zaman * 0.00032);
+      gl.uniform1f(glU.Y, ipek.yuk);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      return;
+    }
     if (!ipek.img || !ipek.lut) return;
     var W = ipek.W, H = ipek.H, px = ipek.img.data, lut = ipek.lut, yuk = ipek.yuk;
     /* Geniş, yumuşak kıvrımlar: iç içe (alan bükümlü) düşük frekanslı sinüsler.
@@ -10848,7 +10952,11 @@ html body .header-logo{background:rgba(255,255,255,.1)}
     if (!sivi || !sivi.classList.contains('calisiyor') || document.hidden) return;
     /* ~15 kare/sn (akış çok yavaş, fark edilmez); kaydırma sürerken çizim
        atlanır ki kaydırma akıcı kalsın */
-    if (zaman - ipek.son >= 66 && Date.now() - ipekKaydirma > 180) { ipek.son = zaman; ipekCiz(zaman); }
+    if (gl) {
+      /* GPU yolu: ~30 kare/sn, kaydırma sırasında da kesintisiz akar
+         (eskiden kaydırırken çizim atlanıyordu — duraksamanın sebebi buydu) */
+      if (zaman - ipek.son >= 30) { ipek.son = zaman; ipekCiz(zaman); }
+    } else if (zaman - ipek.son >= 66 && Date.now() - ipekKaydirma > 180) { ipek.son = zaman; ipekCiz(zaman); }
     ipek.anim = requestAnimationFrame(ipekDongu);
   }
   function ipekBaslat() {
