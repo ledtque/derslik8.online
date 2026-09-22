@@ -972,6 +972,7 @@ else{window.addEventListener('load',function(){setTimeout(hideSplash,350);});}})
 <button class="mtab active" onclick="showMain('program',this)"><span class="tab-icon">📋 </span><span class="tab-full">Ders Programı</span><span class="tab-short">Dersler</span></button>
 <button class="mtab" onclick="showMain('takvim',this)"><span class="tab-icon">📅 </span><span class="tab-full">Akademik Takvim</span><span class="tab-short">Takvim</span></button>
 <button class="mtab" onclick="showMain('sinav',this)"><span class="tab-icon">📝 </span><span class="tab-full">Sınav Programı</span><span class="tab-short">Sınavlar</span></button>
+<button class="mtab" id="mtab-gorev" onclick="showMain('gorev',this)" title="Haftalık Görev Planı — döneme özel görevler"><span class="tab-icon">🧭 </span><span class="tab-full">Görev Planı</span><span class="tab-short">Görevler</span></button>
 <button class="mtab mtab-akbis" id="akbisTabBtn" onclick="d8TogglePicker(event,'akbis-picker-dropdown')" title="MEB AKBİS — Ders Notları ve Eğitim Görevleri"><span class="tab-icon">🏛️ </span><span class="tab-full">MEB AKBİS</span><span class="tab-short">AKBİS</span></button>
 <button class="mtab mtab-sunu" id="kaynaklarTabBtn" onclick="d8TogglePicker(event,'kaynaklar-picker-dropdown')" title="Kaynaklar — Ders Sunuları, Öğretmen Notları ve İngilizce Öğretim Programı"><span class="tab-icon">📚 </span><span class="tab-full">Kaynaklar</span><span class="tab-short">Kaynaklar</span></button>
 <button class="mtab mtab-zamanlayici" onclick="openScreensaver();return false;" title="Sınıf Zamanlayıcısı — Tam ekran geri sayım"><span class="tab-icon">⏱️ </span><span class="tab-full">Zamanlayıcı</span><span class="tab-short">⏱️</span></button>
@@ -1350,7 +1351,7 @@ body.dark #kaynaklar-picker-dropdown{background:#111827;border-color:#1E2840;}
 </table>
 </div>
 <div style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center;">📌 <strong>2. Dönem Dönem Sonu Sınav Takvimi</strong> · 14–17 Eylül 2026</div>
-</div></div> </div> </div>  
+</div></div> <div id="panel-gorev" style="display:none"><div id="gorev-bos" style="display:none"></div></div> </div> </div>  
  <div id="panel-profil" style="display:none"> <div id="profil-content"></div>
 </div>
 <div id="panel-admin" style="display:none">
@@ -2095,7 +2096,7 @@ var dsb=document.getElementById('desktop-sidebar');if(dsb)dsb.style.display=(id=
   } else if(profilContent&&profilContent._built){
     buildProfilPage();
   }
-}else if(id==='admin'&&typeof window.d8RenderAdminBar==='function'){try{window.d8RenderAdminBar();}catch(e){}}['program','takvim','sinav','profil','admin'].forEach(k=>{const panel=document.getElementById('panel-'+k);if(!panel)return;panel.style.display=k===id?'block':'none';if(k===id&&k!=='profil'&&k!=='admin'){panel.classList.remove('panel-animated');void panel.offsetWidth;panel.style.overflow='hidden';panel.classList.add('panel-animated');var _dl=panel.closest('.desktop-content')||panel.parentNode;if(_dl){_dl.style.overflow='hidden';setTimeout(function(){_dl.style.overflow='';},420);}setTimeout(function(){panel.style.overflow='';},420);}else if(k===id&&(k==='profil'||k==='admin')){panel.classList.remove('panel-animated');}});document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));if(btn)btn.classList.add('active');else{var progTab=document.querySelector('.mtab[onclick*="\'program\'"]');if(progTab)progTab.classList.add('active');syncMobNav('program');}
+}else if(id==='admin'&&typeof window.d8RenderAdminBar==='function'){try{window.d8RenderAdminBar();}catch(e){}}['program','takvim','sinav','gorev','profil','admin'].forEach(k=>{const panel=document.getElementById('panel-'+k);if(!panel)return;panel.style.display=k===id?'block':'none';if(k===id&&k!=='profil'&&k!=='admin'){panel.classList.remove('panel-animated');void panel.offsetWidth;panel.style.overflow='hidden';panel.classList.add('panel-animated');var _dl=panel.closest('.desktop-content')||panel.parentNode;if(_dl){_dl.style.overflow='hidden';setTimeout(function(){_dl.style.overflow='';},420);}setTimeout(function(){panel.style.overflow='';},420);}else if(k===id&&(k==='profil'||k==='admin')){panel.classList.remove('panel-animated');}});document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));if(btn)btn.classList.add('active');else{var progTab=document.querySelector('.mtab[onclick*="\'program\'"]');if(progTab)progTab.classList.add('active');syncMobNav('program');}
 if(id==='takvim'){var calDaysEl=document.getElementById('cal-days');if(calDaysEl&&!window._calBuilt){var skelHtml='';for(var _sk=0;_sk<35;_sk++){skelHtml+='<div class="skeleton-line cal-skel-day"></div>';}calDaysEl.innerHTML=skelHtml;setTimeout(function(){renderCal();window._calBuilt=true;},80);}else{requestAnimationFrame(renderCal);}setTimeout(function(){if(window._bindCalSwipe)window._bindCalSwipe();},350);if(window.innerWidth<=660){setTimeout(function(){var calNav=document.querySelector('.cal-nav');if(calNav){var y=calNav.getBoundingClientRect().top+window.pageYOffset-60;window.scrollTo({top:Math.max(0,y),behavior:'smooth'});}},80);}}else if(id==='sinav'){if(true){if(typeof updateSinavTableCells==='function')updateSinavTableCells();buildSinavMobile();
   setTimeout(function(){
     var hasSinav=document.querySelectorAll('[id^="sinav-row-"]').length>0;
@@ -3684,21 +3685,21 @@ window.installToHomeScreen=function(){
 window._refreshPwaRow=function(){var pc=document.getElementById('profil-content');if(pc&&pc._built&&typeof buildProfilPage==='function')buildProfilPage();};
 })();</script> <!-- 📱 Mobil Alt Navigasyon -->
 <div id="mob-floating-pill" aria-live="polite" style="display:none"> <div id="session-pill-wrap-mob"></div>
-</div> <nav id="mobile-bottom-nav" aria-label="Ana menü"> <div id="mob-nav-btns"> <button class="mob-nav-btn active" id="mob-btn-program" onclick="showMain('program',this);syncMobNav('program')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></span> <span class="mob-nav-label">Dersler</span> </button> <button class="mob-nav-btn" id="mob-btn-takvim" onclick="showMain('takvim',this);syncMobNav('takvim')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span> <span class="mob-nav-label">Takvim</span> </button> <button class="mob-nav-btn" id="mob-btn-sinav" onclick="showMain('sinav',this);syncMobNav('sinav')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></span> <span class="mob-nav-label">Sınavlar</span> </button> <button class="mob-nav-btn mob-nav-akbis" id="akbisMobBtn" onclick="d8TogglePicker(event,'akbis-picker-dropdown')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><line x1="6" y1="18" x2="6" y2="11"></line><line x1="10" y1="18" x2="10" y2="11"></line><line x1="14" y1="18" x2="14" y2="11"></line><line x1="18" y1="18" x2="18" y2="11"></line><polygon points="12 3 20 9 4 9"></polygon></svg></span> <span class="mob-nav-label">AKBİS</span> </button><button class="mob-nav-btn" id="kaynaklarMobBtn" onclick="d8TogglePicker(event,'kaynaklar-picker-dropdown')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span> <span class="mob-nav-label">Kaynaklar</span> </button><button class="mob-nav-btn" id="mob-btn-profil" onclick="showMain('profil',this);syncMobNav('profil')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span> <span class="mob-nav-label">Profil</span> </button> </div>
+</div> <nav id="mobile-bottom-nav" aria-label="Ana menü"> <div id="mob-nav-btns"> <button class="mob-nav-btn active" id="mob-btn-program" onclick="showMain('program',this);syncMobNav('program')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></span> <span class="mob-nav-label">Dersler</span> </button> <button class="mob-nav-btn" id="mob-btn-takvim" onclick="showMain('takvim',this);syncMobNav('takvim')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span> <span class="mob-nav-label">Takvim</span> </button> <button class="mob-nav-btn" id="mob-btn-sinav" onclick="showMain('sinav',this);syncMobNav('sinav')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></span> <span class="mob-nav-label">Sınavlar</span> </button> <button class="mob-nav-btn" id="mob-btn-gorev" onclick="showMain('gorev',this);syncMobNav('gorev')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><polyline points="9 14 11 16 15 12"></polyline></svg></span> <span class="mob-nav-label">Görevler</span> </button><button class="mob-nav-btn" id="kaynaklarMobBtn" onclick="d8TogglePicker(event,'kaynaklar-picker-dropdown')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span> <span class="mob-nav-label">Kaynaklar</span> </button><button class="mob-nav-btn" id="mob-btn-profil" onclick="showMain('profil',this);syncMobNav('profil')"> <span class="mob-nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span> <span class="mob-nav-label">Profil</span> </button> </div>
 </nav> <script>(function(){var stickyEl=document.getElementById('mob-sticky-day');if(!stickyEl)return;var ticking=false;var lastHeader=null;function getVisibleHeader(scope){var ham;if(scope==='sinav'){ham=document.querySelectorAll('.mob-day-header[data-sinav-gun]');}else{ham=document.querySelectorAll('#mobile-schedule .mob-day-header, #mobile-schedule-d2 .mob-day-header, #mobile-schedule-d3 .mob-day-header, #mobile-schedule-d4 .mob-day-header');}
 /* Gizli dönem panellerindeki başlıklar elenir: ölçüleri 0 olduğu için hepsi
    "en üstte" sayılıp yapışkan şeritte yanlış gün (son satır: Cuma) kalıyordu. */
 var headers=[];for(var j=0;j<ham.length;j++){var r0=ham[j].getBoundingClientRect();if(r0.width>0&&r0.height>0)headers.push(ham[j]);}
 var best=null;for(var i=0;i<headers.length;i++){var rect=headers[i].getBoundingClientRect();if(rect.top<=2){best=headers[i];}else{break;}}
 return best;}
-function getActiveScope(){var sinavPanel=document.getElementById('panel-sinav');if(sinavPanel&&sinavPanel.style.display!=='none')return'sinav';var takvimPanel=document.getElementById('panel-takvim');if(takvimPanel&&takvimPanel.style.display!=='none')return'none';var profilPanel=document.getElementById('panel-profil');if(profilPanel&&profilPanel.style.display!=='none')return'none';return'ders';}
+function getActiveScope(){var sinavPanel=document.getElementById('panel-sinav');if(sinavPanel&&sinavPanel.style.display!=='none')return'sinav';var takvimPanel=document.getElementById('panel-takvim');if(takvimPanel&&takvimPanel.style.display!=='none')return'none';var gorevPanel=document.getElementById('panel-gorev');if(gorevPanel&&gorevPanel.style.display!=='none')return'none';var profilPanel=document.getElementById('panel-profil');if(profilPanel&&profilPanel.style.display!=='none')return'none';return'ders';}
 function update(){if(window.innerWidth>660){stickyEl.classList.remove('visible');ticking=false;return;}
 var scope=getActiveScope();if(scope==='none'){stickyEl.classList.remove('visible');lastHeader=null;ticking=false;return;}
 var h=getVisibleHeader(scope);if(h){if(h!==lastHeader){stickyEl.innerHTML=h.innerHTML;stickyEl.classList.toggle('today-style',h.classList.contains('today-header'));lastHeader=h;}
 stickyEl.classList.add('visible');}else{stickyEl.classList.remove('visible');lastHeader=null;}
 ticking=false;}
 window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(update);ticking=true;}},{passive:true});var _resizeTimer=null;window.addEventListener('resize',function(){if(_resizeTimer)clearTimeout(_resizeTimer);_resizeTimer=setTimeout(function(){if(window.innerWidth>660)stickyEl.classList.remove('visible');},100);},{passive:true});})();var _mobNavBtns=null;function syncMobNav(key){if(!_mobNavBtns)_mobNavBtns=document.querySelectorAll('.mob-nav-btn');_mobNavBtns.forEach(function(b){b.classList.remove('active');});var a=document.getElementById('mob-btn-'+key);if(a)a.classList.add('active');}
-document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('click',function(){var panels=['program','takvim','sinav','profil'];panels.forEach(function(k){if(btn.getAttribute('onclick')&&btn.getAttribute('onclick').indexOf("'"+k+"'")>-1){syncMobNav(k);}});});});</script>
+document.querySelectorAll('.mtab').forEach(function(btn){btn.addEventListener('click',function(){var panels=['program','takvim','sinav','gorev','profil'];panels.forEach(function(k){if(btn.getAttribute('onclick')&&btn.getAttribute('onclick').indexOf("'"+k+"'")>-1){syncMobNav(k);}});});});</script>
 <!-- ═══ NOW BAR — body'nin doğrudan çocuğu, fixed bozulmasın ═══ -->
 <div id="di-pill" style="display:none"></div>
 <script>
@@ -6194,12 +6195,13 @@ td.td-full[data-fam="uygulama"] {
     sinav:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 3.5h9l4 4v13H6z"/><path d="M15 3.5v4h4M9 12h6M9 16h4"/></svg>',
     akbis:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3.5 9.5 12 4.5l8.5 5"/><path d="M5.5 10v8M9.5 10v8M14.5 10v8M18.5 10v8M3.5 19.5h17"/></svg>',
     kaynaklar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(12 12) scale(0.82) translate(-12 -12)"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></g></svg>',
+    gorev:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5H6.5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-14a1 1 0 0 0-1-1H15"/><rect x="9" y="3" width="6" height="3" rx="1"/><path d="m8.5 12 1.5 1.5 2.5-2.5M8.5 17l1.5 1.5 2.5-2.5M14.5 12.5h1.5M14.5 17.5h1.5"/></svg>',
     profil:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20c1.4-3.6 4.2-5.5 7.5-5.5s6.1 1.9 7.5 5.5"/></svg>'
   };
 
   function ikonlariDegistir() {
     var esle = { 'mob-btn-program': 'program', 'mob-btn-takvim': 'takvim',
-                 'mob-btn-sinav': 'sinav', 'akbisMobBtn': 'akbis', 'kaynaklarMobBtn': 'kaynaklar', 'mob-btn-profil': 'profil' };
+                 'mob-btn-sinav': 'sinav', 'mob-btn-gorev': 'gorev', 'akbisMobBtn': 'akbis', 'kaynaklarMobBtn': 'kaynaklar', 'mob-btn-profil': 'profil' };
     Object.keys(esle).forEach(function (id) {
       var b = el(id); if (!b) return;
       var i = b.querySelector('.mob-nav-icon'); if (!i) return;
@@ -6822,18 +6824,15 @@ td.td-full[data-fam="uygulama"] {
   function d3Panel() {
     /* Yolculuk kartı burada tekrar edilmez: Profil'de ve masaüstü kenar
        çubuğunda zaten duruyor. */
-    var plan = '';
-    if (typeof window.d8TzodBolumu === 'function') { try { plan = window.d8TzodBolumu(); } catch (e) {} }
+    /* Haftalık görev planı kendi sekmesine taşındı (gorevHtml / panel-gorev). */
     if (programVar('d3')) return tabloHtml('d3') +
-      (typeof window.d8StajBolumu === 'function' ? window.d8StajBolumu() : '') + plan;
+      (typeof window.d8StajBolumu === 'function' ? window.d8StajBolumu() : '');
 
     /* Geri sayımlı bilgi kartı (d3Ust) kaldırıldı: dönem başladı, panel
        doğrudan kişisel çizelgeyle açılır. */
     var h = '';
     /* Kişisel çizelge en üstte: bu dönemde herkesin programı kendine ait. */
     if (typeof window.d8StajBolumu === 'function') { try { h += window.d8StajBolumu(); } catch (e) {} }
-    /* Yönergedeki 10 haftalık görev planı: kişinin aday sırasına göre */
-    h += plan;
     /* Uygulama değerlendirmeleri, dönem takvimi, değerlendirme formları ve
        dikkat edilecek hususlar Sınav Programı sekmesine (sinavHtml) taşındı. */
     return h;
@@ -6937,13 +6936,45 @@ td.td-full[data-fam="uygulama"] {
 
   function panelHtml(mod) { return mod === 'd3' ? d3Panel() : d4Panel(); }
 
+  /* ------------------------------------------------ Görev Planı sekmesi
+     Her dönemin kendi görev planı olur. Şimdilik yalnızca III. Dönem'in
+     planı (d8-tzod) var; IV. Dönem'in görevleri belli olunca gorevHtml('d4')
+     doldurulacak. I./II. dönemde sekme boş durum gösterir (gorevBosHtml). */
+  function gorevHtml(mod) {
+    if (mod === 'd3') {
+      var plan = '';
+      if (typeof window.d8TzodBolumu === 'function') { try { plan = window.d8TzodBolumu(); } catch (e) {} }
+      return plan || gorevBosKart('🧭', 'Görev planı yüklenemedi', 'Sayfayı yenilemeyi dene. Sorun sürerse III. Dönem yönergesini Ders Programı sekmesindeki ders tanımından açabilirsin.');
+    }
+    return gorevBosKart('🛠️', 'IV. Dönem görev planı hazırlanıyor',
+      'Bu dönemin kendine has görevleri belli olduğunda haftalara yerleştirip işaretleyebileceğin plan burada açılacak.');
+  }
+  function gorevBosKart(ikon, baslik, not, eylem) {
+    return '<div class="gv-bos"><div class="gv-bos-ikon">' + ikon + '</div>' +
+           '<div class="gv-bos-baslik">' + baslik + '</div>' +
+           '<div class="gv-bos-not">' + not + '</div>' + (eylem || '') + '</div>';
+  }
+  function gorevBosHtml(mod) {
+    var d = don(mod) || {};
+    return gorevBosKart('🗂️', (d.ad || 'Bu dönem') + ' için görev planı yok',
+      'Görev planı III. Dönem’den itibaren kullanılıyor.',
+      '<button class="gv-bos-btn" onclick="setDonemMode(\'d3\')">III. Dönem’in planını aç</button>');
+  }
+
   /* ------------------------------------------------------------ 7. DOM kurulum */
   function stilEkle() {
     if (document.getElementById('d34-stil')) return;
     var s = document.createElement('style');
     s.id = 'd34-stil';
     s.textContent = [
-      '#program-d3,#program-d4,#sinav-d3,#sinav-d4{animation:d4In .25s ease;flex:1 1 0%;min-width:0;max-width:100%;box-sizing:border-box}',
+      '#program-d3,#program-d4,#sinav-d3,#sinav-d4,#gorev-d3,#gorev-d4,#gorev-bos{animation:d4In .25s ease;flex:1 1 0%;min-width:0;max-width:100%;box-sizing:border-box}',
+      '#gorev-d3 .tz-blok{margin-top:0}',
+      '.gv-bos{background:var(--white);border:1px dashed var(--border);border-radius:16px;padding:34px 22px;text-align:center;max-width:520px;margin:8px auto 0}',
+      '.gv-bos-ikon{font-size:30px;line-height:1;margin-bottom:10px}',
+      '.gv-bos-baslik{font-size:15px;font-weight:700;color:var(--navy)}',
+      '.gv-bos-not{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:6px}',
+      '.gv-bos-btn{margin-top:14px;font-family:inherit;font-size:12px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--navy),var(--navy2));border:none;border-radius:10px;padding:8px 16px;cursor:pointer}',
+      '.gv-bos-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}',
       '@keyframes d4In{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}',
       '.d4-hero{background:linear-gradient(135deg,#7A4409,#B8791E);border-radius:16px;padding:18px 20px;color:#fff;box-shadow:0 6px 20px rgba(122,68,9,.22)}',
       /* Sınav sekmesindeki III. Dönem başlığı artık mevsim temasını izler */
@@ -7107,7 +7138,15 @@ td.td-full[data-fam="uygulama"] {
     stilEkle();
     var pp = document.getElementById('panel-program');
     var ps = document.getElementById('panel-sinav');
+    var pg = document.getElementById('panel-gorev');
     PANEL_MODLAR.forEach(function (mod) {
+      if (pg && !document.getElementById('gorev-' + mod)) {
+        var el3 = document.createElement('div');
+        el3.id = 'gorev-' + mod;
+        el3.style.display = 'none';
+        el3.innerHTML = gorevHtml(mod);
+        pg.appendChild(el3);
+      }
       if (pp && !document.getElementById('program-' + mod)) {
         var el = document.createElement('div');
         el.id = 'program-' + mod;
@@ -7131,6 +7170,8 @@ td.td-full[data-fam="uygulama"] {
       if (el) el.innerHTML = panelHtml(mod);
       var el2 = document.getElementById('sinav-' + mod);
       if (el2) el2.innerHTML = sinavHtml(mod);
+      var el3 = document.getElementById('gorev-' + mod);
+      if (el3) el3.innerHTML = gorevHtml(mod);
     });
   };
 
@@ -7218,9 +7259,16 @@ td.td-full[data-fam="uygulama"] {
     PANEL_MODLAR.forEach(function (m) {
       var p = document.getElementById('program-' + m);
       var s = document.getElementById('sinav-' + m);
+      var g = document.getElementById('gorev-' + m);
       if (p) p.style.display = (mod === m) ? '' : 'none';
       if (s) s.style.display = (mod === m) ? '' : 'none';
+      if (g) g.style.display = (mod === m) ? '' : 'none';
     });
+    var gbos = document.getElementById('gorev-bos');
+    if (gbos) {
+      gbos.style.display = ek ? 'none' : '';
+      if (!ek) gbos.innerHTML = gorevBosHtml(mod);
+    }
 
     var smob = document.getElementById('sinav-mobile-schedule');
     if (smob) smob.style.display = ek ? 'none' : '';
@@ -7482,6 +7530,40 @@ td.td-full[data-fam="uygulama"] {
     kap.insertBefore(bolum, sonraki);
   }
 
+  /** MEB AKBİS: mobil alt menüde yerini Görevler'e bıraktı; bağlantıları
+      Profil'de Hesap'ın hemen altında. İçerik açılır listeden okunur. */
+  function profilAkbis() {
+    var kap = document.getElementById('profil-content');
+    if (!kap || kap.querySelector('[data-bolum="akbis"]')) return;
+    var kaynak = document.getElementById('akbis-picker-dropdown');
+    if (!kaynak) return;
+    var kart = document.createElement('div');
+    kart.className = 'profil-card profil-settings-card';
+    kaynak.querySelectorAll('.ip-item').forEach(function (el) {
+      var ikon = el.querySelector('.ip-icon'), bas2 = el.querySelector('.ip-title'), alt = el.querySelector('.ip-sub');
+      var a = document.createElement('a');
+      a.className = 'profil-setting-row prof-kaynak-satir';
+      a.href = el.getAttribute('href') || '#';
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.innerHTML = '<div class="profil-setting-icon">' + (ikon ? ikon.textContent : '🏛️') + '</div>' +
+        '<div class="profil-setting-body"><div class="profil-setting-label">' + (bas2 ? bas2.textContent : '') + '</div>' +
+        '<div class="profil-setting-sub">' + (alt ? alt.textContent : '') + '</div></div>' +
+        '<div style="font-size:14px;color:var(--muted);opacity:.5;flex-shrink:0;">↗</div>';
+      kart.appendChild(a);
+    });
+    if (!kart.children.length) return;
+    var bolum = document.createElement('div');
+    bolum.className = 'profil-section';
+    bolum.setAttribute('data-bolum', 'akbis');
+    bolum.innerHTML = '<div class="profil-section-title">🏛️ MEB AKBİS</div>';
+    bolum.appendChild(kart);
+    var anc = document.getElementById('profil-admin-anchor');
+    var hesap = anc ? anc.closest('.profil-section') : null;
+    if (hesap && hesap.parentNode === kap) kap.insertBefore(bolum, hesap.nextSibling);
+    else kap.insertBefore(bolum, kap.firstChild ? kap.firstChild.nextSibling : null);
+  }
+
   /** Kaynaklar: mobil alt menüden çıkarıldı, Profil'de kendi bölümü oldu.
       İçerik, mevcut açılır listeden okunur — tek kaynak, ikinci bir liste yok. */
   function profilKaynaklar() {
@@ -7669,7 +7751,7 @@ td.td-full[data-fam="uygulama"] {
     if (typeof orij === 'function') {
       window.buildProfilPage = function () {
         var r = orij.apply(this, arguments);
-        try { profilKutulari(); profilTamamlananlar(); profilKaynaklar(); ilerlemeDuzelt(document.getElementById('profil-content')); } catch (e) {}
+        try { profilKutulari(); profilTamamlananlar(); profilAkbis(); profilKaynaklar(); ilerlemeDuzelt(document.getElementById('profil-content')); } catch (e) {}
         return r;
       };
     }
@@ -10744,7 +10826,7 @@ html body .header-logo{background:rgba(255,255,255,.1)}
 
   /* --------------------------------------------------------- Sekme durumu */
   function gorunenSekme() {
-    var l = ['program', 'takvim', 'sinav', 'profil', 'admin'];
+    var l = ['program', 'takvim', 'sinav', 'gorev', 'profil', 'admin'];
     for (var i = 0; i < l.length; i++) {
       var p = document.getElementById('panel-' + l[i]);
       if (p && p.style.display !== 'none' && p.offsetParent !== null) return l[i];
