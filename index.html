@@ -9609,11 +9609,15 @@ td.td-full[data-fam="uygulama"] {
   /* ----------------------------------------------- 2. Haftalar ve formlar
      1. ve 8. hafta herkes için sabit. Diğer sekiz haftaya sekiz görev,
      uygulama öğretmeniyle yapılan plana göre kişinin kendisi tarafından
-     yerleştirilir (her görev bir kez). 8. hafta dışında her haftanın temel
-     görevi ders anlatımı ve uygulamadır; her hafta bir yansıtıcı gözlem formu,
-     8. hafta ise ona özel form doldurulur.                                   */
+     yerleştirilir (her görev bir kez). 1. hafta eğitim ortamını tanımaya,
+     8. hafta iyi uygulama paylaşımına ayrıldığı için bu iki haftada ders
+     anlatımı ve uygulama yoktur; diğer sekiz haftanın temel görevi budur.
+     Her hafta bir yansıtıcı gözlem formu, 8. hafta ise ona özel form
+     doldurulur.                                                              */
   var SABIT = { 1: 'egitim', 8: 'iyi' };
   var YER = { 8: 'Eğitim ve Uygulama Merkezinde' };
+  /* Temel görevin (ders anlatımı ve uygulama) işlemediği haftalar */
+  function temelVar(no) { return no !== 1 && no !== 8; }
   var SECMELI = ['izleme', 'nobet', 'olcme', 'kurul', 'sosyal', 'aile', 'bilisim', 'brans'];
   var TEMEL = 'Uygulama öğretmeni rehberliğinde sınıf içi uygulama ve ders anlatımı yapılır; eğitim personeli uygun zaman dilimlerinde gözlemler ve değerlendirir.';
 
@@ -10238,14 +10242,14 @@ td.td-full[data-fam="uygulama"] {
 
     var baslik = kod ? GOREV[kod].ikon + ' ' + GOREV[kod].ad
                      : '<span class="tz-soluk">Görev seçilmedi</span>';
-    var alt = kisa(pzt) + ' – ' + kisa(cuma) + (YER[no] ? ' · ' + YER[no] : (no !== 8 ? ' · Ders anlatımı ve uygulama' : ''));
+    var alt = kisa(pzt) + ' – ' + kisa(cuma) + (YER[no] ? ' · ' + YER[no] : (temelVar(no) ? ' · Ders anlatımı ve uygulama' : ''));
 
     var h = '<details class="' + cls + '"' + (acikMi ? ' open' : '') + ' ontoggle="d8TzodAc(' + no + ',this.open)">';
     h += '<summary><span class="tz-no">' + no + '</span><span class="tz-ozet">' +
          '<span class="tz-tarih">' + alt + '</span><span class="tz-gorev">' + baslik + '</span></span>' +
          '<span class="tz-sag">' + sag + '</span></summary>';
     h += '<div class="tz-govde">';
-    if (no !== 8) h += '<div class="tz-temel"><strong>Temel görev: ders anlatımı ve uygulama.</strong> ' + TEMEL + '</div>';
+    if (temelVar(no)) h += '<div class="tz-temel"><strong>Temel görev: ders anlatımı ve uygulama.</strong> ' + TEMEL + '</div>';
     if (!SABIT[no]) h += seciciHtml(no, d);
     if (kod) h += gorevGovdesi(kod, d, no);
     else h += '<div class="tz-ipucu">Uygulama öğretmeninle planladığınız görevi yukarıdan seç; açıklaması ve çalışma listesi burada açılır.</div>';
