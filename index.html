@@ -7875,7 +7875,7 @@ td.td-full[data-fam="uygulama"] {
     }
     if (dow < 1 || dow > 5) return { tip: 'haftasonu', gun: sonrakiDoluGun(dow) };
 
-    var bloklar = gununBloklari(dow);
+    var bloklar = zamanlayiciBloklari(dow);
     if (!bloklar.length) return { tip: 'bosgun', gun: sonrakiDoluGun(dow) };
 
     var simdi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -7884,13 +7884,13 @@ td.td-full[data-fam="uygulama"] {
       var b = bloklar[i], bas = sn(b.bas), bit = sn(b.bit);
       if (b.tur !== 'bos') sira++;
       if (simdi >= bas && simdi < bit) {
-        return { tip: 'simdi', blok: b, sira: b.tur === 'bos' ? 0 : sira,
+        return { tip: 'simdi', blok: b, sira: b.p || (b.tur === 'bos' ? 0 : sira),
                  kalan: bit - simdi, pct: (simdi - bas) / (bit - bas) * 100 };
       }
       if (simdi < bas) {
         var oncekiBit = i > 0 ? sn(bloklar[i - 1].bit) : bas - 1800;
         var ara = Math.max(60, bas - oncekiBit);
-        return { tip: 'sonraki', blok: b, sira: b.tur === 'bos' ? 0 : sira,
+        return { tip: 'sonraki', blok: b, sira: b.p || (b.tur === 'bos' ? 0 : sira),
                  kalan: bas - simdi, pct: Math.max(0, Math.min(100, (ara - (bas - simdi)) / ara * 100)) };
       }
     }
@@ -7903,6 +7903,9 @@ td.td-full[data-fam="uygulama"] {
     /* Dönem başlamadan şerit gösterilmez (geri sayım zaten üst blokta).
        Gizli yer tutucu, başlangıç anında şeridin kendiliğinden açılması için. */
     if (d.tip === 'once') return '<div id="staj-durum" hidden></div>';
+    /* Günün dersleri bitince ayrı bir kart gösterilmez; gizli yer tutucu
+       ertesi gün ilk ders yaklaşınca şeridin kendiliğinden açılmasını sağlar. */
+    if (d.tip === 'gunbitti') return '<div id="staj-durum" hidden></div>';
     var sinif = 'staj-durum', ikon = '🏫', etiket = '', ad = '', alt = '',
         sayac = '', sayacAlt = '', pct = null;
 
@@ -7912,12 +7915,12 @@ td.td-full[data-fam="uygulama"] {
       sinif += ' sd-' + (simdiMi ? 'canli' : 'ara') + ' ' + t.sinif;
       ikon = simdiMi ? t.ikon : '⏭';
       etiket = simdiMi
-        ? (d.blok.tur === 'bos' ? 'Boş saat' : t.ad + ' sürüyor')
-        : (d.blok.tur === 'bos' ? 'Sırada boş saat' : 'Sırada ' + t.ad.toLocaleLowerCase('tr'));
-      ad = d.blok.ad ? kac(d.blok.ad) : t.ad;
+        ? (d.blok.tur === 'bos' ? 'Ders saati sürüyor' : t.ad + ' sürüyor')
+        : (d.blok.tur === 'bos' ? 'Sırada ders saati' : 'Sırada ' + t.ad.toLocaleLowerCase('tr'));
+      ad = d.blok.ad ? kac(d.blok.ad) : (d.blok.tur === 'bos' ? 'Boş ders saati' : t.ad);
       alt = kac(d.blok.bas) + (d.blok.bit ? '–' + kac(d.blok.bit) : '') +
             (d.blok.yer ? ' · ' + kac(d.blok.yer) : '') +
-            (d.sira ? ' · ' + d.sira + '. saat' : '');
+            (d.sira ? ' · ' + d.sira + '. ders' : '');
       sayac = sureKisa(d.kalan);
       sayacAlt = simdiMi ? 'kalan' : 'kala başlıyor';
       pct = d.pct;
@@ -7998,7 +8001,8 @@ td.td-full[data-fam="uygulama"] {
       return h;
     }
 
-    h += durumHtml();
+    /* Durum kartı kaldırıldı: anlık ders/teneffüs bilgisi alt sekmenin üstündeki
+       zamanlayıcıda (pill) gösteriliyor, burada ayrıca kart gerekmiyor. */
 
     /* Künye + haftalık özet tek şeritte */
     var oz = haftaOzet(), hf = null;
@@ -8338,6 +8342,37 @@ td.td-full[data-fam="uygulama"] {
     }).sort(function (a, b) { return sn(a.bas) - sn(b.bas); });
   }
 
+  /** Programdaki en geç dolu ders saati (bütün günler içinde). Ör. bir günde
+      7. saatte dersin varsa 7 döner; hiç ders girilmemişse 0. */
+  function enFazlaDersSaati() {
+    var n = 0;
+    for (var g = 1; g <= 5; g++) {
+      var sa = gunSaatleri(veri, g);
+      for (var i = 0; i < sa.length; i++) if (veri.hucre[g] && veri.hucre[g][i]) n = Math.max(n, i + 1);
+    }
+    return n;
+  }
+
+  /** Zamanlayıcının (pill + durum şeridi) izlediği bloklar: o günün 1. saatinden
+      programdaki en geç ders saatine kadar HER ders saati. Sınıf atanmamış saatler
+      de ders saati olarak yer alır (tur 'bos'); aralar saatler arasındaki boşluktur.
+      p = kaçıncı ders saati. Eski biçimli (zil saati girilmemiş) kayıtlarda eski
+      davranışa döner. */
+  function zamanlayiciBloklari(dow) {
+    var maks = enFazlaDersSaati();
+    if (!veri.saatler.length || !maks) return gununBloklari(dow);
+    var sa = gunSaatleri(veri, dow), out = [];
+    for (var i = 0; i < Math.min(maks, sa.length); i++) {
+      var z = sa[i];
+      if (!z || sn(z.bas) === null || sn(z.bit) === null || sn(z.bit) <= sn(z.bas)) continue;
+      var c = veri.hucre[dow] && veri.hucre[dow][i], s = c ? sinifBul(veri, c.s) : null;
+      out.push(s
+        ? { bas: z.bas, bit: z.bit, ad: s.ders || s.ad, yer: s.ders ? s.ad : '', tur: 'ders', p: i + 1 }
+        : { bas: z.bas, bit: z.bit, ad: '', yer: '', tur: 'bos', p: i + 1 });
+    }
+    return out;
+  }
+
   function pillCiz(pill, sinif, ikon, ikonBg, etiket, ad, sure, sureEtiket, rozet, pct) {
     pill.innerHTML =
       '<div class="dip-row">' +
@@ -8365,7 +8400,7 @@ td.td-full[data-fam="uygulama"] {
     if (!d3Icinde(now)) return false;
     if (tatilMi(now)) { if (typeof window._diGizle === 'function') window._diGizle(); return true; }
 
-    var bloklar = gununBloklari(dow);
+    var bloklar = zamanlayiciBloklari(dow);
     if (!bloklar.length) { if (typeof window._diGizle === 'function') window._diGizle(); return true; }
 
     var simdi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -8374,16 +8409,19 @@ td.td-full[data-fam="uygulama"] {
     for (i = 0; i < bloklar.length; i++) {
       b = bloklar[i];
       if (b.tur !== 'bos') sayac++;
+      var no = b.p || sayac;
       var bas = sn(b.bas), bit = sn(b.bit);
       if (simdi >= bas && simdi < bit) {
         tur = TURLER[b.tur] || TURLER.ders;
         var kalan = bit - simdi;
         var pct = Math.min(100, Math.max(0, (simdi - bas) / (bit - bas) * 100)).toFixed(1);
         if (b.tur === 'bos') {
-          pillCiz(pill, 'di-pill-break', '⚪', '', 'Boş saat', b.ad || 'Ders yok', sureKisa(kalan), 'Kalan', '', pct);
+          /* Sınıf atanmamış olsa da bir ders saati: kendi numarası ve geri sayımıyla görünür */
+          pillCiz(pill, 'di-pill-live', '⚪', TURLER.bos.bg, 'Ders saati sürüyor', 'Boş ders saati',
+                  sureKisa(kalan), 'Kalan', no + '. ders', pct);
         } else {
           pillCiz(pill, 'di-pill-live', tur.ikon, tur.bg, tur.ad === 'Gözlem' ? 'Gözlem sürüyor' : 'Ders sürüyor',
-                  b.ad || tur.ad, sureKisa(kalan), 'Kalan', sayac + '. saat', pct);
+                  b.ad || tur.ad, sureKisa(kalan), 'Kalan', no + '. ders', pct);
         }
         return true;
       }
@@ -8399,8 +8437,9 @@ td.td-full[data-fam="uygulama"] {
         var araToplam = Math.max(60, hedef - oncekiBit);
         var pct2 = Math.min(100, Math.max(0, (araToplam - kalan2) / araToplam * 100)).toFixed(1);
         tur = TURLER[b.tur] || TURLER.ders;
-        pillCiz(pill, 'di-pill-break', '☕', '', i === 0 ? 'Bugünün ilk saati' : 'Ara',
-                b.ad || tur.ad, sureKisa(kalan2), 'Başlamaya', '', pct2);
+        pillCiz(pill, 'di-pill-break', '☕', '', i === 0 ? 'Bugünün ilk saati' : 'Teneffüs',
+                b.tur === 'bos' ? 'Boş ders saati' : (b.ad || tur.ad), sureKisa(kalan2), 'Başlamaya',
+                b.p ? b.p + '. ders' : '', pct2);
         return true;
       }
     }
