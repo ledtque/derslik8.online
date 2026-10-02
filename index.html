@@ -8142,7 +8142,13 @@ td.td-full[data-fam="uygulama"] {
       for (i2 = ilkI; i2 <= sonI; i2++) {
         var cc = v.hucre[g][i2], zs = sa2[i2];
         var etiket = (i2 + 1) + '. ders';
-        if (!cc) { h += '<div class="staj-mob-bosluk">' + etiket + ' · boş</div>'; continue; }
+        if (!cc) {
+          h += '<div class="mob-lesson-card staj-mob-bos' + (bu && simdiI === i2 ? ' mob-current' : '') + '">' +
+               '<div class="mob-card-time">' + kac(zs.bas) + '<br>' + kac(zs.bit) + '<span class="mob-card-period">' + etiket + '</span></div>' +
+               '<div class="mob-card-body"><div class="mob-card-name">Boş ders</div>' +
+               '<div class="mob-card-teacher">Bu saatte ders yok</div></div></div>';
+          continue;
+        }
         var s = sinifBul(v, cc.s), c = sinifRenk(v, cc.s);
         var simdi = bu && simdiI === i2;
         h += '<div class="mob-lesson-card' + (simdi ? ' mob-current' : '') + '" style="border-left:3px solid var(--' + c + 't)" onclick="d8StajNotAc(\'' + cc.s + '\',' + g + ',' + i2 + ')">' +
@@ -8937,8 +8943,10 @@ td.td-full[data-fam="uygulama"] {
       '.staj-tr-bugun .td-gun{box-shadow:inset 3px 0 0 var(--accent)}',
       '.staj-gl-bugun{color:var(--accent)!important;font-weight:700}',
       '.staj-mob-yok{cursor:default;font-size:12px;color:var(--muted);font-style:italic;justify-content:center}',
+      '.mob-lesson-card.staj-mob-bos{background:transparent;border:1.5px dashed var(--border);box-shadow:none;cursor:default}',
+      '.staj-mob-bos .mob-card-time{background:transparent!important;color:var(--muted)!important;border:1.5px dashed var(--border)!important;opacity:.85}',
       '.staj-mob-bos .mob-card-name{color:var(--muted);font-weight:600}',
-      '.staj-mob-bos .mob-card-time{border-style:dashed}',
+      '.staj-mob-bos .mob-card-teacher{color:var(--muted);opacity:.75;font-style:italic}',
       /* Ders programı düzenleyicisi */
       '.se-kutu{max-width:760px}',
       '.se-bolum{padding:4px 0 18px;margin-bottom:14px;border-bottom:1px solid var(--border)}',
@@ -10056,9 +10064,8 @@ td.td-full[data-fam="uygulama"] {
       h += '</section>';
     });
     h += '<p class="tz-g-gizlilik">' + (girisVarG()
-      ? '☁️ Yazdıkların hesabında saklanır; telefonda ve bilgisayarda aynı görünür. '
-      : '💾 Şimdilik yalnızca bu cihazda saklanıyor. <button type="button" class="staj-link" onclick="handleAuthClick()">Giriş yap</button> — telefonda yazdığın bilgisayarda da açılsın. ') +
-      'Öğrenci adı ya da kimliğini belli eden bilgi yazma. Bitirince yazdır veya kopyalayıp resmî forma aktar.</p>';
+      ? '☁️ Yazdıkların hesabında saklanır; telefonda ve bilgisayarda aynı görünür.'
+      : '💾 Şimdilik yalnızca bu cihazda saklanıyor. <button type="button" class="staj-link" onclick="handleAuthClick()">Giriş yap</button> — telefonda yazdığın bilgisayarda da açılsın.') + '</p>';
     h += '</div>';
     h += '<div class="staj-ov-alt tz-galt"><span class="tz-g-kayit" id="tz-g-kayit">Kaydedildi</span>' +
          '<button class="staj-btn-sec" onclick="d8GunlukKopyala()">Kopyala</button>' +
