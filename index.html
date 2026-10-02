@@ -5384,6 +5384,14 @@ window.d8StajBulutKaydet = async function(veri){
     return true;
   }catch(e){ console.warn('[D8 Staj] buluta yazma hatası:', e); return false; }
 };
+// III. Dönem yansıtıcı günlük formları: users/{uid}.gunluk (cihazlar arası eşitlenir)
+window.d8GunlukBulutKaydet = async function(veri){
+  if(!currentUser) return false;
+  try{
+    await setDoc(settingsDocRef(currentUser.uid), { gunluk: veri }, { mergeFields: ['gunluk'] });
+    return true;
+  }catch(e){ console.warn('[D8 Günlük] buluta yazma hatası:', e); return false; }
+};
 function stajDinle(uid){
   stajDinlemeyiDurdur();
   try{
@@ -5393,6 +5401,11 @@ function stajDinle(uid){
         window.d8StajBuluttanGeldi(d.stajProgram);
       } else if(typeof window.d8StajBulutBos === 'function'){
         window.d8StajBulutBos();
+      }
+      if(d && d.gunluk && typeof window.d8GunlukBuluttanGeldi === 'function'){
+        window.d8GunlukBuluttanGeldi(d.gunluk);
+      } else if(typeof window.d8GunlukBulutBos === 'function'){
+        window.d8GunlukBulutBos();
       }
     }, function(err){ console.warn('[D8 Staj] dinleme hatası:', err); });
   }catch(e){ console.warn('[D8 Staj] dinleme kurulamadı:', e); }
@@ -7875,7 +7888,7 @@ td.td-full[data-fam="uygulama"] {
     }
     if (dow < 1 || dow > 5) return { tip: 'haftasonu', gun: sonrakiDoluGun(dow) };
 
-    var bloklar = zamanlayiciBloklari(dow);
+    var bloklar = gununBloklari(dow);
     if (!bloklar.length) return { tip: 'bosgun', gun: sonrakiDoluGun(dow) };
 
     var simdi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -7884,13 +7897,13 @@ td.td-full[data-fam="uygulama"] {
       var b = bloklar[i], bas = sn(b.bas), bit = sn(b.bit);
       if (b.tur !== 'bos') sira++;
       if (simdi >= bas && simdi < bit) {
-        return { tip: 'simdi', blok: b, sira: b.p || (b.tur === 'bos' ? 0 : sira),
+        return { tip: 'simdi', blok: b, sira: b.tur === 'bos' ? 0 : sira,
                  kalan: bit - simdi, pct: (simdi - bas) / (bit - bas) * 100 };
       }
       if (simdi < bas) {
         var oncekiBit = i > 0 ? sn(bloklar[i - 1].bit) : bas - 1800;
         var ara = Math.max(60, bas - oncekiBit);
-        return { tip: 'sonraki', blok: b, sira: b.p || (b.tur === 'bos' ? 0 : sira),
+        return { tip: 'sonraki', blok: b, sira: b.tur === 'bos' ? 0 : sira,
                  kalan: bas - simdi, pct: Math.max(0, Math.min(100, (ara - (bas - simdi)) / ara * 100)) };
       }
     }
@@ -7903,9 +7916,6 @@ td.td-full[data-fam="uygulama"] {
     /* Dönem başlamadan şerit gösterilmez (geri sayım zaten üst blokta).
        Gizli yer tutucu, başlangıç anında şeridin kendiliğinden açılması için. */
     if (d.tip === 'once') return '<div id="staj-durum" hidden></div>';
-    /* Günün dersleri bitince ayrı bir kart gösterilmez; gizli yer tutucu
-       ertesi gün ilk ders yaklaşınca şeridin kendiliğinden açılmasını sağlar. */
-    if (d.tip === 'gunbitti') return '<div id="staj-durum" hidden></div>';
     var sinif = 'staj-durum', ikon = '🏫', etiket = '', ad = '', alt = '',
         sayac = '', sayacAlt = '', pct = null;
 
@@ -7915,12 +7925,12 @@ td.td-full[data-fam="uygulama"] {
       sinif += ' sd-' + (simdiMi ? 'canli' : 'ara') + ' ' + t.sinif;
       ikon = simdiMi ? t.ikon : '⏭';
       etiket = simdiMi
-        ? (d.blok.tur === 'bos' ? 'Ders saati sürüyor' : t.ad + ' sürüyor')
-        : (d.blok.tur === 'bos' ? 'Sırada ders saati' : 'Sırada ' + t.ad.toLocaleLowerCase('tr'));
-      ad = d.blok.ad ? kac(d.blok.ad) : (d.blok.tur === 'bos' ? 'Boş ders saati' : t.ad);
+        ? (d.blok.tur === 'bos' ? 'Boş saat' : t.ad + ' sürüyor')
+        : (d.blok.tur === 'bos' ? 'Sırada boş saat' : 'Sırada ' + t.ad.toLocaleLowerCase('tr'));
+      ad = d.blok.ad ? kac(d.blok.ad) : t.ad;
       alt = kac(d.blok.bas) + (d.blok.bit ? '–' + kac(d.blok.bit) : '') +
             (d.blok.yer ? ' · ' + kac(d.blok.yer) : '') +
-            (d.sira ? ' · ' + d.sira + '. ders' : '');
+            (d.sira ? ' · ' + d.sira + '. saat' : '');
       sayac = sureKisa(d.kalan);
       sayacAlt = simdiMi ? 'kalan' : 'kala başlıyor';
       pct = d.pct;
@@ -8001,8 +8011,7 @@ td.td-full[data-fam="uygulama"] {
       return h;
     }
 
-    /* Durum kartı kaldırıldı: anlık ders/teneffüs bilgisi alt sekmenin üstündeki
-       zamanlayıcıda (pill) gösteriliyor, burada ayrıca kart gerekmiyor. */
+    h += durumHtml();
 
     /* Künye + haftalık özet tek şeritte */
     var oz = haftaOzet(), hf = null;
@@ -8342,37 +8351,6 @@ td.td-full[data-fam="uygulama"] {
     }).sort(function (a, b) { return sn(a.bas) - sn(b.bas); });
   }
 
-  /** Programdaki en geç dolu ders saati (bütün günler içinde). Ör. bir günde
-      7. saatte dersin varsa 7 döner; hiç ders girilmemişse 0. */
-  function enFazlaDersSaati() {
-    var n = 0;
-    for (var g = 1; g <= 5; g++) {
-      var sa = gunSaatleri(veri, g);
-      for (var i = 0; i < sa.length; i++) if (veri.hucre[g] && veri.hucre[g][i]) n = Math.max(n, i + 1);
-    }
-    return n;
-  }
-
-  /** Zamanlayıcının (pill + durum şeridi) izlediği bloklar: o günün 1. saatinden
-      programdaki en geç ders saatine kadar HER ders saati. Sınıf atanmamış saatler
-      de ders saati olarak yer alır (tur 'bos'); aralar saatler arasındaki boşluktur.
-      p = kaçıncı ders saati. Eski biçimli (zil saati girilmemiş) kayıtlarda eski
-      davranışa döner. */
-  function zamanlayiciBloklari(dow) {
-    var maks = enFazlaDersSaati();
-    if (!veri.saatler.length || !maks) return gununBloklari(dow);
-    var sa = gunSaatleri(veri, dow), out = [];
-    for (var i = 0; i < Math.min(maks, sa.length); i++) {
-      var z = sa[i];
-      if (!z || sn(z.bas) === null || sn(z.bit) === null || sn(z.bit) <= sn(z.bas)) continue;
-      var c = veri.hucre[dow] && veri.hucre[dow][i], s = c ? sinifBul(veri, c.s) : null;
-      out.push(s
-        ? { bas: z.bas, bit: z.bit, ad: s.ders || s.ad, yer: s.ders ? s.ad : '', tur: 'ders', p: i + 1 }
-        : { bas: z.bas, bit: z.bit, ad: '', yer: '', tur: 'bos', p: i + 1 });
-    }
-    return out;
-  }
-
   function pillCiz(pill, sinif, ikon, ikonBg, etiket, ad, sure, sureEtiket, rozet, pct) {
     pill.innerHTML =
       '<div class="dip-row">' +
@@ -8400,7 +8378,7 @@ td.td-full[data-fam="uygulama"] {
     if (!d3Icinde(now)) return false;
     if (tatilMi(now)) { if (typeof window._diGizle === 'function') window._diGizle(); return true; }
 
-    var bloklar = zamanlayiciBloklari(dow);
+    var bloklar = gununBloklari(dow);
     if (!bloklar.length) { if (typeof window._diGizle === 'function') window._diGizle(); return true; }
 
     var simdi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -8409,19 +8387,16 @@ td.td-full[data-fam="uygulama"] {
     for (i = 0; i < bloklar.length; i++) {
       b = bloklar[i];
       if (b.tur !== 'bos') sayac++;
-      var no = b.p || sayac;
       var bas = sn(b.bas), bit = sn(b.bit);
       if (simdi >= bas && simdi < bit) {
         tur = TURLER[b.tur] || TURLER.ders;
         var kalan = bit - simdi;
         var pct = Math.min(100, Math.max(0, (simdi - bas) / (bit - bas) * 100)).toFixed(1);
         if (b.tur === 'bos') {
-          /* Sınıf atanmamış olsa da bir ders saati: kendi numarası ve geri sayımıyla görünür */
-          pillCiz(pill, 'di-pill-live', '⚪', TURLER.bos.bg, 'Ders saati sürüyor', 'Boş ders saati',
-                  sureKisa(kalan), 'Kalan', no + '. ders', pct);
+          pillCiz(pill, 'di-pill-break', '⚪', '', 'Boş saat', b.ad || 'Ders yok', sureKisa(kalan), 'Kalan', '', pct);
         } else {
           pillCiz(pill, 'di-pill-live', tur.ikon, tur.bg, tur.ad === 'Gözlem' ? 'Gözlem sürüyor' : 'Ders sürüyor',
-                  b.ad || tur.ad, sureKisa(kalan), 'Kalan', no + '. ders', pct);
+                  b.ad || tur.ad, sureKisa(kalan), 'Kalan', sayac + '. saat', pct);
         }
         return true;
       }
@@ -8437,9 +8412,8 @@ td.td-full[data-fam="uygulama"] {
         var araToplam = Math.max(60, hedef - oncekiBit);
         var pct2 = Math.min(100, Math.max(0, (araToplam - kalan2) / araToplam * 100)).toFixed(1);
         tur = TURLER[b.tur] || TURLER.ders;
-        pillCiz(pill, 'di-pill-break', '☕', '', i === 0 ? 'Bugünün ilk saati' : 'Teneffüs',
-                b.tur === 'bos' ? 'Boş ders saati' : (b.ad || tur.ad), sureKisa(kalan2), 'Başlamaya',
-                b.p ? b.p + '. ders' : '', pct2);
+        pillCiz(pill, 'di-pill-break', '☕', '', i === 0 ? 'Bugünün ilk saati' : 'Ara',
+                b.ad || tur.ad, sureKisa(kalan2), 'Başlamaya', '', pct2);
         return true;
       }
     }
@@ -9854,9 +9828,10 @@ td.td-full[data-fam="uygulama"] {
      Kaynak: III. Dönem-Genel s.22-25. 8. hafta dışındaki dokuz hafta için
      dört bölümlü form, 8. hafta için tek bölümlü (en az 500 kelime) form.
 
-     Metinler YALNIZCA bu cihazda (localStorage) tutulur, buluta gönderilmez:
-     yönerge uygulama sırasında elde edilen kayıtların bulut sistemlerinde
-     paylaşılmamasını istiyor. Buluta yalnızca "doldurdum" işareti gider.
+     Metinler her zaman localStorage'a yazılır; Google ile giriş yapılmışsa
+     ayrıca users/{uid}.gunluk alanına eşitlenir, böylece telefondan alınan
+     kısa notlar bilgisayarda da açılır. Çakışmada hafta bazında `guncel`
+     (zaman damgası) büyük olan kazanır; künye için `kunyeGuncel` kullanılır.
      Bitmiş form yazdırılır / PDF alınır ya da kopyalanıp resmî forma aktarılır. */
   var GUNLUK_9 = {
     ad: 'Tam Zamanlı Öğretmenlik Deneyimi Yansıtıcı Günlük Formu',
@@ -9885,10 +9860,89 @@ td.td-full[data-fam="uygulama"] {
 
   var G_ANAHTAR = 'd8Gunluk';
   function gOku() {
-    try { var v = JSON.parse(localStorage.getItem(G_ANAHTAR) || 'null'); if (v && typeof v === 'object') return { kunye: v.kunye || {}, hafta: v.hafta || {} }; } catch (e) {}
-    return { kunye: {}, hafta: {} };
+    try { var v = JSON.parse(localStorage.getItem(G_ANAHTAR) || 'null'); if (v && typeof v === 'object') return { kunye: v.kunye || {}, hafta: v.hafta || {}, kunyeGuncel: Number(v.kunyeGuncel) || 0 }; } catch (e) {}
+    return { kunye: {}, hafta: {}, kunyeGuncel: 0 };
   }
   function gYaz(v) { try { localStorage.setItem(G_ANAHTAR, JSON.stringify(v)); return true; } catch (e) { return false; } }
+
+  /* ---- Bulut eşitleme (hafta bazında, son yazan kazanır) ---- */
+  var gBulutZaman = null, gBulutBekliyor = false;
+  function girisVarG() {
+    try { return typeof window.d8StajGirisVar === 'function' && window.d8StajGirisVar(); } catch (e) { return false; }
+  }
+  function gDolu(g) {
+    for (var k in g.kunye) if (String(g.kunye[k] || '').trim()) return true;
+    for (var n in g.hafta) {
+      var h = g.hafta[n] || {}, m = h.metin || {};
+      for (var a in m) if (String(m[a] || '').trim()) return true;
+    }
+    return false;
+  }
+  function gBulutDurum(ok) {
+    var el = document.getElementById('tz-g-kayit'); if (!el || el.classList.contains('hata')) return;
+    if (el.textContent === 'Yazılıyor…') return;
+    el.textContent = ok ? 'Kaydedildi · hesabına eşitlendi ☁️' : 'Bu cihaza kaydedildi · buluta yazılamadı';
+  }
+  function gBulutaGonder(hemen) {
+    if (typeof window.d8GunlukBulutKaydet !== 'function') return;
+    gBulutBekliyor = true;
+    clearTimeout(gBulutZaman);
+    gBulutZaman = setTimeout(function () {
+      gBulutBekliyor = false;
+      if (!girisVarG()) return;
+      var g = gOku();
+      if (!g.kunyeGuncel) { for (var k in g.kunye) if (String(g.kunye[k] || '').trim()) { g.kunyeGuncel = Date.now(); gYaz(g); break; } }
+      Promise.resolve(window.d8GunlukBulutKaydet(g)).then(gBulutDurum, function () { gBulutDurum(false); });
+    }, hemen ? 0 : 1500);
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden' && gBulutBekliyor) gBulutaGonder(true);
+  });
+  /** Yerel + bulut → hafta bazında yeni olan kazanır */
+  function gBirlestir(y, b) {
+    var o = { kunye: y.kunye, kunyeGuncel: y.kunyeGuncel || 0, hafta: {} }, yd = false, bf = false;
+    var bk = Number(b.kunyeGuncel) || 0;
+    if (bk > o.kunyeGuncel) { o.kunye = b.kunye || {}; o.kunyeGuncel = bk; yd = true; }
+    else if (o.kunyeGuncel > bk) bf = true;
+    var bh = b.hafta || {}, anahtar = {};
+    Object.keys(y.hafta).forEach(function (k) { anahtar[k] = 1; });
+    Object.keys(bh).forEach(function (k) { anahtar[k] = 1; });
+    Object.keys(anahtar).forEach(function (k) {
+      var a = y.hafta[k], c = bh[k], ag = (a && Number(a.guncel)) || 0, cg = (c && Number(c.guncel)) || 0;
+      if (cg > ag) { o.hafta[k] = c; yd = true; }
+      else { if (a) o.hafta[k] = a; if (ag > cg) bf = true; }
+    });
+    return { veri: o, yerelDegisti: yd, bulutaFark: bf };
+  }
+  window.d8GunlukBuluttanGeldi = function (bulut) {
+    if (!bulut || typeof bulut !== 'object') return;
+    var s = gBirlestir(gOku(), { kunye: bulut.kunye || {}, hafta: bulut.hafta || {}, kunyeGuncel: bulut.kunyeGuncel });
+    if (s.yerelDegisti) { gYaz(s.veri); gEditoruTazele(); try { if (typeof D8.d34Tazele === 'function') D8.d34Tazele(); } catch (e) {} }
+    if (s.bulutaFark) gBulutaGonder(true);
+  };
+  window.d8GunlukBulutBos = function () {
+    /* Bulutta kayıt yok ama bu cihazda varsa ilk girişte yukarı taşı */
+    if (gDolu(gOku())) gBulutaGonder(true);
+  };
+  /** Başka cihazdan gelen değişikliği açık editöre yansıt (yazılmakta olan alana dokunma) */
+  function gEditoruTazele() {
+    var ov = document.getElementById('tz-gunluk'); if (!ov || !gAcik) return;
+    var g = gOku(), no = gAcik, metin = (g.hafta[no] || {}).metin || {}, f = gunlukFormu(no);
+    ov.querySelectorAll('.tz-g-bol').forEach(function (sec) {
+      var ta = sec.querySelector('textarea'), k = sec.getAttribute('data-k'), v = metin[k] || '';
+      if (!ta || document.activeElement === ta || ta.value === v) return;
+      ta.value = v;
+      var min = Number(sec.getAttribute('data-min')), n = kelime(v), say = sec.querySelector('.tz-g-say');
+      say.textContent = n + ' / ' + min + ' kelime'; say.classList.toggle('ok', n >= min);
+      sec.querySelector('.tz-g-bar i').style.width = Math.min(100, Math.round(n / min * 100)) + '%';
+    });
+    f.kunye.forEach(function (k) {
+      var el = ov.querySelector('#tz-gk-' + k[0]); if (!el || document.activeElement === el) return;
+      var v = kunyeDegeri(no, k[0], g); if (el.value !== v) el.value = v;
+    });
+  }
+  /** Yerel yazma + (girişliyse) buluta gönderme */
+  function gKaydet(v) { var ok = gYaz(v); gBulutaGonder(false); return ok; }
   function kelime(s) { return (String(s || '').match(/[\p{L}\p{N}]+(?:['’][\p{L}]+)*/gu) || []).length; }
   function kac(x) {
     return String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -10001,7 +10055,10 @@ td.td-full[data-fam="uygulama"] {
       h += '<textarea rows="' + (b.min >= 500 ? 16 : 8) + '" aria-label="' + b.ad + '" oninput="d8GunlukYaz(\'' + b.k + '\',this)">' + kac(metin[b.k] || '') + '</textarea>';
       h += '</section>';
     });
-    h += '<p class="tz-g-gizlilik">🔒 Bu metin yalnızca bu cihazda saklanır, buluta yüklenmez. Yönerge, uygulamada elde edilen kayıtların bulut sistemlerinde paylaşılmamasını istiyor. Öğrenci adı ya da kimliğini belli eden bilgi yazma. Bitirince yazdır veya kopyalayıp resmî forma aktar.</p>';
+    h += '<p class="tz-g-gizlilik">' + (girisVarG()
+      ? '☁️ Yazdıkların hesabında saklanır; telefonda ve bilgisayarda aynı görünür. '
+      : '💾 Şimdilik yalnızca bu cihazda saklanıyor. <button type="button" class="staj-link" onclick="handleAuthClick()">Giriş yap</button> — telefonda yazdığın bilgisayarda da açılsın. ') +
+      'Öğrenci adı ya da kimliğini belli eden bilgi yazma. Bitirince yazdır veya kopyalayıp resmî forma aktar.</p>';
     h += '</div>';
     h += '<div class="staj-ov-alt tz-galt"><span class="tz-g-kayit" id="tz-g-kayit">Kaydedildi</span>' +
          '<button class="staj-btn-sec" onclick="d8GunlukKopyala()">Kopyala</button>' +
@@ -10033,7 +10090,7 @@ td.td-full[data-fam="uygulama"] {
     gZaman = setTimeout(function () {
       var g = gOku(); g.hafta[no] = g.hafta[no] || {}; g.hafta[no].metin = g.hafta[no].metin || {};
       g.hafta[no].metin[alan] = deger; g.hafta[no].guncel = Date.now();
-      kayitBildir(gYaz(g));
+      kayitBildir(gKaydet(g));
     }, 400);
   };
   window.d8GunlukKunye = function (alan, deger, yerel) {
@@ -10043,15 +10100,17 @@ td.td-full[data-fam="uygulama"] {
       /* Programdaki değerle aynıysa ayrıca saklama: program değişirse form da izlesin */
       if (PROGRAMDAN[alan] && String(deger).trim() === programDegeri(alan)) delete g.hafta[no][alan];
       else g.hafta[no][alan] = deger;
-    } else g.kunye[alan] = deger;
-    kayitBildir(gYaz(g));
+      g.hafta[no].guncel = Date.now();
+    } else { g.kunye[alan] = deger; g.kunyeGuncel = Date.now(); }
+    kayitBildir(gKaydet(g));
     var not = document.getElementById('tz-gk-not-' + alan);
     if (not) not.innerHTML = programNotu(alan, deger);
   };
   window.d8GunlukProgramaDon = function (alan) {
     var g = gOku(), no = gAcik;
-    if (g.hafta[no]) delete g.hafta[no][alan];
-    kayitBildir(gYaz(g));
+    g.hafta[no] = g.hafta[no] || {};
+    delete g.hafta[no][alan]; g.hafta[no].guncel = Date.now();
+    kayitBildir(gKaydet(g));
     var el = document.getElementById('tz-gk-' + alan), p = programDegeri(alan);
     if (el) el.value = p;
     var not = document.getElementById('tz-gk-not-' + alan);
@@ -10063,8 +10122,13 @@ td.td-full[data-fam="uygulama"] {
     if (ov) {
       clearTimeout(gZaman);
       var g = gOku(), no = gAcik; g.hafta[no] = g.hafta[no] || {}; g.hafta[no].metin = g.hafta[no].metin || {};
-      ov.querySelectorAll('.tz-g-bol').forEach(function (s) { g.hafta[no].metin[s.getAttribute('data-k')] = s.querySelector('textarea').value; });
-      gYaz(g);
+      var degisti = false;
+      ov.querySelectorAll('.tz-g-bol').forEach(function (s) {
+        var k = s.getAttribute('data-k'), v = s.querySelector('textarea').value;
+        if ((g.hafta[no].metin[k] || '') !== v) { g.hafta[no].metin[k] = v; degisti = true; }
+      });
+      /* Yalnızca gerçekten değiştiyse zaman damgasını ilerlet: başka cihazdaki yeni metni ezme */
+      if (degisti) { g.hafta[no].guncel = Date.now(); gKaydet(g); }
       ov.parentNode.removeChild(ov);
       if (typeof d8NotifyScreenClosed === 'function') d8NotifyScreenClosed('gunluk');
     }
