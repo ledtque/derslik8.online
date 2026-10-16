@@ -7810,10 +7810,31 @@ td.td-full[data-fam="uygulama"] {
     kaydet(duzelt(v), true);
   };
 
+  /* Anahtar sırasından bağımsız karşılaştırma (Firestore haritaları sırayı korumaz) */
+  function kararli(o) {
+    if (Array.isArray(o)) return '[' + o.map(kararli).join(',') + ']';
+    if (o && typeof o === 'object') {
+      return '{' + Object.keys(o).sort().filter(function (k) { return k !== 'guncel'; })
+        .map(function (k) { return JSON.stringify(k) + ':' + kararli(o[k]); }).join(',') + '}';
+    }
+    return JSON.stringify(o);
+  }
+
   /* --------------------------------------------------- 2. Bulut köprüsü */
   window.d8StajBuluttanGeldi = function (bulut) {
     var b = duzelt(bulut);
-    if (b.guncel <= veri.guncel) return;         /* yerel daha yeni */
+    if (b.guncel <= veri.guncel) {
+      /* Yerel kayıt daha yeni ya da aynı zaman damgalı ama içeriği farklıysa
+         bulut bu cihazdaki kayıttan sapmış demektir: ya giriş yapmadan önce
+         burada değişiklik yapıldı ya da eski sürümün derin birleştirmesi
+         buluta eski hücreleri karıştırdı. Doğru olan yerel kayıt buluta
+         yazılır; aynı damgada diğer cihazların da alması için damga yenilenir. */
+      if (doluMu() && kararli(b) !== kararli(veri)) {
+        if (b.guncel === veri.guncel) kaydet(duzelt(JSON.parse(JSON.stringify(veri))), true);
+        else if (typeof window.d8StajBulutKaydet === 'function') { try { window.d8StajBulutKaydet(veri); } catch (e) {} }
+      }
+      return;
+    }
     veri = b; yerelYaz(b); tazele();
     /* Düzenleyici bu cihazda açık ama henüz dokunulmamışsa taslağı yeni
        veriyle tazele; yoksa eski taslak kaydedilince diğer cihazın
@@ -8381,6 +8402,20 @@ td.td-full[data-fam="uygulama"] {
   function ss(x) { return String(Math.floor(x / 60)).padStart(2, '0') + ':' + String(Math.floor(x % 60)).padStart(2, '0'); }
 
   function gununBloklari(dow) {
+    /* Okulun zil saatleri girildiyse sayaç bütün ders saatlerini ve aralarını
+       izler: dersin olsun ya da olmasın her saat "ders sürüyor / boş saat",
+       saatler arası "ara" olarak sayılır. */
+    if (veri.saatler && veri.saatler.length) {
+      var sa = gunSaatleri(veri, dow), out = [];
+      for (var i = 0; i < sa.length; i++) {
+        var bs = sn(sa[i].bas), bt = sn(sa[i].bit);
+        if (bs === null || bt === null || bt <= bs) continue;
+        var c = veri.hucre[dow] && veri.hucre[dow][i], s = c ? sinifBul(veri, c.s) : null;
+        out.push(s ? { bas: sa[i].bas, bit: sa[i].bit, ad: s.ders || s.ad, yer: s.ders ? s.ad : '', tur: 'ders', no: i + 1 }
+                   : { bas: sa[i].bas, bit: sa[i].bit, ad: 'Boş ders saati', yer: '', tur: 'bos', no: i + 1 });
+      }
+      return out.sort(function (a, b) { return sn(a.bas) - sn(b.bas); });
+    }
     return (veri.gunler[dow] || []).filter(function (b) {
       return sn(b.bas) !== null && sn(b.bit) !== null && sn(b.bit) > sn(b.bas);
     }).sort(function (a, b) { return sn(a.bas) - sn(b.bas); });
@@ -8414,7 +8449,8 @@ td.td-full[data-fam="uygulama"] {
     if (tatilMi(now)) { if (typeof window._diGizle === 'function') window._diGizle(); return true; }
 
     var bloklar = gununBloklari(dow);
-    if (!bloklar.length) { if (typeof window._diGizle === 'function') window._diGizle(); return true; }
+    /* Zil saatleri girilmemişse genel zil düzenine (özgün sayaç) bırak */
+    if (!bloklar.length) return false;
 
     var simdi = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
     var sayac = 0, i, b, tur;
@@ -8428,10 +8464,10 @@ td.td-full[data-fam="uygulama"] {
         var kalan = bit - simdi;
         var pct = Math.min(100, Math.max(0, (simdi - bas) / (bit - bas) * 100)).toFixed(1);
         if (b.tur === 'bos') {
-          pillCiz(pill, 'di-pill-break', '⚪', '', 'Boş saat', b.ad || 'Ders yok', sureKisa(kalan), 'Kalan', '', pct);
+          pillCiz(pill, 'di-pill-break', '⚪', '', 'Boş saat', b.ad || 'Ders yok', sureKisa(kalan), 'Kalan', b.no ? b.no + '. saat' : '', pct);
         } else {
           pillCiz(pill, 'di-pill-live', tur.ikon, tur.bg, tur.ad === 'Gözlem' ? 'Gözlem sürüyor' : 'Ders sürüyor',
-                  b.ad || tur.ad, sureKisa(kalan), 'Kalan', sayac + '. saat', pct);
+                  b.ad || tur.ad, sureKisa(kalan), 'Kalan', (b.no || sayac) + '. saat', pct);
         }
         return true;
       }
@@ -8448,7 +8484,7 @@ td.td-full[data-fam="uygulama"] {
         var pct2 = Math.min(100, Math.max(0, (araToplam - kalan2) / araToplam * 100)).toFixed(1);
         tur = TURLER[b.tur] || TURLER.ders;
         pillCiz(pill, 'di-pill-break', '☕', '', i === 0 ? 'Bugünün ilk saati' : 'Ara',
-                b.ad || tur.ad, sureKisa(kalan2), 'Başlamaya', '', pct2);
+                b.ad || tur.ad, sureKisa(kalan2), 'Başlamaya', b.no ? b.no + '. saat' : '', pct2);
         return true;
       }
     }
