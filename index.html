@@ -5396,7 +5396,11 @@ window.d8StajGirisVar = function(){ return !!currentUser; };
 window.d8StajBulutKaydet = async function(veri){
   if(!currentUser) return false;
   try{
-    await setDoc(settingsDocRef(currentUser.uid), { stajProgram: veri }, { merge: true });
+    /* mergeFields: stajProgram alanı bütünüyle değiştirilir. { merge: true }
+       iç içe nesneleri derinlemesine birleştirdiği için silinen hücreler
+       (taslak temizleme), sınıf notları ve işaretler bulutta kalıyor,
+       diğer cihaza eski + yeni karışık program gidiyordu. */
+    await setDoc(settingsDocRef(currentUser.uid), { stajProgram: veri }, { mergeFields: ['stajProgram'] });
     return true;
   }catch(e){ console.warn('[D8 Staj] buluta yazma hatası:', e); return false; }
 };
@@ -7811,6 +7815,15 @@ td.td-full[data-fam="uygulama"] {
     var b = duzelt(bulut);
     if (b.guncel <= veri.guncel) return;         /* yerel daha yeni */
     veri = b; yerelYaz(b); tazele();
+    /* Düzenleyici bu cihazda açık ama henüz dokunulmamışsa taslağı yeni
+       veriyle tazele; yoksa eski taslak kaydedilince diğer cihazın
+       değişikliğini ezerdi. */
+    if (taslak && JSON.stringify(taslak) === taslakIlk) {
+      taslak = duzelt(JSON.parse(JSON.stringify(veri)));
+      taslakIlk = JSON.stringify(taslak);
+      if (!sinifBul(taslak, firca)) firca = taslak.siniflar.length ? taslak.siniflar[0].id : null;
+      try { icerikCiz(); } catch (e) {}
+    }
   };
   window.d8StajBulutBos = function () {
     /* Bulutta kayıt yok ama bu cihazda varsa ilk girişte yukarı taşı */
@@ -12795,6 +12808,12 @@ body.dark .nb-cip.tatil{color:#C9BBFF}
 #dsb-canli #di-pill .dip-progress-track{height:3px!important;border-radius:0!important}
 #dsb-canli #di-pill .dip-progress-fill{border-radius:0!important}
 @media (min-width:901px){#session-pill-wrap{display:none!important}}
+/* Ders yokken: nötr saat görünümü */
+.di-pill-saat{background:var(--white);border:1px solid var(--border);box-shadow:var(--shadow-md);color:var(--text)}
+.di-pill-saat .dip-icon-wrap{background:var(--bg,rgba(100,116,139,.12));border:1px solid var(--border)}
+.di-pill-saat .dip-timer{color:var(--navy)}
+.di-pill-saat .dip-progress-track{background:rgba(100,116,139,.15)}
+.di-pill-saat .dip-progress-fill{background:var(--navy)}
 </style>
 <script id="d8-canli-js">
 /* Ders durumu kartı (eski yüzen balon) konumu:
@@ -12833,12 +12852,38 @@ body.dark .nb-cip.tatil{color:#C9BBFF}
     }
     pill.style.display = 'flex';
   }
+  /* Ders, teneffüs ya da sınav yokken zamanlayıcı gizlenmez: saati gösterir.
+     Bütün "gizle" yolları (hafta sonu, gün bitti, tatil, boş gün, derse
+     75 dk'dan fazla var) buraya düşer; diTick her saniye çağırdığı için
+     saat canlı akar. */
+  var GUN_AD = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  var AY_AD = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  function iki(n){ return (n < 10 ? '0' : '') + n; }
   function gizle(){
     var pill = document.getElementById('di-pill');
-    if (pill){ pill.style.display = 'none'; pill.innerHTML = ''; pill.className = ''; }
-    var wrap = document.getElementById('session-pill-wrap'); if (wrap) wrap.style.display = 'none';
-    var mobFloat = document.getElementById('mob-floating-pill'); if (mobFloat) mobFloat.style.display = 'none';
-    var kenar = document.getElementById('dsb-canli'); if (kenar) kenar.classList.add('bos');
+    if (!pill) return;
+    var now = new Date(), dow = now.getDay();
+    var saat = iki(now.getHours()) + ':' + iki(now.getMinutes()) + ':' + iki(now.getSeconds());
+    var durum = (dow === 0 || dow === 6) ? 'Hafta sonu' : 'Şu an ders yok';
+    var gunSn = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+    var pct = (gunSn / 864).toFixed(1);
+    pill.innerHTML =
+      '<div class="dip-row">' +
+        '<div class="dip-icon-wrap">🕒</div>' +
+        '<div class="dip-body">' +
+          '<div class="dip-label">' + GUN_AD[dow] + ', ' + now.getDate() + ' ' + AY_AD[now.getMonth()] + '</div>' +
+          '<div class="dip-name">' + durum + '</div>' +
+        '</div>' +
+        '<div class="dip-timer-wrap">' +
+          '<div class="dip-timer">' + saat + '</div>' +
+          '<div class="dip-timer-label">Saat</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="dip-progress-wrap"><div class="dip-progress-track">' +
+        '<div class="dip-progress-fill" style="width:' + pct + '%"></div>' +
+      '</div></div>';
+    pill.className = 'di-pill-saat';
+    konumla(pill);
   }
   window._diKonumla = konumla;
   window._diGizle = gizle;
