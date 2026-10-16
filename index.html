@@ -7898,7 +7898,7 @@ td.td-full[data-fam="uygulama"] {
   function sonrakiDoluGun(dow) {
     for (var i = 1; i <= 7; i++) {
       var g = dow + i; while (g > 7) g -= 7;
-      if (g >= 1 && g <= 5 && gununBloklari(g).length) return g;
+      if (g >= 1 && g <= 5 && gununBloklari(g).some(function (b) { return b.tur !== 'bos'; })) return g;
     }
     return null;
   }
@@ -7947,13 +7947,13 @@ td.td-full[data-fam="uygulama"] {
       var b = bloklar[i], bas = sn(b.bas), bit = sn(b.bit);
       if (b.tur !== 'bos') sira++;
       if (simdi >= bas && simdi < bit) {
-        return { tip: 'simdi', blok: b, sira: b.tur === 'bos' ? 0 : sira,
+        return { tip: 'simdi', blok: b, sira: b.no || (b.tur === 'bos' ? 0 : sira),
                  kalan: bit - simdi, pct: (simdi - bas) / (bit - bas) * 100 };
       }
       if (simdi < bas) {
         var oncekiBit = i > 0 ? sn(bloklar[i - 1].bit) : bas - 1800;
         var ara = Math.max(60, bas - oncekiBit);
-        return { tip: 'sonraki', blok: b, sira: b.tur === 'bos' ? 0 : sira,
+        return { tip: 'sonraki', blok: b, sira: b.no || (b.tur === 'bos' ? 0 : sira),
                  kalan: bas - simdi, pct: Math.max(0, Math.min(100, (ara - (bas - simdi)) / ara * 100)) };
       }
     }
@@ -8158,7 +8158,6 @@ td.td-full[data-fam="uygulama"] {
       h += '<tr' + (g === bugun ? ' class="staj-tr-bugun"' : '') + '><td class="td-gun">' + GUN_TAM[g] +
            '<span class="gl">' + (sayi ? sayi + ' ders saati' : 'Ders yok') + '</span>' +
            (g === bugun ? '<span class="gl staj-gl-bugun">▶ Bugün</span>' : '') + '</td>';
-      if (!sayi) { h += '<td class="td-cell staj-td-yok" colspan="' + N + '">Bu gün ders yok</td></tr>'; continue; }
       parcalar(v, g).forEach(function (p) {
         if (!p.c) { h += '<td class="td-cell"' + (p.n > 1 ? ' colspan="' + p.n + '"' : '') + '></td>'; return; }
         var s = sinifBul(v, p.c.s), simdi = g === bugun && simdiI >= p.i && simdiI < p.i + p.n;
@@ -8184,12 +8183,11 @@ td.td-full[data-fam="uygulama"] {
       h += '<div class="mob-day-header' + (bu ? ' today-header' : '') + '">' + GUN_TAM[g] +
            '<span style="font-size:11px;opacity:.75;font-weight:500">· ' + (s2 ? s2 + ' ders saati' : 'ders yok') + '</span>' +
            (bu ? '<span class="today-badge">▶ Bugün</span>' : '') + '</div>';
-      if (!s2) { h += '<div class="mob-lesson-card staj-mob-yok">Bu gün ders yok</div>'; continue; }
-      /* Telefonda her ders saati ayrı satır (birleşik blok yalnız masaüstü tablosunda);
-         baştaki ve sondaki boş saatler gösterilmez */
-      var ilkI = -1, sonI = -1, i2;
-      for (i2 = 0; i2 < sa2.length; i2++) if (v.hucre[g][i2]) { if (ilkI < 0) ilkI = i2; sonI = i2; }
-      for (i2 = ilkI; i2 <= sonI; i2++) {
+      /* Telefonda her ders saati ayrı satır (birleşik blok yalnız masaüstü tablosunda).
+         Okulun bütün ders saatleri gösterilir: baştaki, sondaki ve tamamen boş
+         günlerdeki saatler de tek tek "Boş ders" olarak listelenir. */
+      var i2;
+      for (i2 = 0; i2 < sa2.length; i2++) {
         var cc = v.hucre[g][i2], zs = sa2[i2];
         var etiket = (i2 + 1) + '. ders';
         if (!cc) {
