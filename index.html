@@ -6701,15 +6701,19 @@ td.td-full[data-fam="uygulama"] {
 
   function sinavHtml(mod) {
     var olaylar = donemOlaylari(mod).filter(function (r) { return r.type === 'sinav' || r.type === 'sonuc' || r.type === 'uyg'; });
-    var h = '<div class="d4-hero d4-hero-slim ' + (mod === 'd3' ? 'd3-hero' : '') + '">';
-    h +=   '<div class="d4-hero-kicker">' + (don(mod) || {}).ad + '</div>';
-    h +=   '<div class="d4-hero-title" style="font-size:20px">' +
-           (mod === 'd3' ? 'Bu dönemde yazılı sınav yok' : 'Sınav takvimi henüz açıklanmadı') + '</div>';
-    h +=   '<div class="d4-hero-note" style="margin-top:10px">' +
-           (mod === 'd3'
-             ? 'Not %100 uygulamadan gelir: eğitim personeli, okul müdürü ve uygulama öğretmeni seni kendi formlarıyla dönem boyunca üçer kez değerlendirir.'
-             : 'Hangi dersin hangi gün ve saatte sınava gireceği belli olduğunda buraya işlenecek. Akademik takvimden bilinen tarihler:') +
-           '</div></div>';
+    /* III. Dönem: üstteki açıklama kartı gösterilmez */
+    var h = '';
+    if (mod !== 'd3') {
+      h = '<div class="d4-hero d4-hero-slim ' + (mod === 'd3' ? 'd3-hero' : '') + '">';
+      h +=   '<div class="d4-hero-kicker">' + (don(mod) || {}).ad + '</div>';
+      h +=   '<div class="d4-hero-title" style="font-size:20px">' +
+             (mod === 'd3' ? 'Bu dönemde yazılı sınav yok' : 'Sınav takvimi henüz açıklanmadı') + '</div>';
+      h +=   '<div class="d4-hero-note" style="margin-top:10px">' +
+             (mod === 'd3'
+               ? 'Not %100 uygulamadan gelir: eğitim personeli, okul müdürü ve uygulama öğretmeni seni kendi formlarıyla dönem boyunca üçer kez değerlendirir.'
+               : 'Hangi dersin hangi gün ve saatte sınava gireceği belli olduğunda buraya işlenecek. Akademik takvimden bilinen tarihler:') +
+             '</div></div>';
+    }
     if (mod !== 'd3') {
       h += '<div style="margin-top:12px">' + tarihListesi(olaylar) + '</div>';
       return h;
@@ -8163,7 +8167,18 @@ td.td-full[data-fam="uygulama"] {
       h += '<div class="mob-day-header' + (bu ? ' today-header' : '') + '">' + GUN_TAM[g] +
            '<span style="font-size:11px;opacity:.75;font-weight:500">· ' + (s2 ? s2 + ' ders saati' : 'ders yok') + '</span>' +
            (bu ? '<span class="today-badge">▶ Bugün</span>' : '') + '</div>';
-      if (!s2) { h += '<div class="mob-lesson-card staj-mob-yok">Bu gün ders yok</div>'; continue; }
+      if (!s2) {
+        /* Ders olmayan gün: okulun tüm ders saatleri "Boş ders" olarak listelenir */
+        if (!sa2.length) { h += '<div class="mob-lesson-card staj-mob-yok">Bu gün ders yok</div>'; continue; }
+        for (var j2 = 0; j2 < sa2.length; j2++) {
+          var zb = sa2[j2]; if (!zb) continue;
+          h += '<div class="mob-lesson-card staj-mob-bos' + (bu && simdiI === j2 ? ' mob-current' : '') + '">' +
+               '<div class="mob-card-time">' + kac(zb.bas) + '<br>' + kac(zb.bit) + '<span class="mob-card-period">' + (j2 + 1) + '. ders</span></div>' +
+               '<div class="mob-card-body"><div class="mob-card-name">Boş ders</div>' +
+               '<div class="mob-card-teacher">Bu saatte ders yok</div></div></div>';
+        }
+        continue;
+      }
       /* Telefonda her ders saati ayrı satır (birleşik blok yalnız masaüstü tablosunda);
          baştaki ve sondaki boş saatler gösterilmez */
       var ilkI = -1, sonI = -1, i2;
@@ -13075,6 +13090,75 @@ window.d8DersGunuKaydir=function(yumusak){
     window.scrollTo({top:Math.max(0,Math.round(y)),behavior:yumusak?'smooth':'auto'});
   }catch(e){}
 };
+</script>
+<script id="d8-serit-cerceve-js">
+/* Mobil: alt menünün üstündeki ders sayacı yalnızca bugünün ders programı
+   çerçevesinde (ilk dersin başlangıcı – son dersin bitişi) görünür.
+   Dersler başlamadan, hepsi bittikten sonra, hafta sonu, tatil ve ders
+   olmayan günlerde gizlenir. Sınav günlerinde mevcut davranış korunur. */
+(function(){
+  'use strict';
+  function dk(t){ var m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; }
+  function cerceveIcinde(now){
+    try { if (typeof _diSinavDate === 'function' && _diSinavDate(now)) return true; } catch(e){}
+    var dow = now.getDay(), nowM = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+    if (dow < 1 || dow > 5) return false;
+    try { if (window.D8 && D8.tatilMi && D8.tatilMi(now)) return false; } catch(e){}
+    var mod = window._d8DonemMode || (window.D8 && D8.mod && D8.mod());
+    /* III. Dönem: kişisel staj programı */
+    if (mod === 'd3' && window.D8 && D8.stajVeri){
+      var v = D8.stajVeri(), bl = (v && v.gunler && v.gunler[dow]) || [], ilk = null, son = null;
+      bl.forEach(function(b){
+        if (b.tur === 'bos') return;
+        var a = dk(b.bas), z = dk(b.bit);
+        if (a === null || z === null || z <= a) return;
+        if (ilk === null || a < ilk) ilk = a;
+        if (son === null || z > son) son = z;
+      });
+      return ilk !== null && nowM >= ilk && nowM < son;
+    }
+    try {
+      var d = D8.simdi(now).durum;
+      return d === 'ders' || d === 'ara' || d === 'tumGun';
+    } catch(e){ return true; }
+  }
+  function tamGizle(){
+    var pill = document.getElementById('di-pill');
+    if (pill){ pill.style.display = 'none'; pill.innerHTML = ''; pill.className = ''; }
+    var mobFloat = document.getElementById('mob-floating-pill');
+    if (mobFloat) mobFloat.style.display = 'none';
+  }
+  function disarida(){ return window.innerWidth <= 640 && !cerceveIcinde(new Date()); }
+  var eskiK = window._diKonumla, eskiG = window._diGizle;
+  if (typeof eskiK === 'function') window._diKonumla = function(p){ if (disarida()){ tamGizle(); return; } return eskiK.apply(this, arguments); };
+  if (typeof eskiG === 'function') window._diGizle = window._diHideDesktop = function(){ if (disarida()){ tamGizle(); return; } return eskiG.apply(this, arguments); };
+  window.d8SayacCercevede = cerceveIcinde;
+  if (typeof window.diTick === 'function'){ try { window.diTick(); } catch(e){} }
+})();
+</script>
+<script id="d8-gorev-kaydir-js">
+/* Mobil: "Görevler" sekmesine basınca bu haftanın görev kartına kaydır. */
+(function(){
+  'use strict';
+  function kaydir(deneme){
+    if (window.innerWidth > 660) return;
+    var panel = document.getElementById('panel-gorev');
+    if (!panel || panel.style.display === 'none') return;
+    var hedef = null, ad = panel.querySelectorAll('.tz-simdi');
+    for (var i = 0; i < ad.length; i++) if (ad[i].offsetHeight) { hedef = ad[i]; break; }
+    if (!hedef){ if (deneme < 8) setTimeout(function(){ kaydir(deneme + 1); }, 120); return; }
+    var y = 0, el = hedef; while (el){ y += el.offsetTop; el = el.offsetParent; }
+    window.scrollTo({ top: Math.max(0, y - 12), behavior: 'smooth' });
+  }
+  window.d8GorevHaftasinaKaydir = function(){ kaydir(0); };
+  var orij = window.showMain;
+  if (typeof orij !== 'function') return;
+  window.showMain = function(id){
+    var r = orij.apply(this, arguments);
+    if (id === 'gorev') setTimeout(function(){ kaydir(0); }, 90);
+    return r;
+  };
+})();
 </script>
 </body>
 </html>
