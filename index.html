@@ -94,7 +94,17 @@ var R={deniz:'#0E7490',guz:'#9A3412',kis:'#1E3A8A'}[t];try{var m=document.queryS
 /* Ana ekrandan uygulama olarak açıldıysa sistem zaten bir açılış ekranı gösterdi;
    sitenin kendi logolu ekranı ikinci kez gösterilmez (üç ekran yerine tek ekran). */
 try{if((window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||navigator.standalone===true)h.classList.add('d8-kurulu');}catch(e){}})()</script>
-<style>html.d8-kurulu #splash{display:none!important}</style>
+<style>
+/* Uygulama olarak açıldıysa site içi açılış ekranı, sistemin açılış ekranının (krem zemin + ortada logo)
+   devamı gibi görünür: yazı, parlama ve yükleme çubuğu yok; böylece iki ayrı ekran değil tek ekran algılanır. */
+html.d8-kurulu #splash .spl-ad,html.d8-kurulu #splash .spl-bekle{display:none!important}
+html.d8-kurulu #splash .spl-logo{animation:none!important;box-shadow:none!important}
+html.d8-kurulu #splash .spl-logo::after{display:none!important}
+html.d8-kurulu:not(.dark-pre) #splash{background:#FDF7EF!important}
+/* Açılış yazısının rengi tema yüklenirken değişmesin */
+#splash .spl-ad{color:#3B2317!important}
+html.dark-pre #splash .spl-ad{color:#F5E9DC!important}
+</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
@@ -451,8 +461,17 @@ html{background-color:var(--bg);min-height:100%}
 <script>/* Açılış logosu ilk boyamadan önce güncel temaya çevrilir */(function(){try{var t=document.documentElement.getAttribute('data-tema')||'guz',s=document.getElementById('splash-icon');if(!s)return;var c=JSON.parse(localStorage.getItem('d8TemaIkon')||'null');if(c&&c.t===t&&c.svg){var k=document.createElement('div');k.innerHTML=c.svg;var y=k.firstElementChild;if(y){y.setAttribute('id','splash-icon');s.parentNode.replaceChild(y,s);return;}}var P={guz:['#7C2D12','#C2410C','#FDF3E4','#F2C14E'],kis:['#16275A','#2563EB','#FFFFFF','#BFDBFE'],deniz:null}[t];if(!P)return;var a=s.querySelectorAll('#sbg stop'),b=s.querySelectorAll('#sdg stop');if(a.length>1){a[0].style.stopColor=P[0];a[1].style.stopColor=P[1];}if(b.length>1){b[0].style.stopColor=P[2];b[1].style.stopColor=P[3];}}catch(e){}})();</script>
 <script>(function(){var t0=Date.now(),bitti=false;var az=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;var MIN=az?150:350;   /* logonun en kısa görünme süresi (ms) */
 function hideSplash(hemen){if(bitti)return;bitti=true;var s=document.getElementById('splash');if(!s)return;var bekle=hemen?0:Math.max(0,MIN-(Date.now()-t0));setTimeout(function(){s.classList.add('hidden');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},450);},bekle);}
-/* Sayfa iskeleti hazır olunca (DOMContentLoaded) kalkar; yazı tipi ve Firebase gibi dış kaynaklar beklenmez */
-if(document.readyState!=='loading'){setTimeout(hideSplash,60);}else{document.addEventListener('DOMContentLoaded',function(){requestAnimationFrame(function(){setTimeout(hideSplash,60);});});}
+/* Açılış ekranı ne zaman kalkar?
+   Giriş yapmamış kullanıcı: sayfa iskeleti hazır olunca (DOMContentLoaded).
+   Giriş yapmış kullanıcı: ayrıca hesabın ayarları (karanlık mod, dönem, ders programı)
+   uygulanana kadar beklenir — yoksa ekran kalktıktan sonra sayfa gözle görülür şekilde
+   yeniden çizilir ve "site birkaç kez açılıyor" hissi oluşur. En fazla 3,5 sn beklenir. */
+var girisli=false;try{girisli=localStorage.getItem('d8GirisVar')==='1';}catch(e){}
+var dcl=false,hazir=!girisli;
+function dene(){if(dcl&&hazir)requestAnimationFrame(function(){setTimeout(hideSplash,60);});}
+window.addEventListener('d8-hazir',function(){hazir=true;dene();});
+function dclOldu(){dcl=true;dene();setTimeout(function(){hazir=true;dene();},3500);}
+if(document.readyState!=='loading')dclOldu();else document.addEventListener('DOMContentLoaded',dclOldu);
 var sp=document.getElementById('splash');if(sp)sp.addEventListener('click',function(){hideSplash(true);});})();</script>
 <script id="d8-core">
 /* ==========================================================================
@@ -4996,6 +5015,7 @@ let fbModuller;
 try {
   fbModuller = await fbYukle();
 } catch (e) {
+  window.dispatchEvent(new Event("d8-hazir"));   /* açılış ekranı beklemesin */
   console.warn("[D8] Firebase yüklenemedi; giriş ve bulut eşitlemesi şimdilik kapalı, site çalışmaya devam ediyor.", e && e.message);
   fbModuller = await new Promise(function (tamam) {
     window.addEventListener("online", function () {
@@ -5614,8 +5634,13 @@ function updateAuthButton(){
   refreshLessonNotesUI();
 }
 
+/* Açılış ekranına "sayfa son halinde" sinyali; giriş bayrağı bir sonraki açılışta
+   açılış ekranının hesabı bekleyip beklemeyeceğini belirler. */
+let d8HazirGitti = false;
+function d8HazirBildir(){ if(d8HazirGitti) return; d8HazirGitti = true; window.dispatchEvent(new Event('d8-hazir')); }
 onAuthStateChanged(auth, async function(user){
   currentUser = user;
+  try{ if(user && !user.isAnonymous) localStorage.setItem('d8GirisVar','1'); else localStorage.removeItem('d8GirisVar'); }catch(e){}
   updateAuthButton();
   if(user){
     try{
@@ -5632,6 +5657,8 @@ onAuthStateChanged(auth, async function(user){
     stajDinle(user.uid);
     if(typeof window.d8StajGirisDurumuDegisti === 'function'){ try{ window.d8StajGirisDurumuDegisti(true); }catch(e){} }
     if(typeof window.d8MigrateLocalNotesIfAny==='function'){ try{ window.d8MigrateLocalNotesIfAny(); }catch(e){} }
+    /* Ders programının ilk bulut kopyası (aynı belge, SDK önbelleğinden) hemen ardından gelir */
+    setTimeout(d8HazirBildir, 250);
   } else {
     unsubscribeNotes();
     stajDinlemeyiDurdur();
@@ -5639,10 +5666,12 @@ onAuthStateChanged(auth, async function(user){
     if(typeof window.buildProfilPage === 'function'){ try{ window.buildProfilPage(); }catch(e){} }
     if(typeof window.d8RenderAdminBar === 'function'){ try{ window.d8RenderAdminBar(); }catch(e){} }
     refreshLessonNotesUI();
+    d8HazirBildir();
   }
 });
 
 } catch(initError) {
+  window.dispatchEvent(new Event('d8-hazir'));
   console.error('[D8 Init] Firebase başlatılamadı, giriş/not özellikleri devre dışı kalacak:', initError);
   window.handleAuthClick = function(){
     alert('Giriş sistemi yüklenemedi (Firebase başlatma hatası). Konsolu (F12) kontrol et veya sayfayı yenile.');
@@ -14006,7 +14035,7 @@ html.d8-hafif .header-liquid-fill,html.d8-hafif .header-liquid-fill::before,html
     var bitti = false;
     function git() { if (!bitti) { bitti = true; location.reload(); } }
     try {
-      caches.open('derslik8-sayfa-v1').then(function (c) {
+      caches.open('derslik8-sayfa').then(function (c) {
         return c.add(new Request(new URL('index.html', location.href).href, { cache: 'reload' }));
       }).then(git, git);
       setTimeout(git, 4000);
