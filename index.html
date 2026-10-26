@@ -14035,8 +14035,10 @@ html.d8-hafif .header-liquid-fill,html.d8-hafif .header-liquid-fill::before,html
     var bitti = false;
     function git() { if (!bitti) { bitti = true; location.reload(); } }
     try {
-      caches.open('derslik8-sayfa').then(function (c) {
-        return c.add(new Request(new URL('index.html', location.href).href, { cache: 'reload' }));
+      /* sw.js sayfayı kök adresle saklar; yönlendirilmiş cevap saklanmaz */
+      var kok = new URL('./', location.href).href;
+      fetch(kok, { cache: 'reload' }).then(function (r) {
+        if (r && r.ok && r.status === 200 && !r.redirected) return caches.open('derslik8-sayfa').then(function (c) { return c.put(kok, r); });
       }).then(git, git);
       setTimeout(git, 4000);
     } catch (e) { git(); }
@@ -14056,7 +14058,11 @@ html.d8-hafif .header-liquid-fill,html.d8-hafif .header-liquid-fill::before,html
     if (e.data && e.data.tip === 'd8-yeni-surum') bildir();
   });
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('[D8] sw.js kaydedilemedi', e); });
+    /* updateViaCache:'none' → sw.js hiçbir zaman tarayıcı önbelleğinden okunmaz; her açılışta
+       güncel sürüm kontrol edilir, bozuk bir sürüm yayınlanırsa düzeltmesi hemen yayılır. */
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(function (k) {
+      try { k.update(); } catch (e) {}
+    }).catch(function (e) { console.warn('[D8] sw.js kaydedilemedi', e); });
   });
 })();
 </script>
