@@ -624,13 +624,20 @@ var sp=document.getElementById('splash');if(sp)sp.addEventListener('click',funct
 
   /* ---------- 6. Tatil / hafta hesabı ---------- */
 
-  D8.tatilMi = function (d) {
+  /* Yarım günlük tatil: basSaat varsa ilk gün o saatten önce tatil sayılmaz */
+  function tatilKapsar(r, d) {
     var s = iso(gunBasi(d));
-    return araliklar().some(function (r) { return r.type === 'tatil' && s >= r.start && s <= r.end; });
+    if (r.type !== 'tatil' || s < r.start || s > r.end) return false;
+    if (r.basSaat && s === r.start && d.getHours() * 60 + d.getMinutes() < toM(r.basSaat)) return false;
+    return true;
+  }
+  D8.tatilKapsar = tatilKapsar;
+  D8.tatilMi = function (d) {
+    return araliklar().some(function (r) { return tatilKapsar(r, d); });
   };
   D8.tatilAdi = function (d) {
-    var s = iso(gunBasi(d)), hit = null;
-    araliklar().forEach(function (r) { if (r.type === 'tatil' && s >= r.start && s <= r.end && !hit) hit = r; });
+    var hit = null;
+    araliklar().forEach(function (r) { if (!hit && tatilKapsar(r, d)) hit = r; });
     return hit ? hit.label : '';
   };
   /** Hafta içi 5 günün en az 4'ü tatilse "tatil haftası" sayılır ve hafta sayısına girmez */
@@ -2130,7 +2137,7 @@ function filterProgram(q){
   var noResult=document.getElementById((window._d8DonemMode||'d2')==='d1'?'program-no-result':'program-no-result-d2');
   if(noResult)noResult.style.display=(q&&!anyVisible)?'block':'none';
 }
-const ranges=[{start:'2026-04-13',end:'2026-04-13',label:'I. Dönem Başlıyor',type:'ders',tip:'I. Ders Dönemi başlangıcı'},{start:'2026-04-23',end:'2026-04-23',label:'Ulusal Egemenlik ve Çocuk Bayramı',type:'tatil',tip:'23 Nisan – Ulusal Egemenlik ve Çocuk Bayramı (Resmî Tatil)'},{start:'2026-05-01',end:'2026-05-01',label:'Emek ve Dayanışma Günü',type:'tatil',tip:'1 Mayıs Emek ve Dayanışma Günü (Resmî Tatil)'},{start:'2026-05-11',end:'2026-05-17',label:'Ara Sınav Haftası',type:'sinav',tip:'I. Dönem Ders + Ara Sınav Haftası: 11–17 Mayıs'},{start:'2026-05-19',end:'2026-05-19',label:'Gençlik ve Spor Bayramı',type:'tatil',tip:'19 Mayıs – Atatürk\'ü Anma, Gençlik ve Spor Bayramı (Resmî Tatil)'},{start:'2026-05-22',end:'2026-05-22',label:'Ara Sınav Sonuçları',type:'sonuc',tip:'I. Dönem Ara Sınav Sonuçlarının İlanı'},{start:'2026-05-23',end:'2026-05-31',label:'Kurban Bayramı',type:'tatil',tip:'23 Mayıs – 31 Mayıs: Kurban Bayramı tatili (9 gün, Cumhurbaşkanlığı kararıyla)'},{start:'2026-06-26',end:'2026-06-26',label:'I. Dönem Bitiyor',type:'bit',tip:'I. Ders Döneminin Bitirilmesi'},{start:'2026-06-27',end:'2026-06-30',label:'Dönem Sonu Sınavı',type:'sinav',tip:'I. Dönem Sonu Sınavı: 27 Haz – 30 Haz'},{start:'2026-07-03',end:'2026-07-03',label:'Dönem Sonu Sonuçları',type:'sonuc',tip:'I. Dönem Sonu Sınav Sonuçlarının İlanı'},{start:'2026-07-05',end:'2026-07-05',label:'Ek Sınav',type:'sinav',tip:'I. Dönem Ek Sınavları'},{start:'2026-07-06',end:'2026-07-06',label:'Ek Sınav Sonuçları',type:'sonuc',tip:'I. Dönem Ek Sınav Sonuçlarının İlanı'},{start:'2026-07-06',end:'2026-07-06',label:'II. Dönem Başlıyor',type:'ders',tip:'II. Ders Dönemi Başlangıcı'},{start:'2026-07-15',end:'2026-07-15',label:'Demokrasi Bayramı',type:'tatil',tip:'15 Temmuz Demokrasi ve Millî Birlik Günü (Resmî Tatil)'},{start:'2026-08-03',end:'2026-08-07',label:'Ara Sınav Haftası',type:'sinav',tip:'II. Dönem Ders + Ara Sınav Haftası: 3–7 Ağustos'},{start:'2026-08-14',end:'2026-08-14',label:'Ara Sınav Sonuçları',type:'sonuc',tip:'II. Dönem Ara Sınav Sonuçlarının İlanı'},{start:'2026-09-11',end:'2026-09-11',label:'II. Dönem Bitiyor',type:'bit',tip:'II. Ders Döneminin Bitirilmesi'},{start:'2026-09-14',end:'2026-09-17',label:'Dönem Sonu Sınavı',type:'sinav',tip:'II. Dönem Sonu Sınavı: 14–17 Eylül'},{start:'2026-09-18',end:'2026-09-18',label:'Dönem Sonu Sonuçları',type:'sonuc',tip:'II. Dönem Sonu Sınav Sonuçlarının İlanı'},{start:'2026-09-21',end:'2026-09-21',label:'Ek Sınav',type:'sinav',tip:'II. Dönem Ek Sınavları'},{start:'2026-09-21',end:'2026-09-27',label:'Ara Tatil',type:'tatil',tip:'Dönemler Arası Ara Tatil: 21–27 Eylül'},{start:'2026-09-24',end:'2026-09-24',label:'Ek Sınav Sonuçları',type:'sonuc',tip:'II. Dönem Ek Sınav Sonuçlarının İlanı'},{start:'2026-09-28',end:'2026-09-28',label:'III. Dönem Başlıyor',type:'uyg',tip:'III. Uygulama Dönemi Başlangıcı'},{start:'2026-10-19',end:'2026-10-23',label:'1. Uygulama Değerlendirmesi',type:'uyg',tip:'1. Uygulama Değerlendirmesi: 19–23 Ekim'},{start:'2026-10-28',end:'2026-10-29',label:'Cumhuriyet Bayramı',type:'tatil',tip:'28 Ekim ÖS – 29 Ekim: Cumhuriyet Bayramı (Resmî Tatil)'},{start:'2026-11-09',end:'2026-11-13',label:'2. Uygulama Değerlendirmesi',type:'uyg',tip:'2. Uygulama Değerlendirmesi: 9–13 Kasım'},{start:'2026-11-30',end:'2026-12-04',label:'3. Uygulama Değerlendirmesi',type:'uyg',tip:'3. Uygulama Değerlendirmesi: 30 Kas – 4 Ara'},{start:'2026-12-04',end:'2026-12-04',label:'III. Dönem Bitiyor',type:'bit',tip:'Uygulama Döneminin Bitirilmesi'},{start:'2026-12-07',end:'2026-12-07',label:'IV. Dönem Başlıyor',type:'ders',tip:'IV. Ders Dönemi Başlangıcı'},{start:'2027-01-01',end:'2027-01-01',label:'Yılbaşı',type:'tatil',tip:'1 Ocak Yılbaşı (Resmî Tatil)'},{start:'2027-01-04',end:'2027-01-07',label:'Ara Sınav Haftası',type:'sinav',tip:'IV. Dönem Ders + Ara Sınav Haftası: 4–7 Ocak'},{start:'2027-01-15',end:'2027-01-15',label:'Ara Sınav Sonuçları',type:'sonuc',tip:'IV. Dönem Ara Sınav Sonuçlarının İlanı'},{start:'2027-02-15',end:'2027-02-17',label:'Dönem Sonu Sınavı',type:'sinav',tip:'IV. Dönem Sonu Sınavı: 15–17 Şubat'},{start:'2027-02-18',end:'2027-02-18',label:'Dönem Sonu Sonuçları',type:'sonuc',tip:'IV. Dönem Sonu Sınav Sonuçlarının İlanı'},{start:'2027-02-19',end:'2027-02-19',label:'Ek Sınav',type:'sinav',tip:'IV. Dönem Ek Sınavları'},{start:'2027-02-22',end:'2027-02-22',label:'Ek Sonuç / IV. Dönem Bitiyor',type:'bit',tip:'Ek Sınav Sonuçları + IV. Ders Döneminin Bitirilmesi'},];function toggleDark(){const isDark=document.body.classList.toggle('dark');const btn=document.getElementById('darkToggle');if(btn)btn.innerHTML=isDark?'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>':'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';localStorage.setItem('d8DarkMode',isDark?'1':'0');window._d8UserSetDark=true;}
+const ranges=[{start:'2026-04-13',end:'2026-04-13',label:'I. Dönem Başlıyor',type:'ders',tip:'I. Ders Dönemi başlangıcı'},{start:'2026-04-23',end:'2026-04-23',label:'Ulusal Egemenlik ve Çocuk Bayramı',type:'tatil',tip:'23 Nisan – Ulusal Egemenlik ve Çocuk Bayramı (Resmî Tatil)'},{start:'2026-05-01',end:'2026-05-01',label:'Emek ve Dayanışma Günü',type:'tatil',tip:'1 Mayıs Emek ve Dayanışma Günü (Resmî Tatil)'},{start:'2026-05-11',end:'2026-05-17',label:'Ara Sınav Haftası',type:'sinav',tip:'I. Dönem Ders + Ara Sınav Haftası: 11–17 Mayıs'},{start:'2026-05-19',end:'2026-05-19',label:'Gençlik ve Spor Bayramı',type:'tatil',tip:'19 Mayıs – Atatürk\'ü Anma, Gençlik ve Spor Bayramı (Resmî Tatil)'},{start:'2026-05-22',end:'2026-05-22',label:'Ara Sınav Sonuçları',type:'sonuc',tip:'I. Dönem Ara Sınav Sonuçlarının İlanı'},{start:'2026-05-23',end:'2026-05-31',label:'Kurban Bayramı',type:'tatil',tip:'23 Mayıs – 31 Mayıs: Kurban Bayramı tatili (9 gün, Cumhurbaşkanlığı kararıyla)'},{start:'2026-06-26',end:'2026-06-26',label:'I. Dönem Bitiyor',type:'bit',tip:'I. Ders Döneminin Bitirilmesi'},{start:'2026-06-27',end:'2026-06-30',label:'Dönem Sonu Sınavı',type:'sinav',tip:'I. Dönem Sonu Sınavı: 27 Haz – 30 Haz'},{start:'2026-07-03',end:'2026-07-03',label:'Dönem Sonu Sonuçları',type:'sonuc',tip:'I. Dönem Sonu Sınav Sonuçlarının İlanı'},{start:'2026-07-05',end:'2026-07-05',label:'Ek Sınav',type:'sinav',tip:'I. Dönem Ek Sınavları'},{start:'2026-07-06',end:'2026-07-06',label:'Ek Sınav Sonuçları',type:'sonuc',tip:'I. Dönem Ek Sınav Sonuçlarının İlanı'},{start:'2026-07-06',end:'2026-07-06',label:'II. Dönem Başlıyor',type:'ders',tip:'II. Ders Dönemi Başlangıcı'},{start:'2026-07-15',end:'2026-07-15',label:'Demokrasi Bayramı',type:'tatil',tip:'15 Temmuz Demokrasi ve Millî Birlik Günü (Resmî Tatil)'},{start:'2026-08-03',end:'2026-08-07',label:'Ara Sınav Haftası',type:'sinav',tip:'II. Dönem Ders + Ara Sınav Haftası: 3–7 Ağustos'},{start:'2026-08-14',end:'2026-08-14',label:'Ara Sınav Sonuçları',type:'sonuc',tip:'II. Dönem Ara Sınav Sonuçlarının İlanı'},{start:'2026-09-11',end:'2026-09-11',label:'II. Dönem Bitiyor',type:'bit',tip:'II. Ders Döneminin Bitirilmesi'},{start:'2026-09-14',end:'2026-09-17',label:'Dönem Sonu Sınavı',type:'sinav',tip:'II. Dönem Sonu Sınavı: 14–17 Eylül'},{start:'2026-09-18',end:'2026-09-18',label:'Dönem Sonu Sonuçları',type:'sonuc',tip:'II. Dönem Sonu Sınav Sonuçlarının İlanı'},{start:'2026-09-21',end:'2026-09-21',label:'Ek Sınav',type:'sinav',tip:'II. Dönem Ek Sınavları'},{start:'2026-09-21',end:'2026-09-27',label:'Ara Tatil',type:'tatil',tip:'Dönemler Arası Ara Tatil: 21–27 Eylül'},{start:'2026-09-24',end:'2026-09-24',label:'Ek Sınav Sonuçları',type:'sonuc',tip:'II. Dönem Ek Sınav Sonuçlarının İlanı'},{start:'2026-09-28',end:'2026-09-28',label:'III. Dönem Başlıyor',type:'uyg',tip:'III. Uygulama Dönemi Başlangıcı'},{start:'2026-10-19',end:'2026-10-23',label:'1. Uygulama Değerlendirmesi',type:'uyg',tip:'1. Uygulama Değerlendirmesi: 19–23 Ekim'},{start:'2026-10-28',end:'2026-10-29',basSaat:'13:00',label:'Cumhuriyet Bayramı',type:'tatil',tip:'28 Ekim ÖS – 29 Ekim: Cumhuriyet Bayramı (Resmî Tatil)'},{start:'2026-11-09',end:'2026-11-13',label:'2. Uygulama Değerlendirmesi',type:'uyg',tip:'2. Uygulama Değerlendirmesi: 9–13 Kasım'},{start:'2026-11-30',end:'2026-12-04',label:'3. Uygulama Değerlendirmesi',type:'uyg',tip:'3. Uygulama Değerlendirmesi: 30 Kas – 4 Ara'},{start:'2026-12-04',end:'2026-12-04',label:'III. Dönem Bitiyor',type:'bit',tip:'Uygulama Döneminin Bitirilmesi'},{start:'2026-12-07',end:'2026-12-07',label:'IV. Dönem Başlıyor',type:'ders',tip:'IV. Ders Dönemi Başlangıcı'},{start:'2027-01-01',end:'2027-01-01',label:'Yılbaşı',type:'tatil',tip:'1 Ocak Yılbaşı (Resmî Tatil)'},{start:'2027-01-04',end:'2027-01-07',label:'Ara Sınav Haftası',type:'sinav',tip:'IV. Dönem Ders + Ara Sınav Haftası: 4–7 Ocak'},{start:'2027-01-15',end:'2027-01-15',label:'Ara Sınav Sonuçları',type:'sonuc',tip:'IV. Dönem Ara Sınav Sonuçlarının İlanı'},{start:'2027-02-15',end:'2027-02-17',label:'Dönem Sonu Sınavı',type:'sinav',tip:'IV. Dönem Sonu Sınavı: 15–17 Şubat'},{start:'2027-02-18',end:'2027-02-18',label:'Dönem Sonu Sonuçları',type:'sonuc',tip:'IV. Dönem Sonu Sınav Sonuçlarının İlanı'},{start:'2027-02-19',end:'2027-02-19',label:'Ek Sınav',type:'sinav',tip:'IV. Dönem Ek Sınavları'},{start:'2027-02-22',end:'2027-02-22',label:'Ek Sonuç / IV. Dönem Bitiyor',type:'bit',tip:'Ek Sınav Sonuçları + IV. Ders Döneminin Bitirilmesi'},];function toggleDark(){const isDark=document.body.classList.toggle('dark');const btn=document.getElementById('darkToggle');if(btn)btn.innerHTML=isDark?'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>':'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';localStorage.setItem('d8DarkMode',isDark?'1':'0');window._d8UserSetDark=true;}
 (function initDarkMode(){var saved=null;try{saved=localStorage.getItem('d8DarkMode');}catch(e){}if(saved==='1'){document.body.classList.add('dark');var btn=document.getElementById('darkToggle');if(btn)btn.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';window._d8UserSetDark=true;}else{document.body.classList.remove('dark');var btn=document.getElementById('darkToggle');if(btn)btn.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';window._d8UserSetDark=true;}})();
 let curYear=new Date().getFullYear();let curMonth=new Date().getMonth();const TR_MONTHS=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];function pad(n){return String(n).padStart(2,'0');}
 function mkDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
@@ -3527,7 +3534,7 @@ function sinavTickerInit(){
 
 
 
-window.addEventListener('load',function(){sinavTickerInit();if(!window._d8LandingApplied){window._d8LandingApplied=true;var hedefTab=(window._d8GlobalDefaultTab==='takvim'||window._d8GlobalDefaultTab==='sinav')?window._d8GlobalDefaultTab:'program';var hedefBtn=document.querySelector('.mtab[onclick*=\''+hedefTab+'\']');if(hedefBtn){showMain(hedefTab,hedefBtn);if(typeof syncMobNav==='function')syncMobNav(hedefTab);}}});</script>  <script>(function(){
+window.addEventListener('load',function(){sinavTickerInit();if(!window._d8LandingApplied){window._d8LandingApplied=true;var hedefTab=(window._d8GlobalDefaultTab==='takvim'||window._d8GlobalDefaultTab==='sinav')?window._d8GlobalDefaultTab:'program';var hedefBtn=document.querySelector('.mtab[onclick*=\''+hedefTab+'\']');if(hedefTab==='program'){if(typeof syncMobNav==='function')syncMobNav('program');}else if(hedefBtn){showMain(hedefTab,hedefBtn);if(typeof syncMobNav==='function')syncMobNav(hedefTab);}}});</script>  <script>(function(){
 /* Tarayıcının yükleme penceresi saklanır; ana ekran kısayolu kartı (d8-kisayol-js) kullanır */
 window._pwaDeferredPrompt=null;
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window._pwaDeferredPrompt=e;});
@@ -5095,6 +5102,7 @@ function landingConfigRef(){ return doc(db, "siteConfig", "landing"); }
 function d8ApplyInitialLandingTab(tab){
   if(window._d8LandingApplied) return; // yalnızca ilk açılışta uygulanır, kullanıcının o anki gezintisini kesmez
   window._d8LandingApplied = true;
+  if(tab === 'program') return;   /* zaten açık; yeniden açmak sayfayı ikinci kez kaydırıyordu */
   var hedefBtn = document.querySelector('.mtab[onclick*="\'' + tab + '\'"]');
   if(hedefBtn && typeof window.showMain === 'function'){
     window.showMain(tab, hedefBtn);
@@ -6962,14 +6970,19 @@ td.td-full[data-fam="uygulama"] {
     });
   }
 
+  function yazGerekirse(el, html) {
+    if (!el) return;
+    /* Saniyelik sayaç ve çubuk değerleri karşılaştırmaya girmez; onları durumGuncelle tazeler */
+    var imza = html.replace(/id="sd-sayac">[^<]*/g, '').replace(/id="sd-bar" style="width:[^"]*"/g, '');
+    if (el._d8Imza === imza) return;
+    el._d8Imza = imza;
+    el.innerHTML = html;
+  }
   D8.d34Tazele = function () {
     PANEL_MODLAR.forEach(function (mod) {
-      var el = document.getElementById('program-' + mod);
-      if (el) el.innerHTML = panelHtml(mod);
-      var el2 = document.getElementById('sinav-' + mod);
-      if (el2) el2.innerHTML = sinavHtml(mod);
-      var el3 = document.getElementById('gorev-' + mod);
-      if (el3) el3.innerHTML = gorevHtml(mod);
+      yazGerekirse(document.getElementById('program-' + mod), panelHtml(mod));
+      yazGerekirse(document.getElementById('sinav-' + mod), sinavHtml(mod));
+      yazGerekirse(document.getElementById('gorev-' + mod), gorevHtml(mod));
     });
   };
 
@@ -7126,6 +7139,7 @@ td.td-full[data-fam="uygulama"] {
         PANEL_MODLAR.forEach(function (m) {
           var dst = document.getElementById('mobile-schedule-' + m);
           if (!dst) return;
+          if (!programVar(m)) return;   /* kişisel staj listesi kendi çiziliyor */
           dst.innerHTML = '';
           if (m !== mod) return;
           var src = document.getElementById('mobile-schedule-d2');
@@ -8944,7 +8958,7 @@ td.td-full[data-fam="uygulama"] {
       var iso = isoGun(d);
       for (var i = 0; i < ranges.length; i++) {
         var r = ranges[i];
-        if (r.type === 'tatil' && iso >= r.start && iso <= r.end) return true;
+        if (D8.tatilKapsar ? D8.tatilKapsar(r, d) : (r.type === 'tatil' && iso >= r.start && iso <= r.end)) return true;
       }
     } catch (e) {}
     return false;
