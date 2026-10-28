@@ -3326,8 +3326,7 @@ const uniqueLabels=[...new Set(holidays.map(h=>h.label))];const dayList=holidays
    kaydedildiği için tarayıcılarca reddediliyor, hiç çalışmıyordu.
    Şimdi yalnızca dosyanın başlık bilgisi (ETag / Last-Modified) istenir, sayfa
    indirilmez. Açılıştaki sürüm hatırlanır; sunucudaki sürüm değişince bant çıkar.
-   Çevrimdışı açılışı sw.js sağlar (sayfanın sonundaki d8-perf-js bölümü). Bant
-   "Yenile"ye basınca önce sw.js önbelleğindeki kopya tazelenir, sonra yenilenir. */
+   Çevrimdışı katman (sw.js) kaldırıldı; bant "Yenile"ye basınca sayfa yenilenir. */
 (function(){
   function d8ShowUpdateBanner(){
     if(document.getElementById('d8UpdateBanner'))return;
@@ -13210,7 +13209,7 @@ body.dark .nb-cip.tatil{color:#C9BBFF}
     }
     var suan = null, ONC = {sinav:0, uyg:1, tatil:2, sonuc:3, ders:4, bit:5};
     if (typeof ranges !== 'undefined'){
-      ranges.filter(function(r){ return P(r.start) <= t && t <= P(r.end); })
+      ranges.filter(function(r){ if (r.basSaat && window.D8 && D8.tatilKapsar) return D8.tatilKapsar(r, new Date()); return P(r.start) <= t && t <= P(r.end); })
         .sort(function(a, b){ return (ONC[a.type] || 9) - (ONC[b.type] || 9); })
         .some(function(r){ suan = {ad:temiz(r.label), e:P(r.end), tek:r.start === r.end, ham:r.start}; return true; });
     }
@@ -13972,36 +13971,19 @@ html.d8-hafif .header-liquid-fill,html.d8-hafif .header-liquid-fill::before,html
     }).observe(ust);
   }
 
-  /* 4) Çevrimdışı çalışma: sw.js (yalnızca https ya da localhost'ta) */
-  /* Yenile: önbellekteki sayfa kopyası önce ağdan tazelenir; yoksa sw.js
-     eski kopyayı verir ve kullanıcı ikinci kez yenilemek zorunda kalırdı. */
-  window.d8YeniSurumYukle = function () {
-    var bitti = false;
-    function git() { if (!bitti) { bitti = true; location.reload(); } }
-    try {
-      caches.open('derslik8-sayfa-v1').then(function (c) {
-        return c.add(new Request(new URL('index.html', location.href).href, { cache: 'reload' }));
-      }).then(git, git);
-      setTimeout(git, 4000);
-    } catch (e) { git(); }
-  };
-  if (!('serviceWorker' in navigator)) return;
-  if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
-  function bildir() {
-    if (document.getElementById('d8-guncel') || document.getElementById('d8UpdateBanner')) return;
-    var b = document.createElement('div');
-    b.id = 'd8-guncel'; b.setAttribute('role', 'status');
-    b.innerHTML = '<span>' + d8Ikon('yenile') + 'Yeni sürüm hazır</span><button type="button" class="yenile">Yenile</button><button type="button" class="sonra" aria-label="Sonra">✕</button>';
-    b.querySelector('.yenile').onclick = function () { window.d8YeniSurumYukle(); };
-    b.querySelector('.sonra').onclick = function () { b.remove(); };
-    document.body.appendChild(b);
-  }
-  navigator.serviceWorker.addEventListener('message', function (e) {
-    if (e.data && e.data.tip === 'd8-yeni-surum') bildir();
-  });
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('[D8] sw.js kaydedilemedi', e); });
-  });
+  /* 4) Çevrimdışı çalışma kaldırıldı. Daha önce kurulmuş sw.js kayıtları ve
+     önbellekteki eski sayfa kopyaları her açılışta temizlenir. */
+  window.d8YeniSurumYukle = function () { location.reload(); };
+  try {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+      navigator.serviceWorker.getRegistrations().then(function (l) {
+        l.forEach(function (r) { r.unregister(); });
+      }).catch(function () {});
+    }
+    if (window.caches && caches.keys) {
+      caches.keys().then(function (k) { k.forEach(function (a) { caches.delete(a); }); }).catch(function () {});
+    }
+  } catch (e) {}
 })();
 </script>
 <style id="d8-duzen">
@@ -14092,6 +14074,8 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
 @media (prefers-reduced-motion:reduce){.ci.current-lesson::before{animation:none;opacity:.6}.d8-announce-dot{animation:none!important}}
 .profil-tatil-icon{color:#6d28d9}body.dark .profil-tatil-icon{color:#c4b5fd}.profil-tatil-icon .d8-si{width:26px;height:26px;margin:0}
 .tatil-rozet .d8-si,.mob-tatil-badge .d8-si{width:1.1em;height:1.1em;margin-right:.25em}
+/* Ders Programı paneli alt alta dizilir; flex düzeninde dönem kartı dersleri ekran dışına itiyordu */
+#panel-program{display:block}
 </style>
 <script id="d8-duzen-js">
 (function () {
