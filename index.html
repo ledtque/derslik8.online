@@ -124,7 +124,11 @@ var R={deniz:'#0E7490',guz:'#9A3412',kis:'#1E3A8A'}[t];try{var m=document.queryS
 /* Ana ekrandan uygulama olarak açıldıysa sistem zaten bir açılış ekranı gösterdi;
    sitenin kendi logolu ekranı ikinci kez gösterilmez (üç ekran yerine tek ekran). */
 try{if((window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||navigator.standalone===true)h.classList.add('d8-kurulu');}catch(e){}})()</script>
-<style>html.d8-kurulu #splash{display:none!important}</style>
+<style>html.d8-kurulu #splash{display:none!important}
+/* Ana ekrandan açılan uygulamada açılış ekranı yok: sayfa kurulurken gizli kalır, hazır olunca tek seferde belirir.
+   Bu kural sayfanın başında olmalı; sonda olursa tarayıcı ara hâlleri çoktan çizmiş oluyor. */
+html.d8-kurulu:not(.d8-hazir) body{opacity:0}
+html:not(.d8-hazir) #mob-sticky-day,html:not(.d8-hazir) .d8-nav-ind{transition:none!important}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
@@ -458,9 +462,13 @@ function hideSplash(hemen){
   var bekle=hemen?0:Math.max(0,MIN-(Date.now()-t0));
   setTimeout(function(){
     hazirla();
-    h.classList.add('d8-hazir');
-    var s=document.getElementById('splash');if(!s)return;
-    s.classList.add('hidden');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},450);
+    /* Yapışkan gün şeridi de açılmadan önce yerine otursun */
+    try{window.dispatchEvent(new Event('scroll'));}catch(e){}
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      h.classList.add('d8-hazir');
+      var s=document.getElementById('splash');if(!s)return;
+      s.classList.add('hidden');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},450);
+    });});
   },bekle);
 }
 window.d8AcilisBitir=hideSplash;
@@ -14135,7 +14143,6 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
    "tak tak" hissi veriyordu. Artık geçiş tek, kısa bir saydamlık geçişi.
    ========================================================================== */
 /* Ana ekrandan açılan uygulamada açılış ekranı yok: içerik hazır olunca bir kerede belirir */
-html.d8-kurulu:not(.d8-hazir) body{opacity:0}
 html.d8-kurulu body{transition:opacity .22s ease-out}
 /* Açılıştaki ayrı ayrı giriş hareketleri kalktı (açılış ekranı zaten örtüyor) */
 .header,.main-tabs,#countdown-bar,.page{animation:none!important}
@@ -14143,7 +14150,7 @@ html.d8-kurulu body{transition:opacity .22s ease-out}
 .mob-lesson-card{animation:none!important}
 #panel-profil.d8-giris .profil-section{animation:none!important}
 /* Panel geçişi: kayma yok, yalnız kısa saydamlık */
-@keyframes d8PanelBelir{from{opacity:0}to{opacity:1}}
+@keyframes d8PanelBelir{from{opacity:.45}to{opacity:1}}
 .panel-animated{animation:d8PanelBelir .2s ease-out both!important}
 #panel-profil.d8-giris #profil-content,#panel-admin.d8-giris,.d8-belir{animation:d8PanelBelir .2s ease-out both!important}
 html.d8-vt .panel-animated,html.d8-vt #panel-profil.d8-giris #profil-content,html.d8-vt #panel-admin.d8-giris,html.d8-vt .d8-belir{animation:none!important}
@@ -14238,7 +14245,6 @@ html.d8-vt .panel-animated,html.d8-vt #panel-profil.d8-giris #profil-content,htm
   window.showMain = function () {
     var self = this, args = arguments;
     var uygun = Date.now() - sonDokunus < 600 &&
-      !h.classList.contains('d8-hafif') &&
       !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) &&
       document.visibilityState === 'visible';
     if (!uygun) return eski.apply(self, args);
@@ -14248,7 +14254,14 @@ html.d8-vt .panel-animated,html.d8-vt #panel-profil.d8-giris #profil-content,htm
       var vt = document.startViewTransition(function () { eski.apply(self, args); });
       vt.finished.then(bitir, bitir);
     } catch (e) { bitir(); eski.apply(self, args); }
-    function bitir() { h.classList.remove('d8-vt'); }
+    function bitir() {
+      /* Geçiş bittiğinde bastırılan giriş hareketleri sonradan bir kez daha oynamasın
+         (aksi hâlde içerik geçişten sonra bir an soluklaşıp yeniden beliriyordu) */
+      document.querySelectorAll('.panel-animated,.d8-giris,.d8-belir').forEach(function (el) {
+        el.classList.remove('panel-animated', 'd8-giris', 'd8-belir');
+      });
+      h.classList.remove('d8-vt');
+    }
   };
 })();
 </script>
