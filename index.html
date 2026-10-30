@@ -440,10 +440,48 @@ html{background-color:var(--bg);min-height:100%}
 </style><div id="splash" class="spl" role="status" aria-label="Derslik 8 açılıyor"><div class="spl-ic"><div class="spl-logo"><svg id="splash-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"> <defs> <linearGradient id="sbg" x1="0%" y1="0%" x2="100%" y2="100%"> <stop offset="0%" style="stop-color:#0E7490"/> <stop offset="100%" style="stop-color:#06B6D4"/> </linearGradient> <linearGradient id="sdg" x1="0%" y1="0%" x2="100%" y2="100%"> <stop offset="0%" style="stop-color:#fff7e6"/> <stop offset="100%" style="stop-color:#ffd280"/> </linearGradient> <radialGradient id="sgl" cx="50%" cy="60%" r="50%"> <stop offset="0%" style="stop-color:#ff6b00;stop-opacity:0.35"/> <stop offset="100%" style="stop-color:transparent"/> </radialGradient> </defs> <rect width="512" height="512" rx="115" fill="url(#sbg)"/> <ellipse cx="256" cy="340" rx="200" ry="160" fill="url(#sgl)"/> <path d="M256,80 C256,80 320,160 340,240 C360,310 310,370 256,390 C202,370 152,310 172,240 C192,160 256,80 256,80Z"
           fill="rgba(255,180,50,0.10)" stroke="rgba(255,140,0,0.18)" stroke-width="2"/> <text x="90" y="340" font-family="Arial Black,sans-serif" font-weight="900" font-size="270" fill="url(#sdg)">D</text> <text x="285" y="430" font-family="Arial Black,sans-serif" font-weight="900" font-size="200" fill="#ffffff">8</text> <circle cx="420" cy="110" r="16" fill="rgba(255,200,80,0.45)"/> </svg></div><div class="spl-ad">Derslik 8</div><div class="spl-bekle" aria-hidden="true"><i></i></div></div></div>
 <script>/* Açılış logosu ilk boyamadan önce güncel temaya çevrilir */(function(){try{var t=document.documentElement.getAttribute('data-tema')||'guz',s=document.getElementById('splash-icon');if(!s)return;var c=JSON.parse(localStorage.getItem('d8TemaIkon')||'null');if(c&&c.t===t&&c.svg){var k=document.createElement('div');k.innerHTML=c.svg;var y=k.firstElementChild;if(y){y.setAttribute('id','splash-icon');s.parentNode.replaceChild(y,s);return;}}var P={guz:['#7C2D12','#C2410C','#FDF3E4','#F2C14E'],kis:['#16275A','#2563EB','#FFFFFF','#BFDBFE'],deniz:null}[t];if(!P)return;var a=s.querySelectorAll('#sbg stop'),b=s.querySelectorAll('#sdg stop');if(a.length>1){a[0].style.stopColor=P[0];a[1].style.stopColor=P[1];}if(b.length>1){b[0].style.stopColor=P[2];b[1].style.stopColor=P[3];}}catch(e){}})();</script>
-<script>(function(){var t0=Date.now(),bitti=false;var az=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;var MIN=az?150:350;   /* logonun en kısa görünme süresi (ms) */
-function hideSplash(hemen){if(bitti)return;bitti=true;var s=document.getElementById('splash');if(!s)return;var bekle=hemen?0:Math.max(0,MIN-(Date.now()-t0));setTimeout(function(){s.classList.add('hidden');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},450);},bekle);}
-/* Sayfa iskeleti hazır olunca (DOMContentLoaded) kalkar; yazı tipi ve Firebase gibi dış kaynaklar beklenmez */
-if(document.readyState!=='loading'){setTimeout(hideSplash,60);}else{document.addEventListener('DOMContentLoaded',function(){requestAnimationFrame(function(){setTimeout(hideSplash,60);});});}
+<script>(function(){
+/* Açılış: ekran ancak sayfa oturduğunda açılır. Yazı tipi değişimi, geç gelen
+   renkler/yeniden çizimler ve bugüne kaydırma açılış ekranının arkasında olur;
+   kullanıcı bunları adım adım görmez. En uzun bekleme sınırlıdır. */
+var t0=Date.now(),bitti=false,h=document.documentElement;
+var az=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var MIN=az?150:350,MAX=2200;
+try{if('scrollRestoration' in history)history.scrollRestoration='manual';}catch(e){}
+function hazirla(){
+  try{if(typeof window.d8DersGunuKaydir==='function')window.d8DersGunuKaydir(false);}catch(e){}
+  /* İlerleme çubuklarının dolma hareketi görünür olduğu anda yeniden başlasın */
+  try{if(!az&&!h.classList.contains('d8-hafif')){h.classList.remove('d8-ilk');void h.offsetWidth;h.classList.add('d8-ilk');setTimeout(function(){h.classList.remove('d8-ilk');},1500);}}catch(e){}
+}
+function hideSplash(hemen){
+  if(bitti)return;bitti=true;
+  var bekle=hemen?0:Math.max(0,MIN-(Date.now()-t0));
+  setTimeout(function(){
+    hazirla();
+    h.classList.add('d8-hazir');
+    var s=document.getElementById('splash');if(!s)return;
+    s.classList.add('hidden');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},450);
+  },bekle);
+}
+window.d8AcilisBitir=hideSplash;
+var dom=false,font=false,yuk=false;
+function dene(){if(dom&&font&&yuk)requestAnimationFrame(function(){requestAnimationFrame(function(){hideSplash();});});}
+function fontBekle(){
+  if(!document.fonts||!document.fonts.load){font=true;dene();return;}
+  var l=document.querySelector('link[href*="fonts.googleapis.com/css2"]'),bitir=function(){font=true;dene();};
+  var yukle=function(){Promise.all([document.fonts.load('700 16px Sora'),document.fonts.load('600 16px Sora'),document.fonts.load('400 13px Sora')]).then(bitir,bitir);};
+  if(l&&l.rel!=='stylesheet'&&!l.sheet){l.addEventListener('load',function(){setTimeout(yukle,0);});l.addEventListener('error',bitir);}else yukle();
+  setTimeout(bitir,1400);
+}
+fontBekle();
+function domHazir(){
+  /* DOMContentLoaded'daki geç işler (renkler, kenar çubuğu, dönem panelleri) bitsin */
+  setTimeout(function(){dom=true;dene();},90);
+  setTimeout(function(){yuk=true;dene();},500);
+}
+window.addEventListener('load',function(){setTimeout(function(){yuk=true;dene();},30);});
+if(document.readyState!=='loading')domHazir();else document.addEventListener('DOMContentLoaded',domHazir);
+setTimeout(hideSplash,MAX);
 var sp=document.getElementById('splash');if(sp)sp.addEventListener('click',function(){hideSplash(true);});})();</script>
 <script id="d8-core">
 /* ==========================================================================
@@ -8079,7 +8117,7 @@ td.td-full[data-fam="uygulama"] {
       return h;
     }
 
-    h += durumHtml();
+    /* Ders durumu şeridi kaldırıldı: aynı bilgiyi alt menüdeki ders sayacı gösteriyor */
 
     /* Künye + haftalık özet tek şeritte */
     var oz = haftaOzet(), hf = null;
@@ -14077,6 +14115,78 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
 /* Ders Programı paneli alt alta dizilir; flex düzeninde dönem kartı dersleri ekran dışına itiyordu */
 #panel-program{display:block}
 </style>
+<style id="d8-akici">
+/* ==========================================================================
+   D8 AKICI — açılış ve sekme geçişleri tek hareket
+   Sırayla beliren kartlar, kayan paneller ve sekme sonrası kaydırmalar
+   "tak tak" hissi veriyordu. Artık geçiş tek, kısa bir saydamlık geçişi.
+   ========================================================================== */
+/* Ana ekrandan açılan uygulamada açılış ekranı yok: içerik hazır olunca bir kerede belirir */
+html.d8-kurulu:not(.d8-hazir) body{opacity:0}
+html.d8-kurulu body{transition:opacity .22s ease-out}
+/* Açılıştaki ayrı ayrı giriş hareketleri kalktı (açılış ekranı zaten örtüyor) */
+.header,.main-tabs,#countdown-bar,.page{animation:none!important}
+/* Ders kartları birer birer kaymıyor */
+.mob-lesson-card{animation:none!important}
+#panel-profil.d8-giris .profil-section{animation:none!important}
+/* Panel geçişi: kayma yok, yalnız kısa saydamlık */
+@keyframes d8PanelBelir{from{opacity:0}to{opacity:1}}
+.panel-animated{animation:d8PanelBelir .2s ease-out both!important}
+#panel-profil.d8-giris #profil-content,#panel-admin.d8-giris,.d8-belir{animation:d8PanelBelir .2s ease-out both!important}
+html.d8-vt .panel-animated,html.d8-vt #panel-profil.d8-giris #profil-content,html.d8-vt #panel-admin.d8-giris,html.d8-vt .d8-belir{animation:none!important}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.18s!important}
+@media (prefers-reduced-motion:reduce){.panel-animated,#panel-profil.d8-giris #profil-content,#panel-admin.d8-giris,.d8-belir{animation:none!important}html.d8-kurulu body{transition:none}}
+</style>
+<script id="d8-akici-js">
+(function(){
+  'use strict';
+  var h=document.documentElement;
+  /* İskelet ekranı (gri çizgiler) 80 ms görünüp sonra içerik geliyordu: içerik hemen çizilir */
+  window._calBuilt=true;
+  var pc=document.getElementById('profil-content'); if(pc) pc._built=true;
+
+  function anlik(y){
+    var e=h.style.scrollBehavior; h.style.scrollBehavior='auto';
+    window.scrollTo(0,Math.max(0,Math.round(y)));
+    h.style.scrollBehavior=e;
+  }
+  function ust(el){var y=0;while(el){y+=el.offsetTop;el=el.offsetParent;}return y;}
+  function gorunen(){
+    var l=['program','takvim','sinav','gorev','profil','admin'];
+    for(var i=0;i<l.length;i++){var p=document.getElementById('panel-'+l[i]);if(p&&p.style.display!=='none'&&p.offsetParent!==null)return l[i];}
+    return null;
+  }
+  /* Sekme değişince kaydırma geçişin içinde, anında yapılır; sonradan gelen
+     yumuşak kaydırmalar aynı yere gittiği için ekran bir daha oynamaz. */
+  function kaydir(id){
+    var mobil=window.innerWidth<=660;
+    if(id==='program'&&mobil&&typeof window.d8DersGunuKaydir==='function'){
+      var once=window.scrollY; window.d8DersGunuKaydir(false);
+      if(window.scrollY===once&&once>0&&!document.querySelector('#panel-program .mob-day-header'))anlik(0);
+      return;
+    }
+    if(id==='gorev'&&mobil){
+      var p=document.getElementById('panel-gorev'),hed=null,l=p?p.querySelectorAll('.tz-simdi'):[];
+      for(var i=0;i<l.length;i++)if(l[i].offsetHeight){hed=l[i];break;}
+      anlik(hed?ust(hed)-12:0); return;
+    }
+    anlik(0);
+  }
+  var eski=window.showMain;
+  if(typeof eski!=='function')return;
+  window.showMain=function(id){
+    var onceki=gorunen();
+    var pc2=document.getElementById('profil-content'); if(pc2) pc2._built=true;
+    window._calBuilt=true;
+    var r=eski.apply(this,arguments);
+    try{
+      if(id==='takvim'&&typeof window.renderCal==='function')window.renderCal();
+      if(onceki!==id)kaydir(id);
+    }catch(e){}
+    return r;
+  };
+})();
+</script>
 <script id="d8-duzen-js">
 (function () {
   'use strict';
