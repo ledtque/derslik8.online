@@ -9073,7 +9073,7 @@ td.td-full[data-fam="uygulama"] {
       if (sn(bloklar[i].bas) > simdi) {
         b = bloklar[i];
         var hedef = sn(b.bas), kalan2 = hedef - simdi;
-        if (kalan2 > 75 * 60) { if (typeof window._diGizle === 'function') window._diGizle(); return true; }
+        /* Günün ilk dersine kadar da geri sayım gösterilir (önceden 75 dk'dan uzun bekleme gizleniyordu) */
         var oncekiBit = i > 0 ? sn(bloklar[i - 1].bit) : hedef - 300;
         var araToplam = Math.max(60, hedef - oncekiBit);
         var pct2 = Math.min(100, Math.max(0, (araToplam - kalan2) / araToplam * 100)).toFixed(1);
@@ -12805,7 +12805,7 @@ button.tk-ditem:hover{border-color:var(--c)}
 .ks{position:fixed;z-index:9990;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom,0px));max-width:420px;margin:0 auto;background:var(--white);color:var(--text);border:1px solid var(--border);border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.20),0 3px 10px rgba(0,0,0,.08);padding:16px 16px 14px;font-family:'Sora',system-ui,sans-serif;animation:ksGir .42s cubic-bezier(.22,1,.36,1) both}
 @media (min-width:641px){.ks{left:auto;right:24px;bottom:24px;width:390px;margin:0}}
 .ks.cik{animation:ksCik .26s ease both}
-@keyframes ksGir{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes ksGir{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
 @keyframes ksCik{to{opacity:0;transform:translateY(16px)}}
 .ks-ust{display:flex;gap:13px;align-items:flex-start;padding-right:26px}
 .ks-ikon{width:52px;height:52px;border-radius:13px;flex-shrink:0;box-shadow:0 4px 14px color-mix(in srgb,var(--navy) 25%,transparent)}
@@ -12828,7 +12828,8 @@ body.dark .ks-btn.ana{color:var(--bg)}
 .ks :focus-visible{outline:2px solid var(--navy);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.ks,.ks.cik{animation:none}}
 /* Kart, ders sayacıyla birlikte uzayan alt menünün üstünde durur (sayacı örtmesin) */
-@media (max-width:640px){.ks{bottom:calc(var(--d8-nav-h,66px) + 26px + env(safe-area-inset-bottom,0px))}}
+/* Telefonda kart ekranın üstünde açılır; alt menüyü ve ders sayacını hiçbir zaman örtmez */
+@media (max-width:640px){.ks{bottom:auto;top:calc(12px + env(safe-area-inset-top,0px))}}
 </style>
 <script id="d8-kisayol-js">
 /* Ana ekran kısayolu kartı.
@@ -13837,7 +13838,8 @@ window.d8DersGunuKaydir=function(yumusak){
         if (ilk === null || a < ilk) ilk = a;
         if (son === null || z > son) son = z;
       });
-      return ilk !== null && nowM >= ilk && nowM < son;
+      /* Okul günü sabahından (ilk dersten 3 saat önce) son dersin bitişine kadar */
+      return ilk !== null && nowM >= ilk - 180 && nowM < son;
     }
     try {
       var d = D8.simdi(now).durum;
