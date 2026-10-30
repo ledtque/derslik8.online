@@ -3588,7 +3588,7 @@ function basliklar(scope){if(_hdrKirli){_hdrCache={};_hdrKirli=false;}if(_hdrCac
 /* Gizli dönem panellerindeki başlıklar elenir: ölçüleri 0 olduğu için hepsi
    "en üstte" sayılıp yapışkan şeritte yanlış gün (son satır: Cuma) kalıyordu. */
 var l=[];for(var j=0;j<ham.length;j++){if(ham[j].getClientRects().length)l.push(ham[j]);}return(_hdrCache[scope]=l);}
-function getVisibleHeader(scope){var headers=basliklar(scope);var lo=0,hi=headers.length-1,best=null;while(lo<=hi){var m=(lo+hi)>>1;if(headers[m].getBoundingClientRect().top<=2){best=headers[m];lo=m+1;}else hi=m-1;}
+function getVisibleHeader(scope){var headers=basliklar(scope);var esik=Math.max(2,(stickyEl.offsetHeight||40)-10);var lo=0,hi=headers.length-1,best=null;while(lo<=hi){var m=(lo+hi)>>1;if(headers[m].getBoundingClientRect().top<=esik){best=headers[m];lo=m+1;}else hi=m-1;}
 return best;}
 function getActiveScope(){var sinavPanel=document.getElementById('panel-sinav');if(sinavPanel&&sinavPanel.style.display!=='none')return'sinav';var takvimPanel=document.getElementById('panel-takvim');if(takvimPanel&&takvimPanel.style.display!=='none')return'none';var gorevPanel=document.getElementById('panel-gorev');if(gorevPanel&&gorevPanel.style.display!=='none')return'none';var profilPanel=document.getElementById('panel-profil');if(profilPanel&&profilPanel.style.display!=='none')return'none';return'ders';}
 function update(){if(window.innerWidth>660){stickyEl.classList.remove('visible');ticking=false;return;}
@@ -12819,6 +12819,8 @@ body.dark .ks-btn.ana{color:var(--bg)}
 .ks-btn:hover{filter:brightness(1.05)}
 .ks :focus-visible{outline:2px solid var(--navy);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.ks,.ks.cik{animation:none}}
+/* Kart, ders sayacıyla birlikte uzayan alt menünün üstünde durur (sayacı örtmesin) */
+@media (max-width:640px){.ks{bottom:calc(var(--d8-nav-h,66px) + 26px + env(safe-area-inset-bottom,0px))}}
 </style>
 <script id="d8-kisayol-js">
 /* Ana ekran kısayolu kartı.
@@ -13386,6 +13388,7 @@ body.dark .nb-cip.tatil{color:#C9BBFF}
   function bosluk(){
     if (window.innerWidth > 640){ document.body.style.removeProperty('padding-bottom'); return; }
     var h = nav.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--d8-nav-h', Math.round(h) + 'px');
     document.body.style.setProperty('padding-bottom', Math.round(h + 14 + 26) + 'px', 'important');
   }
   window.addEventListener('resize', bosluk);
@@ -13787,8 +13790,18 @@ window.d8DersGunuKaydir=function(yumusak){
     if(!hedef){var ad=GUN[hedefDow];for(i=0;i<bas.length;i++){var t=(bas[i].textContent||'').trim();if(t.indexOf(ad)===0&&!(ad==='Pazar'&&t.indexOf('Pazartesi')===0)){hedef=bas[i];break;}}}
     if(!hedef)hedef=bas[0];
     /* offsetTop zinciri: panel giriş animasyonunun transform'undan etkilenmez */
+    var bos=document.getElementById('d8-gun-bosluk');
+    if(!bos){bos=document.createElement('div');bos.id='d8-gun-bosluk';bos.setAttribute('aria-hidden','true');}
+    if(bos.parentNode!==panel)panel.appendChild(bos);
+    bos.style.height='0px';
     var y=0,el=hedef;while(el){y+=el.offsetTop;el=el.offsetParent;}
+    /* Son günlerde sayfa yeterince aşağı inemediği için başlık üste oturmuyor, yapışkan
+       şerit bir önceki günü gösteriyordu: eksik kalan kadar alta boşluk eklenir */
+    var enCok=document.documentElement.scrollHeight-window.innerHeight;
+    if(y>enCok)bos.style.height=Math.ceil(y-enCok)+'px';
+    var hs=document.documentElement.style.scrollBehavior;if(!yumusak)document.documentElement.style.scrollBehavior='auto';
     window.scrollTo({top:Math.max(0,Math.round(y)),behavior:yumusak?'smooth':'auto'});
+    document.documentElement.style.scrollBehavior=hs;
   }catch(e){}
 };
 </script>
