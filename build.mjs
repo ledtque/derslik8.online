@@ -20,7 +20,25 @@ for (const p of STATIC) {
   }
 }
 
-const src = await readFile('index.html', 'utf8');
+// Stylesheets live in stil/ for editing; <link ... data-gom> tags are
+// replaced with their file's contents at the same position, so the published
+// page stays a single file and the cascade order is unchanged.
+let src = await readFile('index.html', 'utf8');
+for (const m of [...src.matchAll(/<link rel="stylesheet" href="([^"]+)" data-gom>/g)]) {
+  const css = await readFile(m[1], 'utf8');
+  if (/<\/style/i.test(css)) throw new Error(`${m[1]} contains </style`);
+  src = src.replace(m[0], () => `<style>\n${css}</style>`);
+}
+if (/data-gom>/.test(src)) throw new Error('a data-gom stylesheet was not inlined');
+
+// Shortcut version: the install card (d8-kisayol-js) and the manifest's
+// start_url must carry the same ?kisayol= value. The code is the single
+// source; the published manifest is written from it.
+const surum = (src.match(/var KISAYOL_SURUM = '([^']+)'/) || [])[1];
+if (!surum) throw new Error('KISAYOL_SURUM not found in index.html');
+const manifest = JSON.parse(await readFile('manifest.webmanifest', 'utf8'));
+manifest.start_url = `./?kisayol=${surum}`;
+await writeFile(`${OUT}/manifest.webmanifest`, JSON.stringify(manifest, null, 2) + '\n');
 
 // Scripts are minified here (module scripts need terser's module mode);
 // a script that fails to minify is kept as it is.
