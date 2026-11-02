@@ -1,0 +1,22 @@
+# Her gönderimde ve çekme isteğinde siteyi derler ve duman testini çalıştırır
+# (test/duman.mjs). Yayın Cloudflare'de ayrıca yapılır; bu iş kırmızıysa
+# gönderilen sürümde bir şey bozulmuş demektir.
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  duman:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm test

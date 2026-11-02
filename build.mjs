@@ -27,7 +27,7 @@ let src = await readFile('index.html', 'utf8');
 for (const m of [...src.matchAll(/<link rel="stylesheet" href="([^"]+)" data-gom>/g)]) {
   const css = await readFile(m[1], 'utf8');
   if (/<\/style/i.test(css)) throw new Error(`${m[1]} contains </style`);
-  src = src.replace(m[0], () => `<style>\n${css}</style>`);
+  src = src.replace(m[0], () => `<style data-kaynak="${m[1]}">\n${css}</style>`);
 }
 if (/data-gom>/.test(src)) throw new Error('a data-gom stylesheet was not inlined');
 
