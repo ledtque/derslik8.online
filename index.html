@@ -7150,6 +7150,10 @@ td.td-full[data-fam="uygulama"] {
       if (typeof buildMobileSchedule === 'function') buildMobileSchedule();
     } else {
       PANEL_MODLAR.forEach(function (m) {
+        /* Kişisel staj listesi (III. Dönem) kendi modülünce çizilir ve geri
+           dönüldüğünde yeniden çizilmez; silinirse mobilde program kaybolur.
+           mobilSarmala'daki kuralla aynı: yalnızca ortak programlar temizlenir. */
+        if (!programVar(m)) return;
         var c = document.getElementById('mobile-schedule-' + m);
         if (c) c.innerHTML = '';
       });
