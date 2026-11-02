@@ -8233,7 +8233,7 @@ td.td-full[data-fam="uygulama"] {
         var no = otVeri(p.c.s).o.length;
         if (no) alt.push(window.d8Ikon('kisi') + no);
         if (ns) alt.push(window.d8Ikon('kalem') + ns);
-        h += '<td class="td-cell"' + (p.n > 1 ? ' colspan="' + p.n + '"' : '') + '><div style="--ci-t:var(--' + sinifRenk(v, p.c.s) + 't)" class="ci ' + sinifRenk(v, p.c.s) +
+        h += '<td class="td-cell"' + (p.n > 1 ? ' colspan="' + p.n + '"' : '') + '><div class="ci ' + sinifRenk(v, p.c.s) +
              (simdi ? ' staj-ci-simdi' : '') + '" onclick="d8StajNotAc(\'' + p.c.s + '\',' + g + ',' + p.i + ')" title="' + kac(s.ad) + ' oturma düzeni · ' +
              saatAraligi(sa[p.i]) + (p.n > 1 ? '–' + kac(sa[p.i + p.n - 1].bit) : '') + '">' +
              '<div class="cn">' + kac(s.ad) + '</div>' + (alt.length ? '<div class="ct">' + alt.join(' · ') + '</div>' : '') + '</div></td>';
@@ -8263,11 +8263,11 @@ td.td-full[data-fam="uygulama"] {
         continue;
       }
       /* Telefonda her ders saati ayrı satır (birleşik blok yalnız masaüstü tablosunda);
-         baştaki ve sondaki boş saatler gösterilmez */
-      var ilkI = -1, sonI = -1, i2;
-      for (i2 = 0; i2 < sa2.length; i2++) if (v.hucre[g][i2]) { if (ilkI < 0) ilkI = i2; sonI = i2; }
-      for (i2 = ilkI; i2 <= sonI; i2++) {
+         günün baştaki ve sondaki boş saatleri de "Boş ders" olarak gösterilir */
+      var i2;
+      for (i2 = 0; i2 < sa2.length; i2++) {
         var cc = v.hucre[g][i2], zs = sa2[i2];
+        if (!zs) continue;
         var etiket = (i2 + 1) + '. ders';
         if (!cc) {
           h += '<div class="mob-lesson-card staj-mob-bos' + (bu && simdiI === i2 ? ' mob-current' : '') + '">' +
@@ -14207,15 +14207,10 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
 .staj-mob .mob-card-teacher .mct-no{font-weight:700;color:var(--text);margin-right:6px;padding-right:7px;border-right:1px solid var(--border)}
 .staj-mob .mob-card-name{font-weight:700}
 
-/* Masaüstü ders tablosu: dolu hücreler belirgin, boşlar sessiz */
-#panel-program .td-cell .ci{border-left:3px solid var(--ci-t,currentColor);box-shadow:0 1px 2px rgba(0,0,0,.06),inset 0 0 0 1px color-mix(in srgb,var(--ci-t,currentColor) 14%,transparent);
-  filter:saturate(1.3);text-align:left;align-items:flex-start;padding-left:12px}
 /* Bugünün satırı masaüstünde de temanın ana renginde (ayrı yeşil yok) */
 #panel-program tr.staj-tr-bugun .td-gun{box-shadow:inset 3px 0 0 var(--navy)!important;border-left-color:var(--navy)!important;background:color-mix(in srgb,var(--navy) 7%,var(--white))!important}
 #panel-program tr.staj-tr-bugun .td-gun .staj-gl-bugun{color:var(--navy)!important;font-weight:700}
 #panel-program tr.staj-tr-bugun td.td-cell{background:color-mix(in srgb,var(--navy) 3%,transparent)}
-#panel-program .td-cell .ci .cn{font-size:14px;font-weight:800;color:var(--text)}
-#panel-program .td-cell .ci .ct{font-size:12px;font-weight:600;color:var(--ci-t,inherit);opacity:1}
 
 /* Telefonda alt sayaç tek satır: başlık ve ad yan yana, kalan süre yanında, çubuk kenarda */
 @media (max-width:660px){
