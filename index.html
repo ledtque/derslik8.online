@@ -8241,18 +8241,39 @@ td.td-full[data-fam="uygulama"] {
     h += '</tbody></table></div>';
 
     /* ---- Telefon: gün başlıkları + birleşik ders kartları ---- */
+    /* Gösterilen haftanın pazartesisi: hafta sonunda gelecek hafta */
+    var pzt = new Date(); pzt.setHours(12, 0, 0, 0);
+    pzt.setDate(pzt.getDate() + (bugun >= 6 ? 8 - bugun : 1 - bugun));
+    var gunTarihi = function (gg) { var d = new Date(pzt); d.setDate(pzt.getDate() + gg - 1); return d; };
+    var tatilAdi = function (d) {
+      try {
+        for (var ti = 0; ti < ranges.length; ti++) {
+          var r = ranges[ti];
+          if (D8.tatilKapsar ? D8.tatilKapsar(r, d) : r.type === 'tatil' &&
+              d.toISOString().slice(0, 10) >= r.start && d.toISOString().slice(0, 10) <= r.end) return r.label || 'Tatil';
+        }
+      } catch (e) {}
+      return null;
+    };
+    if (bugun >= 6) {
+      var ayAd = function (d) { return d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' }); };
+      h += '<div class="staj-hafta-notu">' + window.d8Ikon('takvim') + 'Gelecek hafta · ' +
+           gunTarihi(1).getDate() + '–' + ayAd(gunTarihi(5)) + '</div>';
+    }
     h += '<div class="mobile-schedule staj-mob" id="mobile-schedule-d3">';
     for (g = 1; g <= 5; g++) {
       var bu = g === bugun, s2 = gunDersSayisi(v, g), sa2 = gunSaatleri(v, g);
-      h += '<div class="mob-day-header' + (bu ? ' today-header' : '') + '">' + GUN_TAM[g] +
+      var tatil = tatilAdi(gunTarihi(g)), tk = tatil ? ' staj-tatil-ders' : '';
+      h += '<div class="mob-day-header' + (bu ? ' today-header' : '') + (tatil ? ' staj-gun-tatil' : '') + '">' + GUN_TAM[g] +
            '<span style="font-size:12px;opacity:.75;font-weight:500">· ' + (s2 ? s2 + ' ders saati' : 'ders yok') + '</span>' +
            (bu ? '<span class="today-badge">▶ Bugün</span>' : '') + '</div>';
+      if (tatil) h += '<div class="staj-tatil-serit">Resmî tatil · ' + kac(tatil) + '</div>';
       if (!s2) {
         /* Ders olmayan gün: okulun tüm ders saatleri "Boş ders" olarak listelenir */
-        if (!sa2.length) { h += '<div class="mob-lesson-card staj-mob-yok">Bu gün ders yok</div>'; continue; }
+        if (!sa2.length) { h += '<div class="mob-lesson-card staj-mob-yok' + tk + '">Bu gün ders yok</div>'; continue; }
         for (var j2 = 0; j2 < sa2.length; j2++) {
           var zb = sa2[j2]; if (!zb) continue;
-          h += '<div class="mob-lesson-card staj-mob-bos' + (bu && simdiI === j2 ? ' mob-current' : '') + '">' +
+          h += '<div class="mob-lesson-card staj-mob-bos' + tk + (bu && simdiI === j2 ? ' mob-current' : '') + '">' +
                '<div class="mob-card-time">' + kac(zb.bas) + '<span class="mct-bit">' + kac(zb.bit) + '</span></div>' +
                '<div class="mob-card-body"><div class="mob-card-name">Boş ders</div>' +
                '<div class="mob-card-teacher">' + (j2 + 1) + '. ders</div></div></div>';
@@ -8267,7 +8288,7 @@ td.td-full[data-fam="uygulama"] {
         if (!zs) continue;
         var etiket = (i2 + 1) + '. ders';
         if (!cc) {
-          h += '<div class="mob-lesson-card staj-mob-bos' + (bu && simdiI === i2 ? ' mob-current' : '') + '">' +
+          h += '<div class="mob-lesson-card staj-mob-bos' + tk + (bu && simdiI === i2 ? ' mob-current' : '') + '">' +
                '<div class="mob-card-time">' + kac(zs.bas) + '<span class="mct-bit">' + kac(zs.bit) + '</span></div>' +
                '<div class="mob-card-body"><div class="mob-card-name">Boş ders</div>' +
                '<div class="mob-card-teacher">' + etiket + '</div></div></div>';
@@ -8275,7 +8296,7 @@ td.td-full[data-fam="uygulama"] {
         }
         var s = sinifBul(v, cc.s), c = sinifRenk(v, cc.s);
         var simdi = bu && simdiI === i2;
-        h += '<div class="mob-lesson-card' + (simdi ? ' mob-current' : '') + '" style="border-left:3px solid var(--' + c + 't)" onclick="d8StajNotAc(\'' + cc.s + '\',' + g + ',' + i2 + ')">' +
+        h += '<div class="mob-lesson-card' + tk + (simdi ? ' mob-current' : '') + '" style="border-left:3px solid var(--' + c + 't)" onclick="d8StajNotAc(\'' + cc.s + '\',' + g + ',' + i2 + ')">' +
              '<div class="mob-card-time" style="background:var(--' + c + ');color:var(--' + c + 't);border:none">' +
              kac(zs.bas) + '<span class="mct-bit">' + kac(zs.bit) + '</span></div>' +
              '<div class="mob-card-body"><div class="mob-card-name">' + kac(s.ad) + (s.ders ? ' · ' + kac(s.ders) : '') + '</div>' +
@@ -14193,6 +14214,14 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
 .staj-mob .mob-card-teacher .mct-no{font-weight:700;color:var(--text);margin-right:6px;padding-right:7px;border-right:1px solid var(--border)}
 .staj-mob .mob-card-name{font-weight:700}
 
+/* Tatil günü ve hafta sonu */
+.staj-tatil-serit{display:flex;align-items:center;gap:6px;padding:7px 16px;font-size:12px;font-weight:600;
+  color:var(--muted);background:color-mix(in srgb,var(--muted) 9%,var(--bg));border-bottom:1px solid var(--border)}
+.staj-tatil-serit::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+.staj-mob .mob-lesson-card.staj-tatil-ders{opacity:.42;filter:grayscale(.6)}
+.mob-day-header.staj-gun-tatil:not(.today-header){color:var(--muted)!important}
+.staj-hafta-notu{display:flex;align-items:center;gap:6px;margin:0 2px 8px;font-size:13px;font-weight:700;color:var(--navy)}
+.staj-hafta-notu .d8-si{width:15px;height:15px}
 /* Bugünün satırı masaüstünde de temanın ana renginde (ayrı yeşil yok) */
 #panel-program tr.staj-tr-bugun .td-gun{box-shadow:inset 3px 0 0 var(--navy)!important;border-left-color:var(--navy)!important;background:color-mix(in srgb,var(--navy) 7%,var(--white))!important}
 #panel-program tr.staj-tr-bugun .td-gun .staj-gl-bugun{color:var(--navy)!important;font-weight:700}
