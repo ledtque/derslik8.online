@@ -6,7 +6,7 @@ import { minify as minifyJs } from 'terser';
 import { cp, mkdir, readFile, rm, writeFile, stat } from 'node:fs/promises';
 
 const OUT = 'dist';
-const STATIC = ['manifest.webmanifest', 'sw.js', 'simgeler', 'formlar'];
+const STATIC = ['manifest.webmanifest', 'sw.js', 'simgeler', 'formlar', 'name-wheel-app.html'];
 
 await rm(OUT, { recursive: true, force: true });
 await mkdir(OUT, { recursive: true });
