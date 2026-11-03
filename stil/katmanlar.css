@@ -1052,11 +1052,12 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
    ========================================================================== */
 /* Gün başlıkları: açık zemin, tema renginde yazı */
 .mob-day-header,html[data-tema] .mob-day-header,body.dark .mob-day-header,html[data-tema] body.dark .mob-day-header{
-  background:color-mix(in srgb,var(--navy) 9%,var(--bg))!important;
-  color:var(--navy)!important;box-shadow:none!important;
-  border-bottom:1px solid color-mix(in srgb,var(--navy) 16%,var(--border));
-  padding:9px 16px!important;letter-spacing:.2px}
-.mob-day-header span{color:var(--muted);opacity:1!important}
+  background:color-mix(in srgb,var(--navy) 22%,var(--white))!important;
+  color:var(--navy)!important;box-shadow:inset 4px 0 0 var(--navy)!important;
+  border-top:1px solid color-mix(in srgb,var(--navy) 22%,var(--border));
+  border-bottom:1px solid color-mix(in srgb,var(--navy) 22%,var(--border));
+  padding:10px 16px 10px 18px!important;letter-spacing:.2px;font-size:15px;font-weight:800}
+.mob-day-header span{color:color-mix(in srgb,var(--navy) 55%,var(--text));opacity:1!important;font-weight:600}
 /* Bugün: tek doygun şerit, temanın ana renginde (ayrı yeşil yok) */
 .mob-day-header.today-header,html[data-tema] .mob-day-header.today-header,body.dark .mob-day-header.today-header,html[data-tema] body.dark .mob-day-header.today-header{
   background:var(--navy)!important;color:var(--white)!important;border-bottom-color:transparent;
@@ -1066,10 +1067,10 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
 .mob-day-header.mob-past-header{opacity:.6;background:color-mix(in srgb,var(--muted) 8%,var(--bg))!important;color:var(--muted)!important}
 /* Yapışkan gün şeridi başlıklarla aynı dilde */
 #mob-sticky-day,html[data-tema] #mob-sticky-day{
-  background:color-mix(in srgb,var(--navy) 9%,var(--bg))!important;color:var(--navy)!important;
-  border-bottom:1px solid color-mix(in srgb,var(--navy) 16%,var(--border))!important;
-  box-shadow:0 4px 14px rgba(0,0,0,.08)!important}
-#mob-sticky-day span{color:var(--muted)}
+  background:color-mix(in srgb,var(--navy) 22%,var(--white))!important;color:var(--navy)!important;
+  border-bottom:1px solid color-mix(in srgb,var(--navy) 22%,var(--border))!important;
+  box-shadow:inset 4px 0 0 var(--navy),0 4px 14px rgba(0,0,0,.08)!important;font-size:15px;font-weight:800}
+#mob-sticky-day span{color:color-mix(in srgb,var(--navy) 55%,var(--text));font-weight:600}
 #mob-sticky-day.today-style,html[data-tema] #mob-sticky-day.today-style{
   background:var(--navy)!important;color:var(--white)!important;border-bottom-color:transparent!important;
   box-shadow:0 4px 14px color-mix(in srgb,var(--navy) 30%,transparent)!important}
@@ -1112,6 +1113,14 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
   #mob-floating-pill .dip-progress-wrap{position:absolute;left:0;right:0;bottom:0;padding:0}
   #mob-floating-pill .dip-progress-track{border-radius:0;height:2px}
   #mob-floating-pill .dip-lock-note{display:none}
+  /* Alt menüdeki sayaç: üstte küçük durum, altta tam genişlikte ders adı, sağda süre */
+  #mobile-bottom-nav #mob-floating-pill #di-pill .dip-body{display:flex;flex-direction:column;align-items:stretch;gap:2px;min-width:0;overflow:hidden}
+  #mobile-bottom-nav #mob-floating-pill #di-pill .dip-label{margin:0;font-size:11px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #mobile-bottom-nav #mob-floating-pill #di-pill .dip-label::after{content:none}
+  #mobile-bottom-nav #mob-floating-pill #di-pill .dip-name{font-size:15px;line-height:1.25;max-width:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #mobile-bottom-nav #mob-floating-pill #di-pill .dip-timer-wrap{flex-direction:column;align-items:flex-end;gap:1px}
+  #mobile-bottom-nav #mob-floating-pill #di-pill .dip-timer{font-size:19px;line-height:1.1}
+  #mobile-bottom-nav #mob-floating-pill #di-pill .dip-timer-label{font-size:11px;line-height:1.2}
 }
 
 /* ════════════════ d8-akici ════════════════ */
