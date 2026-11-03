@@ -1050,14 +1050,12 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
    Doygun renk yalnız vurguda: üst başlık, bugün, birincil düğmeler.
    Renkler temanın değişkenlerinden gelir; açık/koyu ve bütün temalarda çalışır.
    ========================================================================== */
-/* Gün başlıkları: açık zemin, tema renginde yazı */
+/* Gün başlıkları: koyu bant (koyu temada açık bant), kartlardan net ayrılır */
 .mob-day-header,html[data-tema] .mob-day-header,body.dark .mob-day-header,html[data-tema] body.dark .mob-day-header{
-  background:color-mix(in srgb,var(--navy) 22%,var(--white))!important;
-  color:var(--navy)!important;box-shadow:inset 4px 0 0 var(--navy)!important;
-  border-top:1px solid color-mix(in srgb,var(--navy) 22%,var(--border));
-  border-bottom:1px solid color-mix(in srgb,var(--navy) 22%,var(--border));
-  padding:10px 16px 10px 18px!important;letter-spacing:.2px;font-size:15px;font-weight:800}
-.mob-day-header span{color:color-mix(in srgb,var(--navy) 55%,var(--text));opacity:1!important;font-weight:600}
+  background:color-mix(in srgb,var(--text) 86%,var(--navy))!important;
+  color:var(--white)!important;box-shadow:none!important;border-bottom:1px solid transparent;
+  padding:9px 16px!important;letter-spacing:.2px;font-size:15px;font-weight:800}
+.mob-day-header span{color:color-mix(in srgb,var(--white) 72%,transparent);opacity:1!important;font-weight:600}
 /* Bugün: tek doygun şerit, temanın ana renginde (ayrı yeşil yok) */
 .mob-day-header.today-header,html[data-tema] .mob-day-header.today-header,body.dark .mob-day-header.today-header,html[data-tema] body.dark .mob-day-header.today-header{
   background:var(--navy)!important;color:var(--white)!important;border-bottom-color:transparent;
@@ -1067,10 +1065,10 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
 .mob-day-header.mob-past-header{opacity:.6;background:color-mix(in srgb,var(--muted) 8%,var(--bg))!important;color:var(--muted)!important}
 /* Yapışkan gün şeridi başlıklarla aynı dilde */
 #mob-sticky-day,html[data-tema] #mob-sticky-day{
-  background:color-mix(in srgb,var(--navy) 22%,var(--white))!important;color:var(--navy)!important;
-  border-bottom:1px solid color-mix(in srgb,var(--navy) 22%,var(--border))!important;
-  box-shadow:inset 4px 0 0 var(--navy),0 4px 14px rgba(0,0,0,.08)!important;font-size:15px;font-weight:800}
-#mob-sticky-day span{color:color-mix(in srgb,var(--navy) 55%,var(--text));font-weight:600}
+  background:color-mix(in srgb,var(--text) 86%,var(--navy))!important;color:var(--white)!important;
+  border-bottom:1px solid transparent!important;
+  box-shadow:0 4px 14px rgba(0,0,0,.12)!important;font-size:15px;font-weight:800}
+#mob-sticky-day span{color:color-mix(in srgb,var(--white) 72%,transparent);font-weight:600}
 #mob-sticky-day.today-style,html[data-tema] #mob-sticky-day.today-style{
   background:var(--navy)!important;color:var(--white)!important;border-bottom-color:transparent!important;
   box-shadow:0 4px 14px color-mix(in srgb,var(--navy) 30%,transparent)!important}
@@ -1089,7 +1087,7 @@ html.d8-arka .ci.current-lesson::before,html.d8-arka .d8-announce-dot{animation-
   color:var(--muted);background:color-mix(in srgb,var(--muted) 9%,var(--bg));border-bottom:1px solid var(--border)}
 .staj-tatil-serit::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
 .staj-mob .mob-lesson-card.staj-tatil-ders{opacity:.42;filter:grayscale(.6)}
-.mob-day-header.staj-gun-tatil:not(.today-header){color:var(--muted)!important}
+.mob-day-header.staj-gun-tatil:not(.today-header){color:color-mix(in srgb,var(--white) 62%,transparent)!important}
 .staj-hafta-notu{display:flex;align-items:center;gap:6px;margin:0 2px 8px;font-size:13px;font-weight:700;color:var(--navy)}
 .staj-hafta-notu .d8-si{width:15px;height:15px}
 /* Bugünün satırı masaüstünde de temanın ana renginde (ayrı yeşil yok) */
