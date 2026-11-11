@@ -12,11 +12,26 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      # GitHub makinelerinde Chrome hazır kurulu gelir; test onunla çalışır.
+      # Böylece her seferinde Ubuntu paket sunucularından tarayıcı ve yazı
+      # tipi indirilmez (o sunuculara ulaşılamayınca test hiç başlamıyordu).
+      # Chrome yoksa eski yola dönülür ve kurulum üç kez denenir.
+      - name: Tarayıcı
+        run: |
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "CHROME_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
+            google-chrome --version
+          else
+            for i in 1 2 3; do
+              npx playwright install --with-deps chromium && exit 0
+              echo "Kurulum başarısız ($i/3), yeniden deneniyor..."; sleep 20
+            done
+            exit 1
+          fi
       - run: npm test
