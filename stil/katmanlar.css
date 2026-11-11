@@ -1276,3 +1276,26 @@ html:not([data-tema="guz"]):not([data-tema="kis"]) .header .header-liquid-mask .
   background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.55) 30%,rgba(255,255,255,.55) 70%,rgba(255,255,255,0))!important;
   filter:none!important;opacity:1!important;animation:none!important}
 @media (prefers-reduced-motion:reduce){.header .header-liquid-mask .header-liquid-fill{transition:none!important}}
+
+/* ======================================================================
+   Arayüz düzeltmeleri (Kasım 2026)
+   ====================================================================== */
+/* Üst çubuk rozetleri ("● III. Dönem · Uygulama") orta genişlikte iki satıra
+   kırılıyordu; rozet tek parça kalır, sığmazsa bir sonraki satıra geçer. */
+.hbadge{white-space:nowrap}
+
+/* Yan paneldeki saat kartı: "Çarşamba, 11 Kasım" ile ss'li saat aynı satıra
+   sığmıyor, tarih ortasından kırılıyordu. Saat kendi satırına iner, sağa yaslanır. */
+#dsb-canli #di-pill.di-pill-saat .dip-row{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"ikon govde" "sure sure" "rozet rozet"}
+#dsb-canli #di-pill.di-pill-saat .dip-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#dsb-canli #di-pill.di-pill-saat .dip-timer-wrap{flex-direction:row-reverse;justify-content:flex-start;align-items:baseline;gap:6px;margin-top:8px;padding-top:7px;border-top:1px solid color-mix(in srgb,var(--border) 70%,transparent)}
+#dsb-canli #di-pill.di-pill-saat .dip-timer-label::after{content:':'}
+
+/* "Giriş yap" gibi satır içi düğmelerin dokunma alanı 14px yüksekti;
+   yerleşimi değiştirmeden tıklanabilir alan büyütülür. */
+.staj-link{padding:8px 4px;margin:-8px -4px;border-radius:6px}
+
+/* Klavyeyle gezen kullanıcı için "İçeriğe atla": yalnız odaklanınca görünür. */
+.d8-atla{position:fixed;top:10px;left:10px;z-index:10000;padding:10px 16px;border-radius:12px;background:var(--navy);color:#fff;font-weight:700;font-size:14px;text-decoration:none;box-shadow:var(--shadow-lg);transform:translateY(-200%);opacity:0;transition:transform .2s ease,opacity .2s ease}
+.d8-atla:focus-visible{transform:none;opacity:1;outline:2px solid #fff;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.d8-atla{transition:none}}

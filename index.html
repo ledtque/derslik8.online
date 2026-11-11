@@ -113,7 +113,7 @@ window.d8BosCizim = function (ana, rozet) {
 };
 </script>
 
-<script>(function(){var h=document.documentElement;try{if(localStorage.getItem('d8DarkMode')==='1')h.classList.add('dark-pre');}catch(e){}var t='guz';try{var v=localStorage.getItem('d8Tema');if(v==='deniz'||v==='guz'||v==='kis')t=v;}catch(e){}h.setAttribute('data-tema',t);
+<script>(function(){var h=document.documentElement;try{var dm=localStorage.getItem('d8DarkMode');if(dm==='1'||(dm===null&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches))h.classList.add('dark-pre');}catch(e){}var t='guz';try{var v=localStorage.getItem('d8Tema');if(v==='deniz'||v==='guz'||v==='kis')t=v;}catch(e){}h.setAttribute('data-tema',t);
 /* Durum/gezinme çubuğu rengi ve manifest açılışta doğru temayla gelsin (tema modülü sayfanın sonunda yüklenir) */
 var R={deniz:'#0E7490',guz:'#9A3412',kis:'#1E3A8A'}[t];try{var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',R);}catch(e){}
 /* Ana ekrandan uygulama olarak açıldıysa sistem zaten bir açılış ekranı gösterdi;
@@ -1823,7 +1823,7 @@ function filterProgram(q){
   if(noResult)noResult.style.display=(q&&!anyVisible)?'block':'none';
 }
 const ranges=[{start:'2026-04-13',end:'2026-04-13',label:'I. Dönem Başlıyor',type:'ders',tip:'I. Ders Dönemi başlangıcı'},{start:'2026-04-23',end:'2026-04-23',label:'Ulusal Egemenlik ve Çocuk Bayramı',type:'tatil',tip:'23 Nisan – Ulusal Egemenlik ve Çocuk Bayramı (Resmî Tatil)'},{start:'2026-05-01',end:'2026-05-01',label:'Emek ve Dayanışma Günü',type:'tatil',tip:'1 Mayıs Emek ve Dayanışma Günü (Resmî Tatil)'},{start:'2026-05-11',end:'2026-05-17',label:'Ara Sınav Haftası',type:'sinav',tip:'I. Dönem Ders + Ara Sınav Haftası: 11–17 Mayıs'},{start:'2026-05-19',end:'2026-05-19',label:'Gençlik ve Spor Bayramı',type:'tatil',tip:'19 Mayıs – Atatürk\'ü Anma, Gençlik ve Spor Bayramı (Resmî Tatil)'},{start:'2026-05-22',end:'2026-05-22',label:'Ara Sınav Sonuçları',type:'sonuc',tip:'I. Dönem Ara Sınav Sonuçlarının İlanı'},{start:'2026-05-23',end:'2026-05-31',label:'Kurban Bayramı',type:'tatil',tip:'23 Mayıs – 31 Mayıs: Kurban Bayramı tatili (9 gün, Cumhurbaşkanlığı kararıyla)'},{start:'2026-06-26',end:'2026-06-26',label:'I. Dönem Bitiyor',type:'bit',tip:'I. Ders Döneminin Bitirilmesi'},{start:'2026-06-27',end:'2026-06-30',label:'Dönem Sonu Sınavı',type:'sinav',tip:'I. Dönem Sonu Sınavı: 27 Haz – 30 Haz'},{start:'2026-07-03',end:'2026-07-03',label:'Dönem Sonu Sonuçları',type:'sonuc',tip:'I. Dönem Sonu Sınav Sonuçlarının İlanı'},{start:'2026-07-05',end:'2026-07-05',label:'Ek Sınav',type:'sinav',tip:'I. Dönem Ek Sınavları'},{start:'2026-07-06',end:'2026-07-06',label:'Ek Sınav Sonuçları',type:'sonuc',tip:'I. Dönem Ek Sınav Sonuçlarının İlanı'},{start:'2026-07-06',end:'2026-07-06',label:'II. Dönem Başlıyor',type:'ders',tip:'II. Ders Dönemi Başlangıcı'},{start:'2026-07-15',end:'2026-07-15',label:'Demokrasi Bayramı',type:'tatil',tip:'15 Temmuz Demokrasi ve Millî Birlik Günü (Resmî Tatil)'},{start:'2026-08-03',end:'2026-08-07',label:'Ara Sınav Haftası',type:'sinav',tip:'II. Dönem Ders + Ara Sınav Haftası: 3–7 Ağustos'},{start:'2026-08-14',end:'2026-08-14',label:'Ara Sınav Sonuçları',type:'sonuc',tip:'II. Dönem Ara Sınav Sonuçlarının İlanı'},{start:'2026-09-11',end:'2026-09-11',label:'II. Dönem Bitiyor',type:'bit',tip:'II. Ders Döneminin Bitirilmesi'},{start:'2026-09-14',end:'2026-09-17',label:'Dönem Sonu Sınavı',type:'sinav',tip:'II. Dönem Sonu Sınavı: 14–17 Eylül'},{start:'2026-09-18',end:'2026-09-18',label:'Dönem Sonu Sonuçları',type:'sonuc',tip:'II. Dönem Sonu Sınav Sonuçlarının İlanı'},{start:'2026-09-21',end:'2026-09-21',label:'Ek Sınav',type:'sinav',tip:'II. Dönem Ek Sınavları'},{start:'2026-09-21',end:'2026-09-27',label:'Ara Tatil',type:'tatil',tip:'Dönemler Arası Ara Tatil: 21–27 Eylül'},{start:'2026-09-24',end:'2026-09-24',label:'Ek Sınav Sonuçları',type:'sonuc',tip:'II. Dönem Ek Sınav Sonuçlarının İlanı'},{start:'2026-09-28',end:'2026-09-28',label:'III. Dönem Başlıyor',type:'uyg',tip:'III. Uygulama Dönemi Başlangıcı'},{start:'2026-10-19',end:'2026-10-23',label:'1. Uygulama Değerlendirmesi',type:'uyg',tip:'1. Uygulama Değerlendirmesi: 19–23 Ekim'},{start:'2026-10-28',end:'2026-10-29',basSaat:'13:00',label:'Cumhuriyet Bayramı',type:'tatil',tip:'28 Ekim ÖS – 29 Ekim: Cumhuriyet Bayramı (Resmî Tatil)'},{start:'2026-11-09',end:'2026-11-13',label:'2. Uygulama Değerlendirmesi',type:'uyg',tip:'2. Uygulama Değerlendirmesi: 9–13 Kasım'},{start:'2026-11-30',end:'2026-12-04',label:'3. Uygulama Değerlendirmesi',type:'uyg',tip:'3. Uygulama Değerlendirmesi: 30 Kas – 4 Ara'},{start:'2026-12-04',end:'2026-12-04',label:'III. Dönem Bitiyor',type:'bit',tip:'Uygulama Döneminin Bitirilmesi'},{start:'2026-12-07',end:'2026-12-07',label:'IV. Dönem Başlıyor',type:'ders',tip:'IV. Ders Dönemi Başlangıcı'},{start:'2027-01-01',end:'2027-01-01',label:'Yılbaşı',type:'tatil',tip:'1 Ocak Yılbaşı (Resmî Tatil)'},{start:'2027-01-04',end:'2027-01-07',label:'Ara Sınav Haftası',type:'sinav',tip:'IV. Dönem Ders + Ara Sınav Haftası: 4–7 Ocak'},{start:'2027-01-15',end:'2027-01-15',label:'Ara Sınav Sonuçları',type:'sonuc',tip:'IV. Dönem Ara Sınav Sonuçlarının İlanı'},{start:'2027-02-15',end:'2027-02-17',label:'Dönem Sonu Sınavı',type:'sinav',tip:'IV. Dönem Sonu Sınavı: 15–17 Şubat'},{start:'2027-02-18',end:'2027-02-18',label:'Dönem Sonu Sonuçları',type:'sonuc',tip:'IV. Dönem Sonu Sınav Sonuçlarının İlanı'},{start:'2027-02-19',end:'2027-02-19',label:'Ek Sınav',type:'sinav',tip:'IV. Dönem Ek Sınavları'},{start:'2027-02-22',end:'2027-02-22',label:'Ek Sonuç / IV. Dönem Bitiyor',type:'bit',tip:'Ek Sınav Sonuçları + IV. Ders Döneminin Bitirilmesi'},];function toggleDark(){const isDark=document.body.classList.toggle('dark');const btn=document.getElementById('darkToggle');if(btn)btn.innerHTML=isDark?'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>':'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';localStorage.setItem('d8DarkMode',isDark?'1':'0');window._d8UserSetDark=true;}
-(function initDarkMode(){var saved=null;try{saved=localStorage.getItem('d8DarkMode');}catch(e){}if(saved==='1'){document.body.classList.add('dark');var btn=document.getElementById('darkToggle');if(btn)btn.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';window._d8UserSetDark=true;}else{document.body.classList.remove('dark');var btn=document.getElementById('darkToggle');if(btn)btn.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';window._d8UserSetDark=true;}})();
+(function initDarkMode(){var saved=null;try{saved=localStorage.getItem('d8DarkMode');}catch(e){}/* Kayıtlı bir seçim yoksa sistemin tercihi izlenir; düğmeye basılınca seçim kaydedilir ve sistem izlenmez. */var sistemKaranlik=false,mq=null;try{mq=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;sistemKaranlik=!!(mq&&mq.matches);}catch(e){}if(saved===null&&mq){var ham=window.toggleDark;var izle=function(e){var kayit=null;try{kayit=localStorage.getItem('d8DarkMode');}catch(e2){}if(kayit!==null)return;if(document.body.classList.contains('dark')!==e.matches){ham();try{localStorage.removeItem('d8DarkMode');}catch(e3){}}};if(mq.addEventListener)mq.addEventListener('change',izle);else if(mq.addListener)mq.addListener(izle);}if(saved==='1'||(saved===null&&sistemKaranlik)){document.body.classList.add('dark');var btn=document.getElementById('darkToggle');if(btn)btn.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';window._d8UserSetDark=true;}else{document.body.classList.remove('dark');var btn=document.getElementById('darkToggle');if(btn)btn.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';window._d8UserSetDark=true;}})();
 let curYear=new Date().getFullYear();let curMonth=new Date().getMonth();const TR_MONTHS=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];function pad(n){return String(n).padStart(2,'0');}
 function mkDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
 function fmtDate(y,m,d){return y+'-'+pad(m+1)+'-'+pad(d);}
@@ -13112,6 +13112,82 @@ window.d8DersGunuKaydir=function(yumusak){
     };
     requestAnimationFrame(bul);
   }, true);
+})();
+</script>
+
+<script id="d8-erisim-js">
+/* Erişilebilirlik tamamlayıcıları: klavye ve ekran okuyucu için küçük ama
+   somut eksikler. Görünüm değişmez; yalnız anlam (ARIA) ve odak düzeni eklenir. */
+(function () {
+  'use strict';
+
+  /* 1) "İçeriğe atla": klavyeyle gelen, üst çubuk ve sekmeleri atlayıp içeriğe iner */
+  function atlaBaglantisi() {
+    if (document.querySelector('.d8-atla')) return;
+    var hedef = document.querySelector('.desktop-content');
+    if (!hedef) return;
+    if (!hedef.id) hedef.id = 'd8-icerik';
+    hedef.setAttribute('tabindex', '-1');
+    var a = document.createElement('a');
+    a.className = 'd8-atla'; a.href = '#' + hedef.id; a.textContent = 'İçeriğe atla';
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      hedef.focus({ preventScroll: false });
+    });
+    document.body.insertBefore(a, document.body.firstChild);
+  }
+
+  /* 2) Sekmeler: hangi sayfanın açık olduğu yalnız renkle değil aria-current ile de söylenir */
+  function sekmeDurumu() {
+    document.querySelectorAll('.mtab, .mob-nav-btn').forEach(function (b) {
+      if (b.classList.contains('active')) b.setAttribute('aria-current', 'page');
+      else b.removeAttribute('aria-current');
+    });
+  }
+  function sekmeleriIzle() {
+    var nav = document.querySelectorAll('.main-tabs, #mobile-bottom-nav');
+    if (!nav.length) return;
+    var mo = new MutationObserver(sekmeDurumu);
+    nav.forEach(function (n) { mo.observe(n, { attributes: true, attributeFilter: ['class'], subtree: true }); });
+    sekmeDurumu();
+  }
+
+  /* 3) Bölüm başlıkları: görsel olarak başlık olan ama div/span olan metinler
+        ekran okuyucuda başlık olarak dolaşılabilir (h1 > h2 sırası). */
+  var BASLIK = '.staj-baslik-ad, .d3x-blok-bas > span:first-child, .tz-baslik, .profil-section-title';
+  function basliklar() {
+    document.querySelectorAll(BASLIK).forEach(function (el) {
+      if (el.getAttribute('role') === 'heading' || /^H[1-6]$/.test(el.tagName)) return;
+      el.setAttribute('role', 'heading'); el.setAttribute('aria-level', '2');
+    });
+  }
+  function basliklariIzle() {
+    var kok = document.querySelector('.desktop-content') || document.body;
+    var bekle = null;
+    new MutationObserver(function () {
+      if (bekle) return;
+      bekle = setTimeout(function () { bekle = null; basliklar(); }, 120);
+    }).observe(kok, { childList: true, subtree: true });
+    basliklar();
+  }
+
+  /* 4) Karanlık mod düğmesi: durumunu da söyler (aria-pressed) */
+  function temaDugmesi() {
+    var b = document.getElementById('darkToggle');
+    if (!b) return;
+    var yaz = function () { b.setAttribute('aria-pressed', document.body.classList.contains('dark') ? 'true' : 'false'); };
+    new MutationObserver(yaz).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    yaz();
+  }
+
+  function baslat() {
+    try { atlaBaglantisi(); } catch (e) {}
+    try { sekmeleriIzle(); } catch (e) {}
+    try { basliklariIzle(); } catch (e) {}
+    try { temaDugmesi(); } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', baslat);
+  else baslat();
 })();
 </script>
 
