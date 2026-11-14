@@ -66,7 +66,7 @@ function curStage(){for(const s of STAGES){if(s.ids.some(id=>!S.cards[id])) retu
 let view="home", filter="all", search="", session=null, keyHandler=null;
 document.addEventListener("keydown",e=>keyHandler&&keyHandler(e));
 function render(){ if(!uid) return; if(view==="home") home(); else if(view==="words") words(); }
-function header(){return `<div class="top"><div class="brand"><i></i>Word Hoard</div>
+function header(){return `<div class="top"><div class="brand"><img src="ikon.svg" alt="">Word Hoard</div>
  <div class="stats"><span class="pill" title="Total XP">${star}${S.xp} XP</span><button class="pill acct" id="acct" title="Sign out"><span id="sync" data-s="${syncState}"></span>Sign out</button></div></div>`}
 function bindHeader(){ $("#acct").onclick=()=>cloud&&cloud.signOut(); }
 
@@ -76,7 +76,7 @@ function gate(kind,msg){
    : kind==="denied"?`<h2>This page is private</h2><p>You're signed in as <b>${esc(msg)}</b>, which doesn't have access.</p><button class="btn" id="out">Sign out</button>`
    : kind==="error"?`<h2>Something went wrong</h2><p>${esc(msg)}</p><button class="btn" id="retry">Try again</button>`
    : `<h2>Word Hoard</h2><p>Your daily English vocabulary. Sign in to continue.</p><button class="btn" id="in">Sign in with Google</button>${msg?`<p class="err">${esc(msg)}</p>`:""}`;
-  app.innerHTML=`<section class="gate"><div class="brand"><i></i>Word Hoard</div>${body}</section>`;
+  app.innerHTML=`<section class="gate"><div class="brand"><img src="ikon.svg" alt="">Word Hoard</div>${body}</section>`;
   $("#in")&&($("#in").onclick=()=>cloud.signIn());
   $("#out")&&($("#out").onclick=()=>cloud.signOut());
   $("#retry")&&($("#retry").onclick=()=>location.reload());
