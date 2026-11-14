@@ -1,8 +1,10 @@
 /* Word Hoard on derslik8.online/kelime
    Words: kelimeler.json next to this page (add new words there; they join the end of the roadmap).
-   Login: Google via the site's Firebase project; only OWNER may use it.
+   Login: Google via the site's Firebase project; only the owner may use it
+   (OWNER_HASH is the SHA-256 of the owner's address, so the address isn't in the code).
    Sync: Firestore document kelime/{uid}; localStorage keeps a copy for fast start. */
-const OWNER = "yigitsakal@gmail.com";
+const OWNER_HASH = "cdcf29c35e88c242caf485905ef1ec7f89498c832288f2c8b0d744f43c746fba";
+async function isOwner(email){ const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode((email||"").trim().toLowerCase())); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")===OWNER_HASH; }
 const TRACKS = {power:"Power words",rare:"Rare gems",idiom:"Idioms",slang:"Slang"};
 const STAGE_NAMES = {1:"Sharp Everyday",2:"Advanced",3:"Proficient",4:"Connoisseur"};
 const MAX_REVIEW=20, CHUNK=5, INTERVALS=[1,2,4,9,20,45];
@@ -64,7 +66,7 @@ function curStage(){for(const s of STAGES){if(s.ids.some(id=>!S.cards[id])) retu
 let view="home", filter="all", search="", session=null, keyHandler=null;
 document.addEventListener("keydown",e=>keyHandler&&keyHandler(e));
 function render(){ if(!uid) return; if(view==="home") home(); else if(view==="words") words(); }
-function header(){return `<div class="top"><div class="brand"><i></i>Word Hoard</div>
+function header(){return `<div class="top"><div class="brand"><img src="ikon.svg" alt="">Word Hoard</div>
  <div class="stats"><span class="pill" title="Total XP">${star}${S.xp} XP</span><button class="pill acct" id="acct" title="Sign out"><span id="sync" data-s="${syncState}"></span>Sign out</button></div></div>`}
 function bindHeader(){ $("#acct").onclick=()=>cloud&&cloud.signOut(); }
 
@@ -74,7 +76,7 @@ function gate(kind,msg){
    : kind==="denied"?`<h2>This page is private</h2><p>You're signed in as <b>${esc(msg)}</b>, which doesn't have access.</p><button class="btn" id="out">Sign out</button>`
    : kind==="error"?`<h2>Something went wrong</h2><p>${esc(msg)}</p><button class="btn" id="retry">Try again</button>`
    : `<h2>Word Hoard</h2><p>Your daily English vocabulary. Sign in to continue.</p><button class="btn" id="in">Sign in with Google</button>${msg?`<p class="err">${esc(msg)}</p>`:""}`;
-  app.innerHTML=`<section class="gate"><div class="brand"><i></i>Word Hoard</div>${body}</section>`;
+  app.innerHTML=`<section class="gate"><div class="brand"><img src="ikon.svg" alt="">Word Hoard</div>${body}</section>`;
   $("#in")&&($("#in").onclick=()=>cloud.signIn());
   $("#out")&&($("#out").onclick=()=>cloud.signOut());
   $("#retry")&&($("#retry").onclick=()=>location.reload());
@@ -258,7 +260,6 @@ const fbApp=initializeApp({
   appId:"1:691814192695:web:070dc72b80a191634dd1b2"
 });
 const auth=getAuth(fbApp), db=getFirestore(fbApp), provider=new GoogleAuthProvider();
-provider.setCustomParameters({login_hint:OWNER});
 getRedirectResult(auth).catch(e=>console.warn("[kelime] redirect",e&&e.code));
 let unsub=null;
 cloud={
@@ -269,7 +270,7 @@ cloud={
 onAuthStateChanged(auth, async user=>{
   if(unsub){unsub();unsub=null}
   if(!user){ uid=null; gate("signin"); return; }
-  if((user.email||"").toLowerCase()!==OWNER){ uid=null; gate("denied",user.email||"this account"); return; }
+  if(!(await isOwner(user.email))){ uid=null; gate("denied",user.email||"this account"); return; }
   uid=user.uid; S=readLocal(uid)||fresh();
   try{ await wordsReady; }catch(e){ gate("error","Couldn't load the word list. Try again in a moment."); return; }
   view="home"; render();
