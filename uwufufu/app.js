@@ -4,12 +4,14 @@
  *            ./?tahta      tahta ekranı (oturumu kurar, QR gösterir, turları yönetir)
  *            ./?k=1234     telefon ekranı (eşleşmeleri oylar)
  *
- * Akış: her turda herkes o turun bütün eşleşmelerini kendi hızında oylar.
- * Tahta oyları canlı sayar; "Turu bitir" deyince her eşleşmenin çoğunluk
- * kazananı bir sonraki tura geçer (eşitlikte kura). 32 → 16 → 8 → 4 → 2 → şampiyon.
+ * Akış: tahtada tek eşleşme görünür, herkes aynı anda onu oylar (oyunu
+ * değiştirebilir). Tahta "Sıradaki"ye basınca en çok oyu alan kazanır
+ * (eşitlikte kura) ve sonraki eşleşme açılır. Tur bitince kazananlar bir
+ * sonraki tura geçer: 32 → 16 → 8 → 4 → 2 → şampiyon.
  *
  * Firestore:
- *   uwufufu/{kod}             durum: 'lobi'|'oylama'|'sonuc'|'bitti', tur, kartlar[],
+ *   uwufufu/{kod}             durum: 'lobi'|'oylama'|'sonuc'|'bitti', tur, mac (açık eşleşme),
+ *                             kartlar[], canli{a,b,k,kura} (bu turda kapanan eşleşmeler),
  *                             gecmis{ t0:{kartlar,a,b,k,kura} ... }, sampiyon, moderatorUid
  *   uwufufu/{kod}/oylar/{uid} katildi, son, t0:{ 0:kartId, 1:kartId ... }, t1:{...}
  * Giriş gerekmez: her cihaz anonim kimlik alır.
@@ -122,30 +124,25 @@ const oturumRef = (kod) => F.doc(F.db, 'uwufufu', kod);
 const oylarCol = (kod) => F.collection(F.db, 'uwufufu', kod, 'oylar');
 const oyRef = (kod, uid) => F.doc(F.db, 'uwufufu', kod, 'oylar', uid);
 
-/* Bir turun oylarını sayar */
-function say(S, oyuncular, tur) {
-  const k = tur === S.tur && S.durum === 'oylama' ? S.kartlar : (S.gecmis['t' + tur] || {}).kartlar || S.kartlar;
-  const m = k.length / 2, a = new Array(m).fill(0), b = new Array(m).fill(0);
-  let bitiren = 0, katilan = 0;
+/* Açık eşleşmenin oylarını sayar */
+function macSay(S, oyuncular) {
+  const k = S.kartlar, i = S.mac || 0, A = k[2 * i], B = k[2 * i + 1];
+  let a = 0, b = 0, katilan = 0;
   for (const p of Object.values(oyuncular)) {
     katilan++;
-    const s = p['t' + tur] || {};
-    let n = 0;
-    for (let i = 0; i < m; i++) {
-      const v = s[i];
-      if (v === k[2 * i]) { a[i]++; n++; } else if (v === k[2 * i + 1]) { b[i]++; n++; }
-    }
-    if (n === m) bitiren++;
+    const v = (p['t' + S.tur] || {})[i];
+    if (v === A) a++; else if (v === B) b++;
   }
-  return { k, m, a, b, bitiren, katilan };
+  return { i, A, B, a, b, oylayan: a + b, katilan, m: k.length / 2 };
 }
+const BOS_CANLI = () => ({ a: [], b: [], k: [], kura: [] });
 
 /* ------------------------------------------------------------------ Giriş */
 function girisCiz(uyari) {
   ekran('<div class="giris">' +
     '<div class="ust">' + MARKA + '</div>' +
     '<div><div class="etiket">Akademi Uwufufu</div><h1>32 dert, <em>tek şampiyon.</em></h1></div>' +
-    '<p>Akademinin en büyük çilesini birlikte seçiyoruz. Her eşleşmede birini seç, sıradakine geç; tahtada sonuçlar canlı akar.</p>' +
+    '<p>Akademinin en büyük çilesini birlikte seçiyoruz. Tahtadaki eşleşmeyi herkes aynı anda telefonundan oylar; en çok oyu alan kazanır.</p>' +
     (uyari ? '<div class="panel" role="alert">' + esc(uyari) + '</div>' : '') +
     '<div class="panel" style="display:flex;flex-direction:column;gap:12px"><div class="etiket">Oyuna katıl</div>' +
     '<form class="kod-form" id="kodForm"><input id="kodInp" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="0000" aria-label="Oyun kodu" autocomplete="off"><button class="btn">Katıl</button></form></div>' +
@@ -162,7 +159,7 @@ function girisCiz(uyari) {
 }
 
 /* ================================================================== TAHTA */
-const T = { kod: null, S: null, oyuncular: {}, anahtar: null, cizimBekliyor: false, onay: 0 };
+const T = { kod: null, S: null, oyuncular: {}, anahtar: null, cizimBekliyor: false, kilit: false, oto: null };
 
 async function tahtaBaslat() {
   yukleniyor('Oyun hazırlanıyor…');
@@ -195,8 +192,8 @@ async function oturumKur() {
     const s = await F.getDoc(oturumRef(kod));
     if (s.exists()) continue;
     await F.setDoc(oturumRef(kod), {
-      moderatorUid: F.uid, createdAt: Date.now(), durum: 'lobi', tur: 0,
-      kartlar: karistir(IDLER), gecmis: {}, sampiyon: null
+      moderatorUid: F.uid, createdAt: Date.now(), durum: 'lobi', tur: 0, mac: 0,
+      kartlar: karistir(IDLER), canli: BOS_CANLI(), gecmis: {}, sampiyon: null
     });
     return kod;
   }
@@ -216,8 +213,8 @@ function tahtaCiz() {
     T.cizimBekliyor = false;
     const S = T.S;
     if (!S) return;
-    const anahtar = S.durum + ':' + S.tur;
-    if (anahtar !== T.anahtar) { T.anahtar = anahtar; T.onay = 0; tahtaTamCiz(); }
+    const anahtar = S.durum + ':' + S.tur + ':' + (S.durum === 'oylama' ? S.mac || 0 : '');
+    if (anahtar !== T.anahtar) { T.anahtar = anahtar; T.kilit = false; otoIptal(); tahtaTamCiz(); }
     tahtaGuncelle();
   });
 }
@@ -268,30 +265,29 @@ function tahtaTamCiz() {
       const u = katilmaAdresi(kod);
       (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(() => bildir('Bağlantı kopyalandı'), () => bildir(u));
     };
-  } else if (S.durum === 'oylama' || S.durum === 'sonuc') {
-    const sonuc = S.durum === 'sonuc' ? S.gecmis['t' + S.tur] : null;
+  } else if (S.durum === 'oylama') {
+    tahtaMacCiz(dugmeUst);
+  } else if (S.durum === 'sonuc') {
+    const sonuc = S.gecmis['t' + S.tur];
     const k = sonuc ? sonuc.kartlar : S.kartlar;
     const m = k.length / 2;
     const [sut, sat, fs, satir, ofs] = izgaraOlcu(m);
     const qr = qrSvg(kod);
-    let alt;
-    if (sonuc) {
-      const sonraki = sonuc.k.length;
-      alt = '<span class="bilgi">Tur kapandı · kazananlar işaretli</span><button class="btn" id="sonraki">' + esc(turAdi(sonraki)) + ' turuna geç →</button>';
-    } else {
-      alt = '<span class="bilgi" id="altBilgi"></span><button class="btn" id="bitir">Turu bitir</button>';
-    }
+    const alt = '<span class="bilgi" id="geriSayim">Tur kapandı · kazananlar işaretli</span><button class="btn" id="sonraki">' + esc(turAdi(sonuc.k.length)) + ' turuna geç →</button>';
     ekran('<div class="tahta sabit"><div class="tahta-ust">' + MARKA +
-      '<div class="orta"><div class="tur-adi">' + esc(turAdi(k.length)) + (sonuc ? ' · Sonuçlar' : '') + '</div>' +
-      '<div class="etiket" style="margin-top:4px" id="ustBilgi">' + m + ' eşleşme</div>' +
-      (sonuc ? '' : '<div class="ilerleme"><b id="ilerleme" style="width:0"></b></div>') + '</div>' +
+      '<div class="orta"><div class="tur-adi">' + esc(turAdi(k.length)) + ' · Sonuçlar</div>' +
+      '<div class="etiket" style="margin-top:4px">' + m + ' eşleşme</div></div>' +
       '<div class="kod-rozet">' + (qr ? '<div class="qr-mini">' + qr + '</div>' : '') + '<div><div class="etiket">Katılma kodu</div><div class="no">' + kod + '</div></div></div>' +
       dugmeUst + '</div>' +
       '<section class="izgara" style="grid-template-columns:repeat(' + sut + ',minmax(0,1fr));grid-template-rows:repeat(' + sat + ',minmax(0,1fr));--vs-y:' + (m >= 16 ? 32 : 38) + ';--metin-fs:' + fs + ';--satir:' + satir + ';--oy-fs:' + ofs + (m === 1 ? ';max-width:1200px;margin:0 auto;width:100%' : '') + '">' +
       Array.from({ length: m }, (_, i) => macHtml(k, i, sonuc)).join('') + '</section>' +
       '<div class="tahta-alt">' + alt + '</div></div>');
-    if (sonuc) document.getElementById('sonraki').onclick = () => yaz({ durum: 'oylama', tur: S.tur + 1, kartlar: sonuc.k });
-    else document.getElementById('bitir').onclick = turuBitir;
+    document.getElementById('sonraki').onclick = sonrakiTur;
+    /* Sonuçlar kısa süre ekranda kalır, sonra yeni tur kendiliğinden başlar */
+    let kalan = 8;
+    const yazSayim = () => { const g = document.getElementById('geriSayim'); if (g) g.textContent = 'Kazananlar işaretli · ' + turAdi(sonuc.k.length) + ' ' + kalan + ' sn sonra başlıyor'; };
+    yazSayim();
+    T.oto = setInterval(() => { kalan--; if (kalan <= 0) { otoIptal(); sonrakiTur(); } else yazSayim(); }, 1000);
   } else if (S.durum === 'bitti') {
     sampiyonCiz();
   }
@@ -302,15 +298,52 @@ function tahtaTamCiz() {
   };
 }
 
+function kodRozet() {
+  const qr = qrSvg(T.kod);
+  return '<div class="kod-rozet">' + (qr ? '<div class="qr-mini">' + qr + '</div>' : '') + '<div><div class="etiket">Katılma kodu</div><div class="no">' + T.kod + '</div></div></div>';
+}
+
+/* Tahta: açık eşleşme büyük gösterilir, oylar canlı akar */
+function tahtaMacCiz(dugmeUst) {
+  const S = T.S, k = S.kartlar, m = k.length / 2, i = S.mac || 0;
+  const son = i === m - 1;
+  ekran('<div class="tahta sabit"><div class="tahta-ust">' + MARKA +
+    '<div class="orta"><div class="tur-adi">' + esc(turAdi(k.length)) + ' · ' + (i + 1) + '. eşleşme</div>' +
+    '<div class="etiket" style="margin-top:4px" id="ustBilgi">' + (i + 1) + ' / ' + m + '</div>' +
+    '<div class="ilerleme"><b style="width:' + ((i / m) * 100) + '%"></b></div></div>' +
+    kodRozet() + dugmeUst + '</div>' +
+    '<section class="izgara tekli" style="grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);--vs-y:42;--metin-fs:clamp(1.1rem,1.9vw,1.7rem);--satir:3;--oy-fs:clamp(1.2rem,2vw,1.9rem);max-width:1400px;margin:0 auto;width:100%">' +
+    macHtml(k, i, null) + '</section>' +
+    '<div class="tahta-alt"><span class="bilgi" id="altBilgi"></span>' +
+    '<button class="btn" id="sonraki">' + 'Beklemeden geç →' + '</button></div></div>');
+  document.getElementById('sonraki').onclick = macBitir;
+}
+
 function tahtaGuncelle() {
   const S = T.S;
   const kat = Object.keys(T.oyuncular).length;
   const ks = document.getElementById('katSay');
   if (ks) ks.textContent = kat + ' kişi katıldı';
-  if (S.durum !== 'oylama' && S.durum !== 'sonuc') return;
-  const sonuc = S.durum === 'sonuc' ? S.gecmis['t' + S.tur] : null;
-  const r = sonuc ? { m: sonuc.a.length, a: sonuc.a, b: sonuc.b } : say(S, T.oyuncular, S.tur);
-  for (let i = 0; i < r.m; i++) {
+  let r;
+  if (S.durum === 'oylama') {
+    if (T.kilit) return;
+    const c = macSay(S, T.oyuncular);
+    r = { bas: c.i, m: 1, a: { [c.i]: c.a }, b: { [c.i]: c.b } };
+    const ub = document.getElementById('ustBilgi');
+    if (ub) ub.textContent = (c.i + 1) + ' / ' + c.m + ' · ' + c.oylayan + '/' + c.katilan + ' kişi oyladı';
+    /* Katılan herkes oyladıysa kısa bir bekleyişten sonra kendiliğinden geçilir */
+    const hepsi = c.katilan > 0 && c.oylayan >= c.katilan;
+    if (hepsi && !T.oto) T.oto = setTimeout(() => { T.oto = null; macBitir(); }, 1500);
+    else if (!hepsi) otoIptal();
+    const ab = document.getElementById('altBilgi');
+    if (ab) ab.textContent = !c.katilan ? 'Henüz kimse katılmadı — QR\'ı okutun.'
+      : hepsi ? 'Herkes oyladı — sonuç açıklanıyor…'
+      : 'Herkes oylayınca kendiliğinden geçer. Bekletmek istemezsen düğmeye bas.';
+  } else if (S.durum === 'sonuc') {
+    const g = S.gecmis['t' + S.tur];
+    r = { bas: 0, m: g.a.length, a: g.a, b: g.b };
+  } else return;
+  for (let i = r.bas; i < r.bas + r.m; i++) {
     const top = r.a[i] + r.b[i];
     for (const [t, v] of [['A', r.a[i]], ['B', r.b[i]]]) {
       const e = app.querySelector('[data-say="' + t + i + '"]');
@@ -319,14 +352,6 @@ function tahtaGuncelle() {
       if (c) c.style.width = (top ? (v / top) * 100 : 0) + '%';
     }
   }
-  if (!sonuc) {
-    const il = document.getElementById('ilerleme');
-    if (il) il.style.width = (r.katilan ? (r.bitiren / r.katilan) * 100 : 0) + '%';
-    const ub = document.getElementById('ustBilgi');
-    if (ub) ub.textContent = r.m + ' eşleşme · ' + r.bitiren + '/' + r.katilan + ' kişi turu bitirdi';
-    const ab = document.getElementById('altBilgi');
-    if (ab && !T.onay) ab.textContent = r.katilan ? 'Herkes bitirince turu kapat. Geç kalanlar QR\'dan hâlâ katılabilir.' : 'Henüz kimse katılmadı — QR\'ı okutun.';
-  }
 }
 
 async function yaz(veri) {
@@ -334,32 +359,54 @@ async function yaz(veri) {
   catch (e) { console.warn('[uwufufu] yazma', e); bildir('Kaydedilemedi (bağlantı ya da izin sorunu)'); }
 }
 
-async function turuBitir() {
-  const S = T.S;
-  const r = say(S, T.oyuncular, S.tur);
-  const eksik = r.katilan - r.bitiren;
-  if (eksik > 0 && Date.now() - T.onay > 4000) {
-    /* İlk tıkta uyar, ikinci tıkta kapat (tarayıcı onay penceresi açmadan) */
-    T.onay = Date.now();
-    const b = document.getElementById('bitir'), ab = document.getElementById('altBilgi');
-    if (b) b.textContent = 'Yine de bitir';
-    if (ab) ab.textContent = eksik + ' kişi henüz bitirmedi. Kapatmak için tekrar bas.';
-    setTimeout(() => {
-      if (T.onay && Date.now() - T.onay >= 4000) { T.onay = 0; if (b && b.isConnected) b.textContent = 'Turu bitir'; tahtaGuncelle(); }
-    }, 4100);
-    return;
+/* Açık eşleşmeyi kapatır: kazananı tahtada gösterir, sonra kaydeder */
+function otoIptal() { if (T.oto) { clearTimeout(T.oto); clearInterval(T.oto); T.oto = null; } }
+
+async function macBitir() {
+  otoIptal();
+  if (T.kilit) return;
+  const S = T.S, c = macSay(S, T.oyuncular);
+  T.kilit = true;
+  let kaz, kura = false;
+  if (c.a > c.b) kaz = c.A;
+  else if (c.b > c.a) kaz = c.B;
+  else { kura = true; kaz = Math.random() < 0.5 ? c.A : c.B; }
+  const mac = document.getElementById('mac' + c.i);
+  if (mac) {
+    mac.classList.add('bitti');
+    mac.querySelector('.yan.A').classList.add(kaz === c.A ? 'kazandi' : 'kaybetti');
+    mac.querySelector('.yan.B').classList.add(kaz === c.B ? 'kazandi' : 'kaybetti');
+    if (kura) mac.insertAdjacentHTML('beforeend', '<span class="kura">🎲 Kura</span>');
   }
-  T.onay = 0;
-  const kaz = [], kura = [];
-  for (let i = 0; i < r.m; i++) {
-    if (r.a[i] > r.b[i]) kaz.push(r.k[2 * i]);
-    else if (r.b[i] > r.a[i]) kaz.push(r.k[2 * i + 1]);
-    else { kura.push(i); kaz.push(r.k[2 * i + (Math.random() < 0.5 ? 0 : 1)]); }
-  }
-  const gecmis = Object.assign({}, S.gecmis, { ['t' + S.tur]: { kartlar: r.k, a: r.a, b: r.b, k: kaz, kura } });
-  if (kaz.length === 1) await yaz({ durum: 'bitti', gecmis, sampiyon: kaz[0] });
-  else await yaz({ durum: 'sonuc', gecmis });
+  const b = document.getElementById('sonraki'); if (b) b.disabled = true;
+  await new Promise((r) => setTimeout(r, 1400));
+  /* kayıt tutmazsa (bağlantı) tahta kilitli kalmasın */
+  const anahtar = T.anahtar;
+  setTimeout(() => { if (T.anahtar === anahtar && T.kilit) { T.kilit = false; T.anahtar = null; tahtaCiz(); } }, 4000);
+  const n = c.i, cn = S.canli || BOS_CANLI();
+  const canli = {
+    a: (cn.a || []).slice(0, n).concat(c.a), b: (cn.b || []).slice(0, n).concat(c.b),
+    k: (cn.k || []).slice(0, n).concat(kaz), kura: (cn.kura || []).filter((x) => x < n).concat(kura ? [n] : [])
+  };
+  if (n < c.m - 1) return yaz({ mac: n + 1, canli });
+  const gecmis = Object.assign({}, S.gecmis, { ['t' + S.tur]: Object.assign({ kartlar: S.kartlar }, canli) });
+  if (c.m === 1) await yaz({ durum: 'bitti', gecmis, canli, sampiyon: kaz });
+  else await yaz({ durum: 'sonuc', gecmis, canli });
 }
+
+function sonrakiTur() {
+  otoIptal();
+  const S = T.S, g = S.gecmis['t' + S.tur];
+  return yaz({ durum: 'oylama', tur: S.tur + 1, mac: 0, kartlar: g.k, canli: BOS_CANLI() });
+}
+
+/* Klavye / sunum kumandası: Sağ ok, Enter ya da Boşluk = sıradaki */
+document.addEventListener('keydown', (e) => {
+  if (!T.S || e.repeat || /INPUT|TEXTAREA/.test((e.target && e.target.tagName) || '')) return;
+  if (!['ArrowRight', 'Enter', ' ', 'PageDown'].includes(e.key)) return;
+  const b = document.getElementById('sonraki');
+  if (b && !b.disabled && (T.S.durum === 'oylama' || T.S.durum === 'sonuc')) { e.preventDefault(); b.click(); }
+});
 
 function sampiyonYolu(S) {
   const c = S.sampiyon, yol = [];
@@ -368,7 +415,7 @@ function sampiyonYolu(S) {
     const idx = g.kartlar.indexOf(c);
     if (idx < 0) break;
     const i = idx >> 1, biz = idx % 2 === 0 ? g.a[i] : g.b[i], onlar = idx % 2 === 0 ? g.b[i] : g.a[i];
-    yol.push({ tur: turAdi(g.kartlar.length), rakip: g.kartlar[idx ^ 1], biz, onlar, kura: g.kura.indexOf(i) > -1 });
+    yol.push({ tur: turAdi(g.kartlar.length), rakip: g.kartlar[idx ^ 1], biz, onlar, kura: (g.kura || []).indexOf(i) > -1 });
   }
   return yol;
 }
@@ -415,7 +462,7 @@ function konfeti() {
 }
 
 /* ================================================================== TELEFON */
-const O = { kod: null, S: null, ben: {}, sira: 0, anahtar: null, kilit: false };
+const O = { kod: null, S: null, ben: {}, anahtar: null, kilit: false };
 
 async function oyuncuBaslat(kod) {
   yukleniyor('Oyuna bağlanılıyor…');
@@ -435,12 +482,6 @@ async function oyuncuBaslat(kod) {
 }
 
 function oylarim(tur) { return O.ben['t' + tur] || {}; }
-function ilkBos(m, tur, bas) {
-  const s = oylarim(tur);
-  for (let i = bas || 0; i < m; i++) if (s[i] == null) return i;
-  return m;
-}
-
 function telBekle(simge, baslik, aciklama, ek) {
   ekran('<div class="tel"><div class="tel-ust">' + MARKA + '<span class="sayac">' + esc(O.kod || '') + '</span></div>' +
     '<div class="bekle"><div class="buyuk" aria-hidden="true">' + simge + '</div><h2>' + esc(baslik) + '</h2><p>' + esc(aciklama) + '</p>' + (ek || '') + '</div></div>');
@@ -449,13 +490,11 @@ function telBekle(simge, baslik, aciklama, ek) {
 function telCiz() {
   const S = O.S;
   if (!S) return;
-  const anahtar = S.durum + ':' + S.tur;
-  if (anahtar !== O.anahtar) {
-    O.anahtar = anahtar;
-    if (S.durum === 'oylama') O.sira = ilkBos(S.kartlar.length / 2, S.tur);
-  }
-  if (S.durum === 'lobi') return telBekle('🎉', 'Katıldın!', 'Tahtada oylama başlayınca ilk eşleşme burada açılacak.');
-  if (S.durum === 'oylama') return O.sira >= S.kartlar.length / 2 ? telTurBitti() : telMac(O.sira);
+  const anahtar = S.durum + ':' + S.tur + ':' + (S.mac || 0);
+  if (anahtar === O.anahtar && S.durum === 'oylama') return; /* aynı eşleşme: ekran yerinde kalsın */
+  O.anahtar = anahtar;
+  if (S.durum === 'lobi') return telBekle('🎉', 'Katıldın!', 'Tahtada oylama başlayınca eşleşme burada açılacak.');
+  if (S.durum === 'oylama') return telMac(S.mac || 0);
   if (S.durum === 'sonuc') return telSonuc();
   if (S.durum === 'bitti') {
     const c = S.sampiyon;
@@ -466,45 +505,35 @@ function telCiz() {
 
 function telMac(i) {
   const S = O.S, k = S.kartlar, m = k.length / 2, A = k[2 * i], B = k[2 * i + 1];
-  const s = oylarim(S.tur), eski = s[i];
-  const kart = (id, t) => '<button class="secenek ' + t + (eski === id ? ' eski' : '') + '" data-id="' + id + '" aria-label="' + esc(metin(id)) + '">' +
+  if (A == null || B == null) return;
+  const secim = oylarim(S.tur)[i];
+  const kart = (id, t) => '<button class="secenek ' + t + (secim === id ? ' secili' : '') + '" data-id="' + id + '" aria-pressed="' + (secim === id) + '" aria-label="' + esc(metin(id)) + '">' +
     foto(id) + '<div class="metin">' + no(id) + esc(metin(id)) + '</div></button>';
   ekran('<div class="tel sabit"><div class="tel-ust"><span class="tur">' + esc(turAdi(k.length)) + '</span><span class="sayac">' + (i + 1) + ' / ' + m + '</span></div>' +
-    '<div class="noktalar" aria-hidden="true">' + Array.from({ length: m }, (_, j) => '<i class="' + (s[j] != null ? 'ok' : j === i ? 'simdi' : '') + '"></i>').join('') + '</div>' +
-    '<div class="duello" id="duello">' + kart(A, 'A') + '<span class="vs">VS</span>' + kart(B, 'B') + '</div>' +
-    '<div class="tel-alt">' + (i > 0 ? '<button class="btn ikincil kucuk" id="geri">← Önceki</button>' : '<span></span>') +
-    '<span class="etiket">Birine dokun</span>' +
-    (eski != null ? '<button class="btn ikincil kucuk" id="ileri">Sonraki →</button>' : '<span></span>') + '</div></div>');
-  app.querySelectorAll('.secenek').forEach((b) => { b.onclick = () => oyVer(i, Number(b.dataset.id), b); });
-  const g = document.getElementById('geri'); if (g) g.onclick = () => { O.sira = i - 1; telCiz(); };
-  const il = document.getElementById('ileri'); if (il) il.onclick = () => { O.sira = i + 1; telCiz(); };
+    '<div class="noktalar" aria-hidden="true">' + Array.from({ length: m }, (_, j) => '<i class="' + (j < i ? 'ok' : j === i ? 'simdi' : '') + '"></i>').join('') + '</div>' +
+    '<div class="duello' + (secim != null ? ' secildi' : '') + '" id="duello">' + kart(A, 'A') + '<span class="vs">VS</span>' + kart(B, 'B') + '</div>' +
+    '<div class="tel-alt" style="justify-content:center"><span class="etiket" id="telDurum">' +
+    (secim != null ? '✓ Oyun alındı · değiştirmek için diğerine dokun' : 'Tahtadaki eşleşme · birine dokun') + '</span></div></div>');
+  app.querySelectorAll('.secenek').forEach((b) => { b.onclick = () => oyVer(i, Number(b.dataset.id)); });
   /* sıradaki eşleşmenin görsellerini önceden indir */
   if (i + 1 < m) [k[2 * i + 2], k[2 * i + 3]].forEach((id) => { new Image().src = gorsel(id); });
 }
 
-function oyVer(i, id, dugme) {
-  if (O.kilit) return;
-  const S = O.S, tur = S.tur, m = S.kartlar.length / 2;
+function oyVer(i, id) {
+  const S = O.S, tur = S.tur, anahtar = 't' + tur;
+  const s = oylarim(tur);
+  if (O.kilit || s[i] === id) return;
   O.kilit = true;
-  const anahtar = 't' + tur;
-  O.ben[anahtar] = Object.assign({}, O.ben[anahtar], { [i]: id });
-  dugme.classList.add('secili');
-  document.getElementById('duello').classList.add('secildi');
+  const onceki = s[i];
+  O.ben[anahtar] = Object.assign({}, s, { [i]: id });
+  telMac(i);
   if (navigator.vibrate) try { navigator.vibrate(12); } catch (e) {}
   F.setDoc(oyRef(O.kod, F.uid), { [anahtar]: { [i]: id }, son: Date.now() }, { merge: true }).catch((e) => {
     console.warn('[uwufufu] oy', e);
-    delete O.ben[anahtar][i];
+    if (onceki == null) delete O.ben[anahtar][i]; else O.ben[anahtar][i] = onceki;
     bildir('Oyun gönderilemedi, tekrar dene');
-    O.sira = i;
-    if (O.S && O.S.durum === 'oylama' && O.S.tur === tur) telCiz();
-  });
-  setTimeout(() => {
-    O.kilit = false;
-    if (!O.S || O.S.durum !== 'oylama' || O.S.tur !== tur) return;
-    const sonraki = ilkBos(m, tur, i + 1);
-    O.sira = sonraki < m ? sonraki : ilkBos(m, tur);
-    telCiz();
-  }, 380);
+    if (O.S && O.S.durum === 'oylama' && O.S.tur === tur && (O.S.mac || 0) === i) telMac(i);
+  }).finally(() => { O.kilit = false; });
 }
 
 function secimListesi(k, s, kazananlar) {
@@ -517,13 +546,6 @@ function secimListesi(k, s, kazananlar) {
     h += '<li class="' + durum + '">' + foto(id) + '<span>' + esc(metin(id)) + '</span>' + (kazananlar ? '<b>' + (durum === ' gecti' ? '✓' : '✗') + '</b>' : '') + '</li>';
   }
   return h + '</ul>';
-}
-
-function telTurBitti() {
-  const S = O.S;
-  telBekle('✅', turAdi(S.kartlar.length) + ' oyların tamam', 'Herkes bitirince tahtada tur kapanacak ve sonraki eşleşmeler açılacak.',
-    '<button class="btn ikincil" id="gozden">Seçimlerimi gözden geçir</button>' + secimListesi(S.kartlar, oylarim(S.tur)));
-  document.getElementById('gozden').onclick = () => { O.sira = 0; telCiz(); };
 }
 
 function telSonuc() {
