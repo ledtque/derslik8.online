@@ -44,6 +44,21 @@ try {
   await stat(join(KOK, 'kelime', 'app.js'));
   tamam('kelime sayfası ve betiği var');
 } catch (e) { kotu('kelime uygulaması eksik: ' + e.message); }
+// Uwufufu (/uwufufu): sayfa, betikler ve 32 kartın görseli yayında olmalı
+try {
+  await stat(join(KOK, 'uwufufu', 'index.html'));
+  await stat(join(KOK, 'uwufufu', 'qr.js'));
+  const uw = await readFile(join(KOK, 'uwufufu', 'app.js'), 'utf8');
+  const kart = (uw.match(/const KARTLAR = \[([\s\S]*?)\n\];/) || [])[1] || '';
+  const adet = (kart.match(/^\s*'/gm) || []).length;
+  denetle(adet === 32, `uwufufu 32 kart içeriyor (${adet})`);
+  const eksik = [];
+  for (let i = 1; i <= 32; i++) {
+    try { await stat(join(KOK, 'uwufufu', 'gorseller', String(i).padStart(2, '0') + '.jpg')); } catch { eksik.push(i); }
+  }
+  denetle(!eksik.length, 'uwufufu görselleri tam' + (eksik.length ? ' (eksik: ' + eksik.join(', ') + ')' : ''));
+  denetle(/id="panel-uwufufu"/.test(html) && /href="uwufufu\/\?tahta"/.test(html), 'ana sayfada Uwufufu sekmesi var');
+} catch (e) { kotu('uwufufu eksik: ' + e.message); }
 
 // ---------------------------------------------------------------- 2. Sunucu
 const sunucu = createServer(async (req, res) => {
@@ -93,8 +108,10 @@ async function sayfaAc(ad, secenek, veri) {
 }
 
 async function sekmeler(pg, mobil) {
-  for (const s of ['program', 'takvim', 'sinav', 'gorev']) {
-    if (mobil) await pg.click(`#mob-btn-${s}`);
+  for (const s of ['program', 'takvim', 'sinav', 'gorev', 'uwufufu']) {
+    // Uwufufu'nun alt menüde düğmesi yok; telefonda Menü'deki satırdan açılır
+    if (mobil && s === 'uwufufu') await pg.evaluate(() => window.showMain('uwufufu', document.getElementById('mtab-uwufufu')));
+    else if (mobil) await pg.click(`#mob-btn-${s}`);
     else await pg.evaluate((x) => window.showMain(x, document.querySelector(`.mtab[onclick*="'${x}'"]`)), s);
     await pg.waitForTimeout(300);
     const gorunur = await pg.evaluate((x) => {

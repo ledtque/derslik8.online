@@ -1299,3 +1299,27 @@ html:not([data-tema="guz"]):not([data-tema="kis"]) .header .header-liquid-mask .
 .d8-atla{position:fixed;top:10px;left:10px;z-index:10000;padding:10px 16px;border-radius:12px;background:var(--navy);color:#fff;font-weight:700;font-size:14px;text-decoration:none;box-shadow:var(--shadow-lg);transform:translateY(-200%);opacity:0;transition:transform .2s ease,opacity .2s ease}
 .d8-atla:focus-visible{transform:none;opacity:1;outline:2px solid #fff;outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.d8-atla{transition:none}}
+
+/* ════════════════ uwufufu-panel ════════════════ */
+/* Uwufufu sekmesi: tanıtım + başlat/katıl; oyunun kendisi uwufufu/ sayfasında */
+.uwu-panel{display:flex;flex-direction:column;gap:18px;padding-bottom:24px}
+.uwu-kahraman{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,1fr);gap:18px;background:var(--white);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:var(--shadow-sm)}
+.uwu-etiket{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.uwu-yazi h2{font-size:clamp(22px,3vw,30px);line-height:1.15;letter-spacing:-.02em;color:var(--text);margin:6px 0 10px}
+.uwu-yazi p{color:var(--muted);font-size:14px;line-height:1.6;max-width:62ch}
+.uwu-dugmeler{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.uwu-btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:12px 20px;border-radius:12px;box-shadow:0 3px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.uwu-btn:active{transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+body.dark .uwu-btn{color:#1c1009}
+.uwu-katil{display:flex;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg)}
+.uwu-katil input{width:84px;border:0;background:transparent;color:var(--text);font:700 16px 'JetBrains Mono',monospace;letter-spacing:.2em;text-align:center;padding:10px 6px}
+.uwu-katil button{border:0;border-left:1.5px solid var(--border);background:var(--white);color:var(--text);font:600 14px 'Sora',sans-serif;padding:0 14px;cursor:pointer}
+.uwu-adimlar{list-style:none;display:flex;flex-direction:column;gap:10px;justify-content:center;margin:0;padding:0}
+.uwu-adimlar li{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px 12px}
+.uwu-adimlar b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--white);font-size:13px;flex-shrink:0}
+.uwu-kartlar{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.uwu-kartlar figure{margin:0;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.uwu-kartlar img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--border)}
+.uwu-kartlar figcaption{padding:8px 10px 10px;font-size:12px;font-weight:600;line-height:1.35;color:var(--text)}
+.uwu-kartlar figcaption span{font-family:'JetBrains Mono',monospace;color:var(--muted);font-weight:700}
+@media(max-width:700px){.uwu-kahraman{grid-template-columns:1fr;padding:18px}.uwu-kartlar{grid-template-columns:repeat(2,1fr)}}
