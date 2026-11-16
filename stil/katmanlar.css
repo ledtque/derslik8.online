@@ -1323,3 +1323,23 @@ body.dark .uwu-btn{color:#1c1009}
 .uwu-kartlar figcaption{padding:8px 10px 10px;font-size:12px;font-weight:600;line-height:1.35;color:var(--text)}
 .uwu-kartlar figcaption span{font-family:'JetBrains Mono',monospace;color:var(--muted);font-weight:700}
 @media(max-width:700px){.uwu-kahraman{grid-template-columns:1fr;padding:18px}.uwu-kartlar{grid-template-columns:repeat(2,1fr)}}
+
+/* ════════════════ etkinlik-pano ════════════════ */
+/* Sınıf Etkinliği tahtası: Liste / Pano geçişi ve pano kartları.
+   Pano kartının rengi --h (ton) değişkeninden; boyutu kaç kişinin yazdığından. */
+.d8-act-gorunum-satir{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:6px}
+.d8-act-gorunum{display:inline-flex;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:3px}
+.d8-act-gorunum button{border:0;background:transparent;color:var(--muted);font:600 13px 'Sora',sans-serif;padding:6px 14px;border-radius:7px;cursor:pointer}
+.d8-act-gorunum button.on{background:var(--white);color:var(--text);box-shadow:var(--shadow-sm)}
+.d8-act-pano{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px;padding:8px 0 24px}
+.d8-act-pano-kart{--h:200;display:inline-flex;align-items:center;gap:.45em;max-width:100%;padding:.45em .8em;border-radius:.6em;
+  background:hsl(var(--h) 85% 93%);color:hsl(var(--h) 70% 26%);border:2px solid hsl(var(--h) 65% 78%);
+  font-family:'Sora',sans-serif;font-weight:700;line-height:1.2;letter-spacing:-.01em;overflow-wrap:anywhere;
+  transition:font-size .45s cubic-bezier(.34,1.4,.64,1)}
+.d8-act-pano-kart b{font-family:'JetBrains Mono',monospace;font-size:.62em;background:hsl(var(--h) 70% 36%);color:#fff;padding:.15em .45em;border-radius:99px;flex-shrink:0}
+.d8-act-pano-kart.yeni{animation:d8ActPop .35s cubic-bezier(.34,1.56,.64,1) both}
+.d8-act-pano-kart.buyudu{animation:d8PanoNabiz .6s ease}
+@keyframes d8PanoNabiz{40%{transform:scale(1.08);box-shadow:0 0 0 6px hsl(var(--h) 80% 70% / .35)}}
+body.dark .d8-act-pano-kart{background:hsl(var(--h) 35% 19%);color:hsl(var(--h) 85% 82%);border-color:hsl(var(--h) 40% 34%)}
+body.dark .d8-act-pano-kart b{background:hsl(var(--h) 70% 62%);color:#111}
+@media(prefers-reduced-motion:reduce){.d8-act-pano-kart{transition:none;animation:none!important}}

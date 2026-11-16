@@ -4143,8 +4143,13 @@ window.d8ActStartBoard = function(){
         '<div class="d8-act-code-big">' + res.code + '</div>' +
         d8ActQrBlock(res.code) +
       '</div>' +
-      '<div class="d8-act-hint" id="d8-act-count" style="margin-top:6px;font-weight:700;">0 cümle</div>' +
+      '<div class="d8-act-gorunum-satir"><div class="d8-act-hint" id="d8-act-count" style="font-weight:700;">0 cümle</div>' +
+        '<div class="d8-act-gorunum" role="group" aria-label="Görünüm">' +
+          '<button type="button" data-gorunum="liste" onclick="d8ActGorunum(\'liste\')">Liste</button>' +
+          '<button type="button" data-gorunum="pano" onclick="d8ActGorunum(\'pano\')">Pano</button>' +
+        '</div></div>' +
       '<div class="d8-act-wall" id="d8-act-wall"><div class="d8-act-empty">Henüz kimse cümle göndermedi…</div></div>';
+    d8ActGorunumDugmeleri();
     window.d8ActivityListenEntries(res.code, function(entries){ d8ActRenderWall(entries); });
   }).catch(function(e){
     console.error(e);
@@ -4194,7 +4199,68 @@ window.d8ActCopyLink = function(code){
   }
 };
 
+/* Tahta görünümü: 'liste' (herkesin cümlesi tek tek) ya da 'pano' (aynı
+   cümleler birleşir, kaç kişi yazdıysa o kadar büyük, her cevabın kendi rengi) */
+function d8ActGorunumAl(){
+  try { return localStorage.getItem('d8ActGorunum') === 'pano' ? 'pano' : 'liste'; } catch(e){ return 'liste'; }
+}
+function d8ActGorunumDugmeleri(){
+  var g = d8ActGorunumAl();
+  document.querySelectorAll('.d8-act-gorunum button').forEach(function(b){
+    var on = b.getAttribute('data-gorunum') === g;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+window.d8ActGorunum = function(g){
+  try { localStorage.setItem('d8ActGorunum', g); } catch(e){}
+  d8ActGorunumDugmeleri();
+  window._d8ActPanoOnceki = null;
+  d8ActRenderWall(window._d8ActSonGirdiler || []);
+};
+/* "Arılar!", "arılar" ve " ARILAR " aynı cevap sayılır */
+function d8ActAnahtar(t){
+  return String(t || '').toLocaleLowerCase('tr-TR').replace(/\s+/g, ' ').replace(/[\s.,!?;:…"'“”‘’()\-]+$/g, '').replace(/^[\s"'“”‘’(\-]+/g, '').trim();
+}
+/* Renk, cevabın ilk geliş sırasından: komşu cevaplar birbirinden belirgin
+   tonlar alır ve yeni cevap gelince eskilerin rengi değişmez */
+function d8ActRenk(sira){
+  return [8, 195, 95, 305, 45, 172, 275, 145, 335, 215, 28, 248][sira % 12];
+}
+function d8ActPano(wall, entries){
+  var gruplar = {}, sira = [];
+  entries.forEach(function(e){
+    var k = d8ActAnahtar(e.text);
+    if (!k) return;
+    if (!gruplar[k]) { gruplar[k] = { k: k, n: 0, yazim: {}, ilk: sira.length }; sira.push(gruplar[k]); }
+    var g = gruplar[k];
+    g.n++;
+    var y = String(e.text).trim();
+    g.yazim[y] = (g.yazim[y] || 0) + 1;
+  });
+  /* çok yazılan önce; eşitse önce gelen */
+  sira.sort(function(a, b){ return b.n - a.n || a.ilk - b.ilk; });
+  var enCok = sira.length ? sira[0].n : 1;
+  var onceki = window._d8ActPanoOnceki || {}, simdi = {};
+  wall.innerHTML = '<div class="d8-act-pano">' + sira.map(function(g){
+    /* gösterilecek yazım: en çok kullanılan biçim */
+    var metin = Object.keys(g.yazim).sort(function(a, b){ return g.yazim[b] - g.yazim[a]; })[0];
+    var oran = enCok > 1 ? Math.sqrt((g.n - 1) / (enCok - 1)) : 0;
+    var boy = 16 + oran * 40;
+    if (metin.length > 60) boy *= 0.62; else if (metin.length > 28) boy *= 0.8;
+    boy = Math.max(17, boy);
+    simdi[g.k] = g.n;
+    var yeni = onceki[g.k] == null ? ' yeni' : (g.n > onceki[g.k] ? ' buyudu' : '');
+    return '<div class="d8-act-pano-kart' + yeni + '" style="--h:' + d8ActRenk(g.ilk) + ';font-size:' + Math.round(boy) + 'px" title="' + g.n + ' kişi yazdı">' +
+      '<span>' + d8ActEsc(metin) + '</span>' + (g.n > 1 ? '<b>×' + g.n + '</b>' : '') + '</div>';
+  }).join('') + '</div>';
+  window._d8ActPanoOnceki = simdi;
+  var countEl = document.getElementById('d8-act-count');
+  if (countEl) countEl.textContent = entries.length + ' cümle · ' + sira.length + ' farklı cevap';
+}
+
 function d8ActRenderWall(entries){
+  window._d8ActSonGirdiler = entries || [];
   var wall = document.getElementById('d8-act-wall');
   var countEl = document.getElementById('d8-act-count');
   if(countEl) countEl.textContent = entries.length + (entries.length===1?' cümle':' cümle');
@@ -4203,6 +4269,7 @@ function d8ActRenderWall(entries){
     wall.innerHTML = '<div class="d8-act-empty">Henüz kimse cümle göndermedi…</div>';
     return;
   }
+  if (d8ActGorunumAl() === 'pano') return d8ActPano(wall, entries);
   wall.innerHTML = entries.map(function(e){
     return '<div class="d8-act-sentence" style="display:flex;align-items:flex-start;gap:10px;">' +
       '<span style="flex:1;">' + d8ActEsc(e.text) + '</span>' +
