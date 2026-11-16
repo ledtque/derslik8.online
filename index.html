@@ -4177,11 +4177,33 @@ function d8ActQrBlock(code){
     return '';
   }
   return '<div class="d8-act-qr-box">' +
-      '<div class="d8-act-qr">' + svg + '</div>' +
-      '<div class="d8-act-qr-label">Kamerayla okut</div>' +
+      '<button type="button" class="d8-act-qr" onclick="d8ActQrBuyut(\'' + code + '\')" title="Büyütmek için dokun" aria-label="QR kodu büyüt">' + svg + '</button>' +
+      '<div class="d8-act-qr-label">Kamerayla okut · büyütmek için dokun</div>' +
       '<button class="d8-act-copy" onclick="d8ActCopyLink(\'' + code + '\')">' + d8Ikon('baglanti') + 'Bağlantıyı kopyala</button>' +
     '</div>';
 }
+
+/* QR'ı tam ekran büyütür: arka sıradakiler de okutabilsin. Dokun ya da Esc = kapat */
+window.d8ActQrBuyut = function(code){
+  var eski = document.getElementById('d8-act-qr-buyuk');
+  if (eski) eski.remove();
+  var svg = '';
+  try { svg = window.d8QR.svg(d8ActJoinUrl(code), { dark:'#0F172A', light:'#FFFFFF', quiet:2 }); } catch(e){ return; }
+  var d = document.createElement('div');
+  d.id = 'd8-act-qr-buyuk';
+  d.setAttribute('role', 'dialog');
+  d.setAttribute('aria-label', 'Büyük QR kod');
+  d.tabIndex = -1;
+  d.innerHTML = '<div class="d8-act-qr-buyuk-ic">' + svg + '</div>' +
+    '<div class="d8-act-qr-buyuk-kod">' + d8ActEsc(code) + '</div>' +
+    '<div class="d8-act-qr-buyuk-not">Kapatmak için dokun</div>';
+  function kapat(){ d.remove(); document.removeEventListener('keydown', tus, true); }
+  function tus(e){ if (e.key === 'Escape') { e.stopPropagation(); kapat(); } }
+  d.onclick = kapat;
+  document.addEventListener('keydown', tus, true);
+  document.body.appendChild(d);
+  d.focus();
+};
 
 window.d8ActCopyLink = function(code){
   var url = d8ActJoinUrl(code);

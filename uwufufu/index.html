@@ -71,11 +71,11 @@ a{color:inherit}
 .tur-adi{font-size:clamp(1.4rem,2.4vw,2.2rem);font-weight:800;letter-spacing:-.02em;line-height:1.1}
 .ilerleme{height:8px;border-radius:99px;background:var(--yuzey2);overflow:hidden;margin-top:8px;max-width:560px}
 .ilerleme b{display:block;height:100%;background:linear-gradient(90deg,var(--vurgu),var(--vurgu2));border-radius:99px;transition:width .5s}
-.kod-rozet{display:flex;align-items:center;gap:10px;background:var(--yuzey);border:1px solid var(--cizgi);border-radius:14px;padding:6px 12px 6px 6px}
+.kod-rozet{cursor:zoom-in;font:inherit;color:inherit;text-align:left;display:flex;align-items:center;gap:10px;background:var(--yuzey);border:1px solid var(--cizgi);border-radius:14px;padding:6px 12px 6px 6px}
 .kod-rozet .qr-mini{width:64px;height:64px;border-radius:8px;overflow:hidden;background:#fff}
 .kod-rozet .no{font-size:1.5rem;letter-spacing:.12em}
 .lobi{flex:1;display:grid;grid-template-columns:minmax(260px,420px) 1fr;gap:clamp(18px,3vw,48px);align-items:center;max-width:1280px;margin:0 auto;width:100%}
-.qr-buyuk{background:#fff;border-radius:24px;padding:16px;box-shadow:var(--golge);aspect-ratio:1}
+.qr-buyuk{cursor:zoom-in;display:block;width:100%;background:#fff;border-radius:24px;padding:16px;box-shadow:var(--golge);aspect-ratio:1}
 .lobi h1{font-size:clamp(2rem,4.4vw,4rem);line-height:1.02;letter-spacing:-.03em}
 .lobi h1 em{font-style:normal;color:var(--vurgu)}
 .lobi .kod-buyuk{font:700 clamp(2.6rem,6vw,5.5rem)/1 var(--mono);letter-spacing:.14em;color:var(--vurgu);margin:10px 0 4px}
@@ -119,6 +119,12 @@ a{color:inherit}
 .yol li .tur{font-weight:800;min-width:96px}
 .yol li .rakip{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--soluk)}
 .yol li .skor{font-family:var(--mono);font-weight:700}
+/* Büyütülmüş QR perdesi */
+.qr-perde{position:fixed;inset:0;z-index:70;background:rgba(15,12,10,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;cursor:zoom-out}
+.qr-perde-ic{width:min(78vh,88vw);aspect-ratio:1;background:#fff;border-radius:24px;padding:min(3vh,20px)}
+.qr-perde-ic svg{display:block;width:100%;height:100%}
+.qr-perde-kod{font:700 clamp(32px,7vh,72px)/1 var(--mono);letter-spacing:.18em;color:#fff}
+.qr-perde-not{font-size:13px;font-weight:600;color:rgba(255,255,255,.6)}
 canvas#konfeti{position:fixed;inset:0;pointer-events:none;z-index:50}
 
 /* ---------- Telefon ---------- */
@@ -166,6 +172,6 @@ canvas#konfeti{position:fixed;inset:0;pointer-events:none;z-index:50}
 <main id="app" aria-live="polite"><div class="giris"><p class="durum-yazi">Yükleniyor…</p></div></main>
 <canvas id="konfeti" hidden></canvas>
 <script src="qr.js?v=3"></script>
-<script type="module" src="app.js?v=3"></script>
+<script type="module" src="app.js?v=4"></script>
 </body>
 </html>

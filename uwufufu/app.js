@@ -258,7 +258,7 @@ function tahtaTamCiz() {
     const qr = qrSvg(kod);
     ekran('<div class="tahta"><div class="tahta-ust">' + MARKA + '<div class="orta"></div>' + dugmeUst + '</div>' +
       '<section class="lobi">' +
-      (qr ? '<div class="qr-buyuk" aria-label="Katılma QR kodu">' + qr + '</div>' : '<div class="panel">QR için sayfayı internet adresinden aç.</div>') +
+      (qr ? '<button type="button" class="qr-buyuk" data-qr-buyut aria-label="Katılma QR kodu, büyütmek için dokun">' + qr + '</button>' : '<div class="panel">QR için sayfayı internet adresinden aç.</div>') +
       '<div><div class="etiket">Akademi Uwufufu · 32 kart</div><h1>Akademinin en büyük çilesi <em>hangisi?</em></h1>' +
       '<p style="margin-top:14px;color:var(--soluk);font-size:clamp(1rem,1.5vw,1.25rem)">Telefonunla QR\'ı okut ya da kodu gir:</p>' +
       '<div class="kod-buyuk">' + kod + '</div><div class="adres">' + esc(katilmaAdresi(kod)) + '</div>' +
@@ -311,8 +311,25 @@ function tahtaTamCiz() {
 
 function kodRozet() {
   const qr = qrSvg(T.kod);
-  return '<div class="kod-rozet">' + (qr ? '<div class="qr-mini">' + qr + '</div>' : '') + '<div><div class="etiket">Katılma kodu</div><div class="no">' + T.kod + '</div></div></div>';
+  return '<button type="button" class="kod-rozet" data-qr-buyut title="Büyütmek için dokun">' + (qr ? '<div class="qr-mini">' + qr + '</div>' : '') + '<div><div class="etiket">Katılma kodu</div><div class="no">' + T.kod + '</div></div></button>';
 }
+
+/* Köşedeki QR'a dokununca tam ekran büyür; dokun ya da Esc = kapat */
+function qrBuyut() {
+  const qr = qrSvg(T.kod);
+  if (!qr) return;
+  const d = document.createElement('div');
+  d.className = 'qr-perde';
+  d.setAttribute('role', 'dialog');
+  d.setAttribute('aria-label', 'Büyük QR kod');
+  d.innerHTML = '<div class="qr-perde-ic">' + qr + '</div><div class="qr-perde-kod">' + T.kod + '</div><div class="qr-perde-not">Kapatmak için dokun</div>';
+  const kapat = () => { d.remove(); document.removeEventListener('keydown', tus, true); };
+  const tus = (e) => { if (e.key === 'Escape') { e.stopPropagation(); kapat(); } else if (['ArrowRight', 'Enter', ' ', 'PageDown'].includes(e.key)) e.stopPropagation(); };
+  d.onclick = kapat;
+  document.addEventListener('keydown', tus, true);
+  document.body.appendChild(d);
+}
+document.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('[data-qr-buyut]')) qrBuyut(); });
 
 /* Tahta: açık eşleşme büyük gösterilir, oylar canlı akar */
 function tahtaMacCiz(dugmeUst) {

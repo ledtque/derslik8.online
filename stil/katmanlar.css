@@ -1343,3 +1343,11 @@ body.dark .uwu-btn{color:#1c1009}
 body.dark .d8-act-pano-kart{background:hsl(var(--h) 35% 19%);color:hsl(var(--h) 85% 82%);border-color:hsl(var(--h) 40% 34%)}
 body.dark .d8-act-pano-kart b{background:hsl(var(--h) 70% 62%);color:#111}
 @media(prefers-reduced-motion:reduce){.d8-act-pano-kart{transition:none;animation:none!important}}
+/* Büyütülmüş QR: ekranın kısa kenarına sığacak kadar büyük */
+button.d8-act-qr{cursor:zoom-in;transition:transform .15s}
+button.d8-act-qr:hover{transform:scale(1.03)}
+#d8-act-qr-buyuk{position:fixed;inset:0;z-index:100001;background:rgba(15,23,42,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;cursor:zoom-out;animation:d8ActPop .25s ease both;outline:0}
+.d8-act-qr-buyuk-ic{width:min(78vh,88vw);aspect-ratio:1;background:#fff;border-radius:24px;padding:min(3vh,20px);box-sizing:border-box}
+.d8-act-qr-buyuk-ic svg{display:block;width:100%;height:100%}
+.d8-act-qr-buyuk-kod{font:700 clamp(32px,7vh,72px)/1 'JetBrains Mono',monospace;letter-spacing:.18em;color:#fff}
+.d8-act-qr-buyuk-not{font:600 13px 'Sora',sans-serif;color:rgba(255,255,255,.6)}
