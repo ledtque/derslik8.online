@@ -167,7 +167,12 @@ async function tahtaBaslat() {
   let kod = oku(GECICI);
   if (kod) {
     const s = await F.getDoc(oturumRef(kod)).catch(() => null);
-    if (!(s && s.exists() && s.data().moderatorUid === F.uid)) kod = null;
+    const d = s && s.exists() ? s.data() : null;
+    /* Yalnız bu sürümle kurulmuş (mac/canli alanı olan), bitmemiş ve 12 saatten
+       yeni bir oyuna dönülür; eski sürümden kalan oyunun oyları karışmasın */
+    const uygun = d && d.moderatorUid === F.uid && typeof d.mac === 'number' && d.canli &&
+      d.durum !== 'bitti' && Date.now() - (d.createdAt || 0) < 12 * 3600 * 1000;
+    if (!uygun) { if (d && d.moderatorUid === F.uid) { T.kod = kod; await oyunuSil(); } kod = null; }
   }
   if (!kod) kod = await oturumKur();
   sakla(GECICI, kod);
@@ -246,7 +251,8 @@ function macHtml(k, i, sonuc) {
 
 function tahtaTamCiz() {
   const S = T.S, kod = T.kod;
-  const dugmeUst = '<button class="btn ikincil kucuk" id="tamEkran" title="Tam ekran">⛶ Tam ekran</button>';
+  const dugmeUst = (S.durum !== 'lobi' ? '<button class="btn ikincil kucuk" id="yeniOyun" title="Bu oyunu silip yeni kodla baştan başla">↺ Yeni oyun</button>' : '') +
+    '<button class="btn ikincil kucuk" id="tamEkran" title="Tam ekran">⛶ Tam ekran</button>';
 
   if (S.durum === 'lobi') {
     const qr = qrSvg(kod);
@@ -291,6 +297,11 @@ function tahtaTamCiz() {
   } else if (S.durum === 'bitti') {
     sampiyonCiz();
   }
+  const yo = document.getElementById('yeniOyun');
+  if (yo) yo.onclick = async () => {
+    if (!yo.dataset.onay) { yo.dataset.onay = '1'; yo.textContent = 'Emin misin? Tekrar bas'; setTimeout(() => { if (yo.isConnected) { delete yo.dataset.onay; yo.textContent = '↺ Yeni oyun'; } }, 4000); return; }
+    otoIptal(); await oyunuSil(); location.replace('?tahta');
+  };
   const te = document.getElementById('tamEkran');
   if (te) te.onclick = () => {
     if (document.fullscreenElement) document.exitFullscreen();
@@ -305,6 +316,7 @@ function kodRozet() {
 
 /* Tahta: açık eşleşme büyük gösterilir, oylar canlı akar */
 function tahtaMacCiz(dugmeUst) {
+  T.acilis = Date.now();
   const S = T.S, k = S.kartlar, m = k.length / 2, i = S.mac || 0;
   const son = i === m - 1;
   ekran('<div class="tahta sabit"><div class="tahta-ust">' + MARKA +
@@ -333,7 +345,7 @@ function tahtaGuncelle() {
     if (ub) ub.textContent = (c.i + 1) + ' / ' + c.m + ' · ' + c.oylayan + '/' + c.katilan + ' kişi oyladı';
     /* Katılan herkes oyladıysa kısa bir bekleyişten sonra kendiliğinden geçilir */
     const hepsi = c.katilan > 0 && c.oylayan >= c.katilan;
-    if (hepsi && !T.oto) T.oto = setTimeout(() => { T.oto = null; macBitir(); }, 1500);
+    if (hepsi && !T.oto) T.oto = setTimeout(() => { T.oto = null; macBitir(); }, Math.max(1500, 3000 - (Date.now() - (T.acilis || 0))));
     else if (!hepsi) otoIptal();
     const ab = document.getElementById('altBilgi');
     if (ab) ab.textContent = !c.katilan ? 'Henüz kimse katılmadı — QR\'ı okutun.'
