@@ -7,7 +7,7 @@
  * Akış: tahtada tek eşleşme görünür, herkes aynı anda onu oylar (oyunu
  * değiştirebilir). Tahta "Sıradaki"ye basınca en çok oyu alan kazanır
  * (eşitlikte kura) ve sonraki eşleşme açılır. Tur bitince kazananlar bir
- * sonraki tura geçer: 32 → 16 → 8 → 4 → 2 → şampiyon.
+ * sonraki tura geçer: 16 → 8 → 4 → 2 → şampiyon.
  *
  * Firestore:
  *   uwufufu/{kod}             durum: 'lobi'|'oylama'|'sonuc'|'bitti', tur, mac (açık eşleşme),
@@ -19,37 +19,21 @@
 
 const KARTLAR = [
   'Eylül\'de başlayacak denilip yıl sonu, Ocak, Şubat derken ancak Nisan\'da kayıt alınması',
-  'Yurt ücretlerinin akademi başlamadan 3 gün önce açıklanması',
-  'Yurtta kalacakların son iki günde açıklanması',
-  'Dekontta "öğretmen adayı harçlığı" yazan maaş yatması',
-  'Kayıta git gel, taşınma, kira, depozito, komisyon masrafları üstüne maaşın önden verilmeyip 17 gün sonra 17 günlük yatması',
-  'Akademinin ilk günü otobüsler dolu diye durakta saatlik bekleme',
-  'Genel otobüs çilesi',
+  'Yurt ücretlerinin akademi başlamadan 3 gün önce, yurtta kalacakların son iki günde açıklanması',
+  'Dekontta "öğretmen adayı harçlığı" yazan, taşınma masraflarının üstüne 17 gün sonra 17 günlük yatan maaş',
+  'İlk gün durakta saatlik bekleme ve bitmeyen otobüs çilesi',
   'Adı "Prestij" olup kendisi vukuat ve sıkıntı yuvası olan meşhur Akbaş Prestij Rezidans',
-  'Voleybol draması',
-  'Son sınav bir gün erkene alınsın mı alınmasın mı draması',
-  'Teorik ve uygulamalı sınavlardaki adaletsiz puanlamalar',
-  '10,5 aylık süreçte sadece 1 haftanın ara tatil olması',
-  'Teorik ders hocasının tüm haftaları öğretmen adaylarına sunum şeklinde kitlemesi ve tüm dönem yatması',
-  '100 beklediğimiz sınav kağıtlarını okumadan "aynı notlardan çalışmışsınız" deyip herkese 80 verme rezaleti',
-  'Uygulama notunun 100 olmaması',
-  'Akademi sıralarının rahatsızlığı',
-  'Yazın dersliklerdeki sıcaklık seviyesi',
+  'Voleybol draması ve son sınav bir gün erkene alınsın mı alınmasın mı draması',
+  'Teorik ve uygulamalı sınavlardaki adaletsiz puanlamalar ve 100 olmayan uygulama notu',
+  'Atanınca 2 haftada kazanılacak deneyimin 10,5 aya yayılması ve bu sürede sadece 1 hafta ara tatil',
+  'Akademi sıralarının rahatsızlığı ve yazın dersliklerdeki sıcaklık',
   'Derslikleri basan arılar',
-  'Atanınca 2 haftada kazanılacak öğretmenlik deneyiminin 10,5 aya yayılması',
   'Fiyatına karşılık alınan yemeğin yetersizliği',
-  'Yemekhane sırası',
-  'Kantin sırası',
+  'Yemekhane ve kantin sırası',
   'Hocasını ikna edenlerin öğle arasına veya çıkışa 5-10 dk erken çıkması',
-  'Kültür ve sanat dersinin varlığı',
-  'Kültür ve sanat dersinde boya kalemi getirmeyenin eksi alması',
-  'Akademinin ilk günü eğitim personeline o gün ne yapılacağına dair bilgi verilmemiş olması',
-  'Eğitim personelinin öğretmen adaylarının hangi sistemden geçerek geldiğini bilmemesi ve akademi sürecinden habersiz olması',
-  'İlk dönem sınavların nasıl ve ne zaman olacağının son dakikaya kadar devlet sırrı olarak tutulması',
-  'Uygulamalı derslerin kılavuzlarının son dakikaya kadar devlet sırrı olarak saklanması',
-  'Konferans ve seminerlerin akademi çıkış saatinden sonra yapılması',
-  'Hafta sonunu kitleyen ÖBA eğitimleri',
-  'İlk dönem her bir maddeye 3000 karakter doldurulacak 7 sayfalık form doldurma işi'
+  'Kültür ve sanat dersinin varlığı ve boya kalemi getirmeyenin eksi alması',
+  'İlk dönem sınav takviminin ve uygulamalı ders kılavuzlarının son dakikaya kadar devlet sırrı olarak saklanması',
+  'Mesai sonrası konferanslar, hafta sonunu kitleyen ÖBA eğitimleri ve 3000 karakterlik 7 sayfalık form'
 ];
 const IDLER = KARTLAR.map((_, i) => i + 1);
 const metin = (id) => KARTLAR[id - 1] || '';
@@ -141,7 +125,7 @@ const BOS_CANLI = () => ({ a: [], b: [], k: [], kura: [] });
 function girisCiz(uyari) {
   ekran('<div class="giris">' +
     '<div class="ust">' + MARKA + '</div>' +
-    '<div><div class="etiket">Akademi Uwufufu</div><h1>32 dert, <em>tek şampiyon.</em></h1></div>' +
+    '<div><div class="etiket">Akademi Uwufufu</div><h1>16 dert, <em>tek şampiyon.</em></h1></div>' +
     '<p>Akademinin en büyük çilesini birlikte seçiyoruz. Tahtadaki eşleşmeyi herkes aynı anda telefonundan oylar; en çok oyu alan kazanır.</p>' +
     (uyari ? '<div class="panel" role="alert">' + esc(uyari) + '</div>' : '') +
     '<div class="panel" style="display:flex;flex-direction:column;gap:12px"><div class="etiket">Oyuna katıl</div>' +
@@ -259,7 +243,7 @@ function tahtaTamCiz() {
     ekran('<div class="tahta"><div class="tahta-ust">' + MARKA + '<div class="orta"></div>' + dugmeUst + '</div>' +
       '<section class="lobi">' +
       (qr ? '<button type="button" class="qr-buyuk" data-qr-buyut aria-label="Katılma QR kodu, büyütmek için dokun">' + qr + '</button>' : '<div class="panel">QR için sayfayı internet adresinden aç.</div>') +
-      '<div><div class="etiket">Akademi Uwufufu · 32 kart</div><h1>Akademinin en büyük çilesi <em>hangisi?</em></h1>' +
+      '<div><div class="etiket">Akademi Uwufufu · 16 kart</div><h1>Akademinin en büyük çilesi <em>hangisi?</em></h1>' +
       '<p style="margin-top:14px;color:var(--soluk);font-size:clamp(1rem,1.5vw,1.25rem)">Telefonunla QR\'ı okut ya da kodu gir:</p>' +
       '<div class="kod-buyuk">' + kod + '</div><div class="adres">' + esc(katilmaAdresi(kod)) + '</div>' +
       '<div class="katilimci"><span class="nabiz"></span><span id="katSay">0 kişi katıldı</span></div>' +

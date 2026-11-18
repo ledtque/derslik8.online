@@ -44,16 +44,16 @@ try {
   await stat(join(KOK, 'kelime', 'app.js'));
   tamam('kelime sayfası ve betiği var');
 } catch (e) { kotu('kelime uygulaması eksik: ' + e.message); }
-// Uwufufu (/uwufufu): sayfa, betikler ve 32 kartın görseli yayında olmalı
+// Uwufufu (/uwufufu): sayfa, betikler ve 16 kartın görseli yayında olmalı
 try {
   await stat(join(KOK, 'uwufufu', 'index.html'));
   await stat(join(KOK, 'uwufufu', 'qr.js'));
   const uw = await readFile(join(KOK, 'uwufufu', 'app.js'), 'utf8');
   const kart = (uw.match(/const KARTLAR = \[([\s\S]*?)\n\];/) || [])[1] || '';
   const adet = (kart.match(/^\s*'/gm) || []).length;
-  denetle(adet === 32, `uwufufu 32 kart içeriyor (${adet})`);
+  denetle(adet === 16, `uwufufu 16 kart içeriyor (${adet})`);
   const eksik = [];
-  for (let i = 1; i <= 32; i++) {
+  for (let i = 1; i <= 16; i++) {
     try { await stat(join(KOK, 'uwufufu', 'gorseller', String(i).padStart(2, '0') + '.jpg')); } catch { eksik.push(i); }
   }
   denetle(!eksik.length, 'uwufufu görselleri tam' + (eksik.length ? ' (eksik: ' + eksik.join(', ') + ')' : ''));
