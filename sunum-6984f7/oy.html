@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hangisi kitaptaki kayıt?</title>
+<style>
+:root{--paper:#FBFAF7;--ink:#16202E;--mut:#5B6472;--rule:#DAD6CC;--a:#0F6670;--b:#C8692A}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font:17px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;padding:max(20px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom))}
+.k{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--a);font-weight:700}
+h1{font:700 28px/1.2 Georgia,serif;margin:6px 0 4px}
+p.m{color:var(--mut)}
+.ops{flex:1;display:flex;flex-direction:column;gap:16px;margin:22px 0 14px}
+button{flex:1;border:3px solid transparent;border-radius:18px;font:800 40px/1 system-ui,sans-serif;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:transform .12s,opacity .2s}
+button small{font-size:16px;font-weight:600;opacity:.9}
+button.A{background:var(--a)}button.B{background:var(--b)}
+button:active{transform:scale(.97)}
+.secildi button{opacity:.35}
+.secildi button.on{opacity:1;border-color:var(--ink);box-shadow:0 0 0 4px #fff inset}
+#d{text-align:center;color:var(--mut);min-height:24px;font-weight:600}
+.bekle{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mut)}
+</style></head>
+<body>
+<p class="k">Sunum · oylama</p>
+<h1>Hangisi kitaptaki kayıt?</h1>
+<p class="m">İki kaydı dinledin. Sence hangisi MEB ders kitabındaki özgün kayıt?</p>
+<div id="app" class="bekle">Bağlanılıyor…</div>
+<script type="module">
+import { firebase, oturum, oy } from './fb.js';
+const app = document.getElementById('app');
+const kod = (new URLSearchParams(location.search).get('k') || '').replace(/\D/g, '');
+const anahtar = 'sunum-oy-' + kod;
+let secim = null; try { secim = Number(localStorage.getItem(anahtar)) || null; } catch (e) {}
+function hata(m) { app.className = 'bekle'; app.textContent = m; }
+function ciz() {
+  app.className = 'ops' + (secim ? ' secildi' : '');
+  app.innerHTML = '<button class="A' + (secim === 1 ? ' on' : '') + '" data-id="1">Kayıt A<small>' + (secim === 1 ? '✓ Oyun' : 'dokun') + '</small></button>' +
+    '<button class="B' + (secim === 2 ? ' on' : '') + '" data-id="2">Kayıt B<small>' + (secim === 2 ? '✓ Oyun' : 'dokun') + '</small></button>';
+  app.querySelectorAll('button').forEach((b) => b.onclick = () => ver(Number(b.dataset.id)));
+  document.getElementById('d').textContent = secim ? 'Oyun alındı. Fikrin değişirse diğerine dokun.' : '';
+}
+let F, kilit = false;
+async function ver(id) {
+  if (kilit || id === secim) return;
+  kilit = true; const once = secim; secim = id; ciz();
+  if (navigator.vibrate) try { navigator.vibrate(12); } catch (e) {}
+  try { await F.setDoc(oy(kod, F.uid), { t0: { 0: id }, son: Date.now() }, { merge: true }); try { localStorage.setItem(anahtar, id); } catch (e) {} }
+  catch (e) { console.warn(e); secim = once; ciz(); document.getElementById('d').textContent = 'Oy gönderilemedi, tekrar dene.'; }
+  finally { kilit = false; }
+}
+(async () => {
+  if (kod.length !== 4) return hata('Kod bulunamadı. Tahtadaki QR kodu yeniden okut.');
+  try {
+    F = await firebase();
+    const s = await F.getDoc(oturum(kod));
+    if (!s.exists()) return hata('Bu oylama kapanmış ya da bulunamadı.');
+    const ben = await F.getDoc(oy(kod, F.uid));
+    if (ben.exists()) { const v = ((ben.data().t0) || {})[0]; if (v) secim = v; }
+    else await F.setDoc(oy(kod, F.uid), { katildi: Date.now() });
+    ciz();
+  } catch (e) { console.warn(e); hata('Bağlanılamadı. İnternet bağlantını kontrol et.'); }
+})();
+</script>
+<p id="d"></p>
+</body></html>
