@@ -678,7 +678,8 @@ em.t{font-style:normal;color:var(--acc);font-weight:600}
 .dgo{display:flex;align-items:center;gap:28px;margin-top:10px}
 .dgb{font-size:30px!important;padding:20px 44px!important}
 .dpk{background:none;border:0;color:#8A97A6;font:600 20px 'Source Sans 3',Arial;text-decoration:underline;cursor:pointer}
-.nb{grid-template-columns:.9fr 1.1fr!important;gap:56px!important}
+.nb{grid-template-columns:.72fr 1.28fr!important;gap:44px!important}
+.nbs{padding:14px 0!important}.nbs b{font-size:27px!important}.nbs p{font-size:21px!important}
 .pnr{display:flex;flex-direction:column;gap:12px;min-height:0}
 .pnq{font-size:26px;line-height:1.4;color:var(--ink);font-weight:600}
 .pnp{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;background:var(--soft);border-radius:10px;padding:18px 20px}
@@ -687,7 +688,7 @@ em.t{font-style:normal;color:var(--acc);font-weight:600}
 .dpc{display:flex;flex-direction:column;align-items:flex-start}
 .pnh{display:flex;gap:20px;align-items:center}.pnqr{width:150px;height:150px;flex:none;background:#fff;border:1.5px solid var(--rule);border-radius:8px;padding:4px;cursor:zoom-in}.pnqr svg{width:100%;height:100%;display:block}.pni{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .pnw{flex:1;min-height:0;overflow:hidden;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:12px}
-.pk{--h:200;display:inline-flex;align-items:center;gap:.45em;max-width:100%;padding:.4em .75em;border-radius:.6em;background:hsl(var(--h) 85% 93%);color:hsl(var(--h) 70% 26%);border:2px solid hsl(var(--h) 65% 78%);font-family:"Source Sans 3",Arial,sans-serif;font-weight:700;line-height:1.2;overflow-wrap:anywhere;transition:font-size .45s}
+.pk{--h:200;display:inline-flex;align-items:center;gap:.45em;max-width:100%;padding:.4em .75em;border-radius:.6em;background:hsl(var(--h) 85% 93%);color:hsl(var(--h) 70% 26%);border:2px solid hsl(var(--h) 65% 78%);font-family:"Source Sans 3",Arial,sans-serif;font-weight:700;line-height:1.2;overflow-wrap:anywhere}
 .pk b{font-size:.62em;background:hsl(var(--h) 70% 36%);color:#fff;padding:.15em .45em;border-radius:99px}
 .pk.yeni{animation:pkp .35s cubic-bezier(.34,1.56,.64,1) both}@keyframes pkp{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
 .pnbos{color:var(--mut);font-size:22px}
@@ -822,8 +823,7 @@ em.t{font-style:normal;color:var(--acc);font-weight:600}
       <li><b>Oyunda dikkat</b> cümle kurmaktan kazanmaya kayabiliyor</li>
       <li><b>Kontrol şart:</b> yapay zekanın ürettiği metin ve etkinlikler de hatalı olabiliyor</li></ul></div>
   </div>
-  <div class="cans kzans"><button class="btn" id="cansb">Hangisi kitaptaki kayıttı?</button>
-<div class="cansx" id="cansx"><p><b>B, kitaptaki kayıt.</b> Tuz, kitapta suya ekleniyor; resimde makarnaya. Adımlar numarayla sıralanıyor, “First, Then, Next, Finally” hiç geçmiyor.</p><p><b>A, yapay zeka.</b> Metin resimlere göre yeniden yazıldı, ElevenLabs ile seslendirildi.</p></div></div>
+  
   <div class="foot"><span></span><span></span></div>
 </section>
 
@@ -1011,7 +1011,7 @@ a.addEventListener('timeupdate',()=>{const c=a.currentTime,d=a.duration||1;f.sty
 W.forEach(x=>x.addEventListener('click',e=>{e.stopPropagation();stopAll(p);a.currentTime=+x.dataset.s;if(a.paused){a.play();b.textContent='❚❚';}}));
 p.addEventListener('click',e=>e.stopPropagation());});
 setInterval(()=>{if(!P[0].closest('.slide').classList.contains('on'))stopAll(null);},400);
-const ab=document.getElementById('cansb');ab.addEventListener('click',e=>{e.stopPropagation();document.getElementById('cansx').classList.add('on');ab.style.display='none';
+const ab=document.getElementById('cansb');if(ab)ab.addEventListener('click',e=>{e.stopPropagation();document.getElementById('cansx').classList.add('on');ab.style.display='none';
 document.getElementById('rvA').textContent='Yapay zeka · ElevenLabs';document.getElementById('rvB').textContent='MEB ders kitabı';document.getElementById('plB').classList.add('cbk');document.getElementById('plA').classList.add('cai');});})();
 </script>
 <script>
@@ -1028,7 +1028,7 @@ const P = { kod: null, unsub: null, onceki: {}, basladi: false };
 const url = (k) => location.origin + '/?etkinlik=' + k;
 const qr = (k) => { try { return window.d8QR.svg(url(k), { dark: '#16202E', light: '#FFFFFF', quiet: 2 }); } catch (e) { return ''; } };
 const esc = (t) => String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const anahtar = (t) => String(t || '').toLocaleLowerCase('tr-TR').replace(/\s+/g, ' ').replace(/[\s.,!?;:…"'“”‘’()\-]+$/g, '').replace(/^[\s"'“”‘’(\-]+/g, '').trim();
+const anahtar = (t) => String(t || '').toLocaleLowerCase('tr-TR').replace(/ı/g, 'i').replace(/\s+/g, ' ').replace(/[\s.,!?;:…"'“”‘’()\-]+$/g, '').replace(/^[\s"'“”‘’(\-]+/g, '').trim();
 const RENK = [8, 195, 95, 305, 45, 172, 275, 145, 335, 215, 28, 248];
 $('pnp').addEventListener('click', (e) => e.stopPropagation());
 function ciz(list) {
@@ -1041,10 +1041,15 @@ function ciz(list) {
     const o = en > 1 ? Math.sqrt((x.n - 1) / (en - 1)) : 0;
     let boy = 24 + o * 44; if (m.length > 40) boy *= 0.7; else if (m.length > 20) boy *= 0.85;
     simdi[x.k] = x.n;
-    return '<div class="pk' + (P.onceki[x.k] == null ? ' yeni' : '') + '" style="--h:' + RENK[x.ilk % 12] + ';font-size:' + Math.round(boy) + 'px"><span>' + esc(m) + '</span>' + (x.n > 1 ? '<b>×' + x.n + '</b>' : '') + '</div>';
+    return '<div class="pk' + (P.onceki[x.k] == null ? ' yeni' : '') + '" data-b="' + Math.round(boy) + '" style="--h:' + RENK[x.ilk % 12] + ';font-size:' + Math.round(boy) + 'px"><span>' + esc(m) + '</span>' + (x.n > 1 ? '<b>×' + x.n + '</b>' : '') + '</div>';
   }).join('') : '<p class="pnbos">Cevaplar burada görünecek</p>';
   P.onceki = simdi;
+  sigdir();
   $('pns').textContent = list.length ? list.length + ' cevap · ' + sira.length + ' farklı' : 'Henüz cevap yok';
+}
+function sigdir() {
+  const w = $('pnw'); let k = 1; w.style.setProperty('--k', 1);
+  for (let i = 0; i < 14 && w.scrollHeight > w.clientHeight + 2; i++) { k *= 0.88; w.querySelectorAll('.pk').forEach((e) => { e.style.fontSize = (parseFloat(e.dataset.b) * k) + 'px'; }); }
 }
 async function baslat(yeni) {
   $('pns').textContent = 'Bağlanılıyor…';
