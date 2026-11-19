@@ -993,13 +993,13 @@ async function kur(F) {
   if (kod) {
     const s = await F.getDoc(oturum(kod)).catch(() => null);
     const d = s && s.exists() ? s.data() : null;
-    if (!(d && d.moderatorUid === F.uid && d.sunum === 1 && Date.now() - (d.createdAt || 0) < 12 * 3600 * 1000)) kod = null;
+    if (!(d && d.moderatorUid === F.uid && Array.isArray(d.kartlar) && d.kartlar.length === 2 && Date.now() - (d.createdAt || 0) < 12 * 3600 * 1000)) kod = null;
   }
   for (let i = 0; !kod && i < 12; i++) {
     const k = String(1000 + Math.floor(Math.random() * 9000));
     if ((await F.getDoc(oturum(k))).exists()) continue;
     await F.setDoc(oturum(k), { moderatorUid: F.uid, createdAt: Date.now(), durum: 'oylama', tur: 0, mac: 0,
-      kartlar: [1, 2], canli: { a: [], b: [], k: [], kura: [] }, gecmis: {}, sampiyon: null, sunum: 1 });
+      kartlar: [1, 2], canli: { a: [], b: [], k: [], kura: [] }, gecmis: {}, sampiyon: null });
     kod = k;
   }
   if (!kod) throw new Error('kod yok');
