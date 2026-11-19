@@ -672,7 +672,9 @@ em.t{font-style:normal;color:var(--acc);font-weight:600}
 #cvfa{background:var(--acc)}#cvfb{background:var(--warm)}
 .b8now{border-left:4px solid var(--warm);padding-left:16px}.b8now p:last-child{color:var(--ink);font-weight:600}
 .nbq{display:flex;align-items:center;justify-content:space-between;gap:30px;background:var(--soft);border-radius:10px;padding:14px 22px}.nbq p{font-size:25px}.nbq .btn{align-self:center;flex:none}
-.lvs{margin-top:20px}.lvs div{padding-bottom:20px}.lvs p{font-size:26px!important}
+.dgk{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid #2C3A49;margin-top:10px}
+.dgc{padding:40px 40px 10px 0;display:flex;flex-direction:column;gap:10px}.dgc+.dgc{padding-left:40px;border-left:1.5px solid #2C3A49}
+.dgc .k{font-size:22px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#E09A62}.dgc b{font-family:'Source Serif 4';font-size:52px;font-weight:600;margin-bottom:18px}
 .dgo{display:flex;align-items:center;gap:28px;margin-top:10px}
 .dgb{font-size:30px!important;padding:20px 44px!important}
 .dpk{background:none;border:0;color:#8A97A6;font:600 20px 'Source Sans 3',Arial;text-decoration:underline;cursor:pointer}
@@ -720,14 +722,11 @@ em.t{font-style:normal;color:var(--acc);font-weight:600}
 
 <section class="slide night" id="demo" data-sec="Canlı">
   <h2>Bir dersi birlikte işleyelim</h2>
-  <p class="lead">Bugün öğrenci sizsiniz. 8. sınıf, <span lang="en">In the Kitchen</span>, sayfa 43.</p>
-  <div class="lv4 lvs">
-    <div><span>1</span><b>Isınma</b><p>Önceki üniteden bir tekrar</p></div>
-    <div><span>2</span><b lang="en">Discover</b><p>Kuralı siz bulun</p></div>
-    <div><span>3</span><b>Dinleme</b><p>Track 14 ve bir oyun<br><span class="t14">Bu kayıt A mıydı, B mi?</span></p></div>
-    <div><span>4</span><b>Ders sonu</b><p>Günün dilini toparlayan etkinlik</p></div>
+  <p class="lead">Bugün öğrenci sizsiniz.</p>
+  <div class="dgk">
+    <div class="dgc"><span class="k">8. sınıf</span><b lang="en">In the Kitchen</b><div class="dgo"><button class="btn dgb" data-open="english8-unit3.html" data-flow="1 Reviews → Unit 2 Review 2  ·  2 s. 43 → Discover  ·  3 Track 14 → Text → cevaplar  ·  Recipe race  ·  4 Wrap-ups">Kitabı aç</button></div></div>
+    <div class="dgc"><span class="k">7. sınıf</span><b lang="en">Sports</b><div class="dgo"><button class="btn dgb" data-open="english7-unit2.html">Kitabı aç</button></div></div>
   </div>
-  <div class="dgo"><button class="btn dgb" data-open="english8-unit3.html" data-flow="1 Reviews  ·  2 s. 43 → Discover  ·  3 Track 14 → Recipe race  ·  4 Wrap-ups">Kitabı aç</button></div>
   <input type="file" id="picker" accept=".html,.htm" hidden>
   <div class="foot"><span></span><span></span></div>
 </section>
@@ -1068,6 +1067,7 @@ async function indir(url, yaz) {
   for (;;) { const { done, value } = await rd.read(); if (done) break; n += value.length; yaz((n / 1048576).toFixed(1) + ' MB'); }
 }
 is('8. sınıf kitap', (y) => indir('english8-unit3.html', y));
+is('7. sınıf kitap', (y) => indir('english7-unit2.html', y));
 is('derslik8', (y) => indir('/', y));
 is('Oylama bağlantısı', async () => { const m = await import('./fb.js'); await m.firebase(); });
 </script>
