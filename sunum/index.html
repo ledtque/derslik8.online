@@ -672,6 +672,10 @@ em.t{font-style:normal;color:var(--acc);font-weight:600}
 #cvfa{background:var(--acc)}#cvfb{background:var(--warm)}
 .b8now{border-left:4px solid var(--warm);padding-left:16px}.b8now p:last-child{color:var(--ink);font-weight:600}
 .nbq{display:flex;align-items:center;justify-content:space-between;gap:30px;background:var(--soft);border-radius:10px;padding:14px 22px}.nbq p{font-size:25px}.nbq .btn{align-self:center;flex:none}
+.lvs{margin-top:20px}.lvs div{padding-bottom:20px}.lvs p{font-size:26px!important}
+.dgo{display:flex;align-items:center;gap:28px;margin-top:10px}
+.dgb{font-size:30px!important;padding:20px 44px!important}
+.dpk{background:none;border:0;color:#8A97A6;font:600 20px 'Source Sans 3',Arial;text-decoration:underline;cursor:pointer}
 .cvq{display:flex;flex-direction:column;align-items:center;gap:8px}
 .cvq[hidden]{display:none}
 .cvqr{width:230px;height:230px;background:#fff;border:1.5px solid var(--rule);border-radius:10px;padding:6px;cursor:zoom-in}.cvqr svg{width:100%;height:100%;display:block}
@@ -716,21 +720,16 @@ em.t{font-style:normal;color:var(--acc);font-weight:600}
 
 <section class="slide night" id="demo" data-sec="Canlı">
   <h2>Bir dersi birlikte işleyelim</h2>
-  <p class="lead">Bugün öğrenci sizsiniz. İnternet bağlantısı olmadan, akıllı tahtada kullandığım haliyle.</p>
-  <div class="lv4">
-    <div><span>1</span><b>Isınma</b><p>“Reviews” → Unit 2 Review 2<br>Bir gönüllü, tek soru</p></div>
-    <div><span>2</span><b lang="en">Discover</b><p>Sayfa 43 → ilk bölüm → “Discover”<br>“Hangisi önce?” · kuralı salon bulsun</p></div>
-    <div><span>3</span><b>Kitaptaki etkinlik</b><p>Track 14 → “Text” → kelimeye dokun<br>Gönüllü cevap seçsin · “Recipe race”<br><span class="t14">Bu kayıt A mıydı, B mi? Cevap birazdan</span></p></div>
-    <div><span>4</span><b>Ders sonu</b><p>“Wrap-ups”u göster<br>Sağ üstten “Sunuma dön”</p></div>
+  <p class="lead">Bugün öğrenci sizsiniz. 8. sınıf, <span lang="en">In the Kitchen</span>, sayfa 43.</p>
+  <div class="lv4 lvs">
+    <div><span>1</span><b>Isınma</b><p>Önceki üniteden bir tekrar</p></div>
+    <div><span>2</span><b lang="en">Discover</b><p>Kuralı siz bulun</p></div>
+    <div><span>3</span><b>Dinleme</b><p>Track 14 ve bir oyun<br><span class="t14">Bu kayıt A mıydı, B mi?</span></p></div>
+    <div><span>4</span><b>Ders sonu</b><p>Günün dilini toparlayan etkinlik</p></div>
   </div>
-
-  <div class="files">
-    <div class="file"><span class="k">8. sınıf · <span lang="en">In the Kitchen</span></span><span class="t">Ünite dosyası</span><div class="b"><button class="btn" data-open="english8-unit3.html" data-flow="1 Reviews → Unit 2 Review 2  ·  2 s. 43 → Discover  ·  3 Track 14 → Text → cevaplar  ·  Recipe race  ·  4 Wrap-ups">Aç</button><button class="btn lt" data-pick>Dosyayı seç</button></div></div>
-    <div class="file"><span class="k">7. sınıf · <span lang="en">Sports</span></span><span class="t">Ünite dosyası</span><div class="b"><button class="btn" data-open="english7-unit2.html">Aç</button><button class="btn lt" data-pick>Dosyayı seç</button></div></div>
-    
-  </div>
+  <div class="dgo"><button class="btn dgb" data-open="english8-unit3.html" data-flow="1 Reviews  ·  2 s. 43 → Discover  ·  3 Track 14 → Recipe race  ·  4 Wrap-ups">Kitabı aç</button></div>
   <input type="file" id="picker" accept=".html,.htm" hidden>
-  <div class="foot"><span>Dosyalar bu sunumla aynı klasörde olmalı · değilse “Dosyayı seç”</span><span></span></div>
+  <div class="foot"><span></span><span></span></div>
 </section>
 
 <section class="slide " data-sec="Başlangıç">
@@ -1069,7 +1068,6 @@ async function indir(url, yaz) {
   for (;;) { const { done, value } = await rd.read(); if (done) break; n += value.length; yaz((n / 1048576).toFixed(1) + ' MB'); }
 }
 is('8. sınıf kitap', (y) => indir('english8-unit3.html', y));
-is('7. sınıf kitap', (y) => indir('english7-unit2.html', y));
 is('derslik8', (y) => indir('/', y));
 is('Oylama bağlantısı', async () => { const m = await import('./fb.js'); await m.firebase(); });
 </script>
