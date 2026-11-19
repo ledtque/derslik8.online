@@ -691,6 +691,7 @@ em.t{font-style:normal;color:var(--acc);font-weight:600}
 .pk b{font-size:.62em;background:hsl(var(--h) 70% 36%);color:#fff;padding:.15em .45em;border-radius:99px}
 .pk.yeni{animation:pkp .35s cubic-bezier(.34,1.56,.64,1) both}@keyframes pkp{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
 .pnbos{color:var(--mut);font-size:22px}
+.slide.uwu{padding:0!important}.uwf{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;z-index:5}
 .cvq{display:flex;flex-direction:column;align-items:center;gap:8px}
 .cvq[hidden]{display:none}
 .cvqr{width:230px;height:230px;background:#fff;border:1.5px solid var(--rule);border-radius:10px;padding:6px;cursor:zoom-in}.cvqr svg{width:100%;height:100%;display:block}
@@ -900,6 +901,12 @@ em.t{font-style:normal;color:var(--acc);font-weight:600}
   <div class="foot"><span>Yiğit SAKAL</span><span></span></div>
 </section>
 
+<section class="slide night uwu" data-sec="Son olarak">
+
+<iframe class="uwf" id="uwf" title="Akademi Uwufufu" allow="fullscreen"></iframe>
+<div class="foot"><span></span><span></span></div>
+</section>
+
 
 
 
@@ -1060,6 +1067,7 @@ $('pnReset').onclick = (e) => { e.stopPropagation(); baslat(true); };
 $('pnqr').onclick = (e) => { e.stopPropagation(); if (!P.kod) return; const d = document.createElement('div'); d.className = 'cvbig'; d.innerHTML = '<div>' + qr(P.kod) + '</div><span>Kod ' + P.kod + '</span>'; d.onclick = (ev) => { ev.stopPropagation(); d.remove(); }; document.body.appendChild(d); };
 setInterval(() => { const on = $('pnp').closest('.slide').classList.contains('on'); if (on && !P.basladi) { P.basladi = true; baslat(false); } }, 400);
 </script>
+<script>setInterval(()=>{const f=document.getElementById("uwf");if(f&&!f.src&&f.closest(".slide").classList.contains("on"))f.src="/uwufufu/?tahta";},400);</script>
 <script src="../uwufufu/qr.js?v=3"></script>
 <script type="module">
 import { firebase, oturum, oylar } from './fb.js';
