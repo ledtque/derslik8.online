@@ -36,7 +36,8 @@
 .header-progress-info .header-progress-sep{opacity:0.5}
 .header-progress-info .header-progress-kalan{font-weight:600;color:rgba(255,255,255,0.7)}
 @media(max-width:480px){.header-progress-info .header-progress-label{display:none}}
-@media(prefers-reduced-motion:reduce){.header-liquid-fill,.header-liquid-fill::before,.header-liquid-fill::after{animation:none!important}}
+/* Sürekli akan başlık animasyonu akıllı tahtada sayfayı kasıyordu: her cihazda durağan */
+.header-liquid-fill,.header-liquid-fill::before,.header-liquid-fill::after{animation:none!important}
 .d8-announce-banner{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);border-radius:12px;padding:11px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:relative;overflow:hidden;animation:pageReveal .2s cubic-bezier(.22,.61,.36,1) both}
 .d8-announce-banner::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);animation:bannerLine 2s ease-in-out infinite}
 .d8-announce-left{display:flex;align-items:center;gap:10px;min-width:0}
@@ -305,12 +306,10 @@ body.dark #d8-sahne,html.dark-pre #d8-sahne{--kar:rgba(255,255,255,.92);--kar-ke
   background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.85) 0 18%,rgba(34,211,238,.10) 40%,rgba(34,211,238,0) 70%)}
 body.dark #d8-sahne .kabarcik{border-color:rgba(103,232,249,.35)}
 body.dark #d8-sahne.sahne-guz .sp{filter:brightness(.92)}
-/* Cihazda "hareketi azalt / animasyonları kaldır" açıksa sahne gizlenmez;
-   parçacıklar ekrana dağılmış hâlde donar. Mevsim havası korunur, hareket olmaz. */
-@media(prefers-reduced-motion:reduce){
-  #d8-sahne .sp{animation:none!important;top:var(--t)}
-  #d8-sahne .sp b{animation:none!important;transform:rotate(var(--r))}
-}
+/* Düşen parçacıklar akıllı tahtada sayfayı kasıyordu: artık her cihazda
+   ekrana dağılmış hâlde durur. Mevsim havası korunur, hareket olmaz. */
+#d8-sahne .sp{animation:none!important;will-change:auto!important;top:var(--t)}
+#d8-sahne .sp b{animation:none!important;will-change:auto!important;transform:rotate(var(--r))}
 
 /* --- Yumuşak sekme geçişleri ------------------------------------------- */
 
