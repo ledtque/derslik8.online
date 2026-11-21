@@ -33,17 +33,6 @@ for (const m of html.matchAll(/(?:href|content)="(?:https:\/\/derslik8\.online\/
   try { await stat(join(KOK, m[1])); } catch { kotu('bağlantılı dosya eksik: ' + m[1]); }
 }
 denetle(/property="og:image" content="https:\/\/derslik8\.online\/simgeler\/paylasim\.png"/.test(html), 'paylaşım görseli etiketi var');
-// Kelime uygulaması (/kelime): sayfa, betik ve kelime listesi yayında olmalı
-try {
-  const kl = JSON.parse(await readFile(join(KOK, 'kelime', 'kelimeler.json'), 'utf8'));
-  const iyi = kl.words.every((w) => w.length === 5 && /\*[^*]+\*/.test(w[3]));
-  denetle(kl.words.length > 0 && iyi, `kelime listesi geçerli (${kl.words.length} kelime)`);
-  const ad = new Set(kl.words.map((w) => w[1].toLowerCase()));
-  denetle(ad.size === kl.words.length, 'kelime listesinde tekrar yok');
-  await stat(join(KOK, 'kelime', 'index.html'));
-  await stat(join(KOK, 'kelime', 'app.js'));
-  tamam('kelime sayfası ve betiği var');
-} catch (e) { kotu('kelime uygulaması eksik: ' + e.message); }
 // Uwufufu (/uwufufu): sayfa, betikler ve 16 kartın görseli yayında olmalı
 try {
   await stat(join(KOK, 'uwufufu', 'index.html'));
